@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4A89FF">
+  <title>全国最新招中标信息汇总</title>
+  <link rel="stylesheet" href="/css/infos.css">
+</head>
+<body>
+  <div class="page">
+    <!-- 顶部蓝色区：标题 + 关键词搜索 -->
+    <header class="top-header">
+      <h1 class="page-title" id="page-title">
+        <span class="page-title-main">全国最新招中标信息汇总</span><span class="page-title-date" id="page-title-date" hidden></span>
+      </h1>
+      <div class="main-search-bar">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+        <input type="text" id="keyword" placeholder="输入关键词（标题/产品/编号）">
+      </div>
+    </header>
+
+    <!-- 悬浮筛选卡片：类型 Toggle -->
+    <div class="filter-card">
+      <div class="type-toggle-row">
+        <button type="button" class="type-btn" id="btn-zhaobiao" data-type="招标公告">
+          <span class="btn-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 7C22.6569 7 24 5.65685 24 4C24 2.34315 22.6569 1 21 1C19.3431 1 18 2.34315 18 4C18 5.65685 19.3431 7 21 7ZM22 18V8.89998C21.6769 8.96557 21.3425 9 21 9C20.6575 9 20.3231 8.96557 20 8.89998V17H5.76282L4 18.3851V5H16.1C16.0344 4.67689 16 4.34247 16 4C16 3.65753 16.0344 3.32311 16.1 3H3C2.44772 3 2 3.44772 2 4V22.5L6.45455 19H21C21.5523 19 22 18.5523 22 18Z"></path></svg></span>
+          <span class="btn-label">招标公告</span><span class="btn-count" id="count-zhaobiao">（0）</span>
+        </button>
+        <button type="button" class="type-btn" id="btn-zhongbiao" data-type="中标结果">
+          <span class="btn-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.99999C12.5523 1.99999 13 2.4477 13 2.99999C12.9999 3.55224 12.5522 3.99999 12 3.99999C7.58172 3.99999 4 7.58171 4 12C4.00004 16.4182 7.58174 20 12 20C16.4182 20 19.9999 16.4182 20 12C20 11.4477 20.4477 11 21 11C21.5523 11 22 11.4477 22 12C21.9999 17.5228 17.5228 22 12 22C6.47717 22 2.00004 17.5228 2 12C2 6.47714 6.47715 1.99999 12 1.99999ZM12 5.99999C12.5523 5.99999 13 6.4477 13 6.99999C12.9999 7.55224 12.5522 7.99999 12 7.99999C9.79085 7.99999 7.99999 9.79085 7.99999 12C8.00004 14.2091 9.79088 16 12 16C14.2091 16 15.9999 14.2091 16 12C16 11.4477 16.4477 11 17 11C17.5523 11 18 11.4477 18 12C17.9999 15.3137 15.3137 18 12 18C8.68631 18 6.00004 15.3137 6 12C6 8.68628 8.68629 5.99999 12 5.99999ZM17.6562 2.10057C18.0468 1.71005 18.6807 1.71005 19.0713 2.10057C19.4614 2.49105 19.4615 3.12419 19.0713 3.51463L18.3633 4.22069L18.3642 4.22167C17.9737 4.61219 17.9737 5.2452 18.3642 5.63573C18.7548 6.02612 19.3878 6.02621 19.7783 5.63573L20.4853 4.9287C20.8759 4.53839 21.5089 4.53826 21.8994 4.9287C22.2899 5.31915 22.2897 5.95222 21.8994 6.34276L19.7783 8.46483C19.5909 8.65223 19.3363 8.75671 19.0713 8.75682H16.6572L12.707 12.707C12.3165 13.0974 11.6834 13.0974 11.293 12.707C10.9025 12.3165 10.9026 11.6835 11.293 11.293L15.2422 7.34374V4.9287C15.2422 4.66356 15.3477 4.40916 15.5351 4.22167L17.6562 2.10057Z"></path></svg></span>
+          <span class="btn-label">中标公告</span><span class="btn-count" id="count-zhongbiao">（0）</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 分类分组列表 -->
+    <div class="ps-sections">
+
+      <!-- 软件相关 分组 -->
+      <div class="ps-section" id="section-software">
+        <button type="button" class="ps-section-hd" data-key="software" aria-expanded="true">
+          <span class="ps-hd-label">软件相关</span>
+          <span class="ps-hd-count" id="count-software">（0）</span>
+          <svg class="ps-hd-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="ps-body" id="body-software">
+          <div class="ps-loading" id="loading-software">加载中…</div>
+          <div class="ps-list" id="list-software" style="display:none"></div>
+          <div class="ps-more" id="more-software" style="display:none" aria-live="polite">正在加载更多…</div>
+          <div class="ps-end" id="end-software" style="display:none">以上是软件相关全部信息</div>
+          <div class="ps-sentinel" id="sentinel-software" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <!-- 硬件相关 分组 -->
+      <div class="ps-section" id="section-hardware">
+        <button type="button" class="ps-section-hd" data-key="hardware" aria-expanded="true">
+          <span class="ps-hd-label">硬件相关</span>
+          <span class="ps-hd-count" id="count-hardware">（0）</span>
+          <svg class="ps-hd-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="ps-body" id="body-hardware">
+          <div class="ps-loading" id="loading-hardware">加载中…</div>
+          <div class="ps-list" id="list-hardware" style="display:none"></div>
+          <div class="ps-more" id="more-hardware" style="display:none" aria-live="polite">正在加载更多…</div>
+          <div class="ps-end" id="end-hardware" style="display:none">以上是硬件相关全部信息</div>
+          <div class="ps-sentinel" id="sentinel-hardware" aria-hidden="true"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let activeType  = '';   // '' | '招标公告' | '中标结果'
+    let listPushDate = '';
+    /** URL ?date_start=&date_end= 指定时优先，与企微卡片当日链接一致 */
+    let listDateStart = '';
+    let listDateEnd = '';
+    let typeCountsSet = false;  // 只从第一个返回的 section 里更新 type_counts
+
+    /* 每个分组的独立状态 */
+    const SEC = {
+      software: { product: '软件相关', page: 1, loaded: 0, total: 0, hasMore: false, loading: false, loadingMore: false, expanded: true, observer: null },
+      hardware: { product: '硬件相关', page: 1, loaded: 0, total: 0, hasMore: false, loading: false, loadingMore: false, expanded: true, observer: null }
+    };
+
+    /** YYYY-MM-DD → 展示用 MM.DD */
+    function formatDigestShortDate(ymd) {
+      if (!ymd || typeof ymd !== 'string') return '';
+      const m = ymd.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+      if (!m) return '';
+      return String(parseInt(m[2], 10)).padStart(2, '0') + '.' + String(parseInt(m[3], 10)).padStart(2, '0');
+    }
+
+    function applyPageTitleFromPushDate(startYmd) {
+      const s = formatDigestShortDate(startYmd);
+      const dateEl = document.getElementById('page-title-date');
+      const label = s ? '\u00a0' + s : '';
+      if (label) {
+        dateEl.textContent = label;
+        dateEl.hidden = false;
+      } else {
+        dateEl.textContent = '';
+        dateEl.hidden = true;
+      }
+      document.title = label ? '全国最新招中标信息汇总' + label : '全国最新招中标信息汇总';
+    }
+
+    function applyTypeCounts(tc) {
+      if (!tc) return;
+      document.getElementById('count-zhaobiao').textContent = '（' + (Number(tc['招标公告']) || 0) + '）';
+      document.getElementById('count-zhongbiao').textContent = '（' + (Number(tc['中标结果']) || 0) + '）';
+    }
+
+    /* ── 构建单个 section 的请求参数 ── */
+    function buildSectionQuery(key) {
+      const s = SEC[key];
+      const params = new URLSearchParams();
+      params.set('page', String(s.page));
+      params.set('page_size', '30');
+      const kw = document.getElementById('keyword').value.trim();
+      if (kw) params.set('keyword', kw);
+      if (activeType) params.set('sub_type', activeType);
+      params.set('product_related', s.product);
+      const ds = listDateStart || listPushDate;
+      const de = listDateEnd || listDateStart || listPushDate;
+      if (ds) {
+        params.set('date_start', ds);
+        params.set('date_end', de || ds);
+      }
+      params.set('audit_filter', 'approved');
+      return params.toString();
+    }
+
+    /* 列表卡片主题 */
+    function listCardKind(raw) {
+      const s = (raw || '').trim();
+      if (!s) return 'other';
+      if (s.includes('中标')) return 'zhongbiao';
+      if (s.includes('成交结果') || s.includes('预成交')) return 'zhongbiao';
+      if (s.includes('招标')) return 'zhaobiao';
+      return 'other';
+    }
+
+    /** 中标/成交类公告不展示投标截止时间 */
+    function isZhongbiaoResultSubtype(raw) {
+      const s = (raw || '').trim();
+      if (!s) return false;
+      if (s.includes('中标')) return true;
+      if (s.includes('成交结果') || s.includes('预成交')) return true;
+      return false;
+    }
+
+    /** 展示为 MM/DD；支持 YYYY-MM-DD、YYYY-MM-DD HH:mm:ss、ISO 日期 */
+    function formatPubMonthDay(raw) {
+      if (!raw) return '-';
+      const s = String(raw).trim();
+      const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/) || s.slice(0, 10).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      return m ? m[2] + '/' + m[3] : '-';
+    }
+
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    /* ── 单条卡片 HTML ── */
+    function buildCardHtml(row) {
+      const title      = esc(row.title || '（无标题）');
+      const subType    = esc(row.sub_type || '其他');
+      const cardKind   = listCardKind(row.sub_type);
+      const deadline   = formatPubMonthDay(row.bid_deadline);
+      const ownerRaw   = (row.project_owner || '').trim();
+      const ownerHtml  = ownerRaw && ownerRaw !== '-'
+        ? `<div class="card-owner">${esc(ownerRaw)}</div>` : '';
+
+      const rawBidder   = (row.winning_bidder || '').trim();
+      const firstBidder = rawBidder ? rawBidder.split('|')[0].trim() : '';
+      const moreBidders = rawBidder.includes('|')
+        ? '<span class="more-tag">+' + (rawBidder.split('|').length - 1) + '</span>' : '';
+
+      const rawBudget  = [row.project_budget, row.winning_amount].filter(Boolean).join(' / ');
+      const firstBudget = rawBudget ? rawBudget.split('|')[0].split('/')[0].trim() : '-';
+      const budgetHtml  = !firstBudget || firstBudget === '-' ? '-' : '¥' + esc(firstBudget);
+
+      const bidderHtml  = cardKind === 'zhaobiao' ? '' : `
+        <div class="info-item">
+          <span class="info-label">中标单位</span>
+          <span class="info-value">${firstBidder ? esc(firstBidder) + moreBidders : '-'}</span>
+        </div>`;
+      const infoHtml    = bidderHtml ? `<div class="info-list">${bidderHtml}</div>` : '';
+      const methodHtml  = (row.bidding_method || '').trim()
+        ? `<span class="method-badge">${esc((row.bidding_method || '').trim())}</span>` : '';
+      const showDeadline = !isZhongbiaoResultSubtype(row.sub_type);
+      const pubHtml     = !showDeadline
+        ? ''
+        : (deadline !== '-'
+          ? `<div class="publish-date-box"><span class="publish-date-label">截止时间</span><span class="publish-date">${esc(deadline)}</span></div>`
+          : `<div class="publish-date-box"><span class="publish-date">-</span></div>`);
+
+      return `<article class="project-card project-card--${cardKind}">
+        <div class="card-header">
+          <div class="card-badges"><span class="type-badge">${subType}</span>${methodHtml}</div>
+          ${pubHtml}
+        </div>
+        ${ownerHtml}
+        <h2 class="card-title">${title}</h2>
+        ${infoHtml}
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="budget-box"><div class="budget-amount">${budgetHtml}</div></div>
+          <a href="/detail/${row.id}" class="action-btn" target="_blank" rel="noopener">查看全文<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="action-btn-icon" aria-hidden="true"><path d="M1.99974 13.0001L1.9996 11.0002L18.1715 11.0002L14.2218 7.05044L15.636 5.63623L22 12.0002L15.636 18.3642L14.2218 16.9499L18.1716 13.0002L1.99974 13.0001Z"></path></svg></a>
+        </div>
+      </article>`;
+    }
+
+    /* ── 折叠/展开 ── */
+    function toggleSection(key) {
+      const s = SEC[key];
+      s.expanded = !s.expanded;
+      document.getElementById('body-' + key).classList.toggle('ps-body--collapsed', !s.expanded);
+      document.querySelector('.ps-section-hd[data-key="' + key + '"]').setAttribute('aria-expanded', String(s.expanded));
+    }
+
+    /* ── IntersectionObserver（每个 section 独立）── */
+    function setupObserver(key) {
+      const s = SEC[key];
+      if (s.observer) s.observer.disconnect();
+      const sentinel = document.getElementById('sentinel-' + key);
+      if (!sentinel) return;
+      s.observer = new IntersectionObserver(entries => {
+        for (const e of entries) {
+          if (e.isIntersecting && s.hasMore && !s.loading && !s.loadingMore) loadSectionMore(key);
+        }
+      }, { rootMargin: '120px', threshold: 0 });
+      s.observer.observe(sentinel);
+    }
+
+    /* ── 渲染 section 响应数据 ── */
+    function applySectionData(key, data, append) {
+      const s      = SEC[key];
+      const items  = data.items || [];
+      s.total      = data.total || 0;
+      const listEl = document.getElementById('list-' + key);
+      const endEl  = document.getElementById('end-' + key);
+
+      document.getElementById('count-' + key).textContent = '（' + s.total + '）';
+
+      if (!typeCountsSet && data.type_counts) {
+        applyTypeCounts(data.type_counts);
+        typeCountsSet = true;
+      }
+
+      if (append) {
+        if (items.length > 0) {
+          listEl.insertAdjacentHTML('beforeend', items.map(buildCardHtml).join(''));
+          s.loaded += items.length;
+        }
+      } else {
+        listEl.innerHTML = s.total === 0 ? '<div class="list-empty">暂无数据</div>' : items.map(buildCardHtml).join('');
+        s.loaded = items.length;
+      }
+      s.hasMore = s.loaded < s.total;
+      endEl.style.display = !s.hasMore && s.total > 0 ? 'block' : 'none';
+    }
+
+    /* ── 加载 section 首页 ── */
+    function loadSectionFirst(key) {
+      const s        = SEC[key];
+      s.page         = 1;
+      s.loaded       = 0;
+      s.total        = 0;
+      s.hasMore      = true;
+      s.loading      = true;
+      s.loadingMore  = false;
+
+      const loadingEl = document.getElementById('loading-' + key);
+      const listEl    = document.getElementById('list-' + key);
+      const moreEl    = document.getElementById('more-' + key);
+      const endEl     = document.getElementById('end-' + key);
+
+      loadingEl.textContent = '加载中…';
+      loadingEl.className   = 'ps-loading';
+      loadingEl.style.display = 'block';
+      listEl.style.display  = 'none';
+      listEl.innerHTML      = '';
+      moreEl.style.display  = 'none';
+      endEl.style.display   = 'none';
+
+      fetch('/api/list?' + buildSectionQuery(key))
+        .then(r => r.json())
+        .then(data => {
+          loadingEl.style.display = 'none';
+          s.loading = false;
+          if (!data.ok) {
+            loadingEl.textContent   = '错误：' + (data.error || '未知');
+            loadingEl.className     = 'ps-loading ps-error';
+            loadingEl.style.display = 'block';
+            return;
+          }
+          listEl.style.display = 'block';
+          applySectionData(key, data, false);
+          setupObserver(key);
+        })
+        .catch(err => {
+          s.loading               = false;
+          loadingEl.textContent   = '请求失败：' + err.message;
+          loadingEl.className     = 'ps-loading ps-error';
+          loadingEl.style.display = 'block';
+        });
+    }
+
+    /* ── 加载更多 ── */
+    function loadSectionMore(key) {
+      const s = SEC[key];
+      if (!s.hasMore || s.loadingMore || s.loading) return;
+      s.loadingMore = true;
+      s.page += 1;
+      const moreEl = document.getElementById('more-' + key);
+      moreEl.style.display = 'block';
+
+      fetch('/api/list?' + buildSectionQuery(key))
+        .then(r => r.json())
+        .then(data => {
+          moreEl.style.display = 'none';
+          s.loadingMore = false;
+          if (data.ok) applySectionData(key, data, true);
+          else s.page -= 1;
+        })
+        .catch(() => {
+          moreEl.style.display = 'none';
+          s.loadingMore = false;
+          s.page -= 1;
+        });
+    }
+
+    /* ── 重载所有分组（类型切换/搜索时触发）── */
+    function reloadAll() {
+      typeCountsSet = false;
+      loadSectionFirst('software');
+      loadSectionFirst('hardware');
+    }
+
+    /* ── 切换 招标/中标 筛选 ── */
+    function setActiveType(type) {
+      activeType = (activeType === type) ? '' : type;
+      document.querySelectorAll('.type-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.type === activeType);
+      });
+      reloadAll();
+    }
+
+    /* ── 事件绑定 ── */
+    document.querySelectorAll('.type-btn').forEach(btn => {
+      btn.onclick = () => setActiveType(btn.dataset.type);
+    });
+
+    document.querySelectorAll('.ps-section-hd').forEach(btn => {
+      btn.onclick = () => toggleSection(btn.dataset.key);
+    });
+
+    document.getElementById('keyword').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') reloadAll();
+    });
+
+    /* ── 初始化：支持 ?date_start=YYYY-MM-DD&date_end=YYYY-MM-DD（企微历史卡片）── */
+    (function parseUrlDates() {
+      const qs = new URLSearchParams(window.location.search);
+      const a = (qs.get('date_start') || '').trim();
+      const b = (qs.get('date_end') || '').trim();
+      const ymd = /^\d{4}-\d{2}-\d{2}$/;
+      if (a && ymd.test(a)) {
+        listDateStart = a;
+        listDateEnd = (b && ymd.test(b)) ? b : a;
+      }
+    })();
+
+    fetch('/api/scrape_dates')
+      .then(r => r.json())
+      .then(sd => {
+        const titleDate = sd.ok && sd.start_date ? sd.start_date : '';
+        return fetch('/api/latest_date')
+          .then(r => r.json())
+          .then(ld => {
+            if (!listDateStart) {
+              listPushDate = ld.ok && ld.date ? ld.date : '';
+            } else {
+              listPushDate = listDateStart;
+            }
+            /* 页眉日期：URL 指定日 > 库最新日 > config */
+            applyPageTitleFromPushDate(listDateStart || listPushDate || titleDate);
+            reloadAll();
+          });
+      })
+      .catch(() => {
+        if (!listDateStart) listPushDate = '';
+        applyPageTitleFromPushDate(listDateStart || listPushDate || '');
+        reloadAll();
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>爬取详情</title>
+  <style>
+    :root {
+      --bg: #1a1d23;
+      --card: #252830;
+      --text: #e6e8ec;
+      --muted: #8b909a;
+      --accent: #5c9ead;
+      --border: #3a3f4a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .back { margin-bottom: 16px; font-size: 14px; }
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      padding: 12px 16px;
+      background: var(--card);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .meta span strong { color: var(--text); margin-right: 6px; }
+    .content {
+      background: var(--card);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 20px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 14px;
+    }
+    .loading, .error {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .error { color: #c75c5c; }
+
+    /* 手机端适配 */
+    @media (max-width: 768px) {
+      body { padding: 12px; font-size: 16px; -webkit-text-size-adjust: 100%; }
+      .back { margin-bottom: 12px; }
+      .back a { padding: 10px 0; display: inline-block; min-height: 44px; line-height: 24px; }
+      h1 { font-size: 1.1rem; line-height: 1.4; word-break: break-word; }
+      .meta { padding: 12px; font-size: 14px; gap: 8px 16px; }
+      .content { padding: 16px; font-size: 15px; line-height: 1.7; }
+    }
+  </style>
+</head>
+<body>
+  <div class="back"><a href="/">← 返回列表</a></div>
+  <div id="loading" class="loading">加载中…</div>
+  <div id="main" style="display: none;">
+    <h1 id="title"></h1>
+    <div class="meta" id="meta"></div>
+    <div class="content" id="content"></div>
+  </div>
+
+  <script>
+    const recordId = {{ record_id }};
+    fetch('/api/detail/' + recordId)
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('loading').style.display = 'none';
+        if (!data.ok) {
+          document.getElementById('loading').textContent = '错误：' + (data.error || '未知');
+          document.getElementById('loading').className = 'loading error';
+          return;
+        }
+        const item = data.item;
+        document.getElementById('main').style.display = 'block';
+        document.getElementById('title').textContent = item.title || '（无标题）';
+
+        const metaParts = [];
+        if (item.sub_type) metaParts.push('<span><strong>信息类型</strong>' + escapeHtml(item.sub_type) + '</span>');
+        if (item.project_owner) metaParts.push('<span><strong>项目业主</strong>' + escapeHtml(item.project_owner) + '</span>');
+        if (item.published_at) metaParts.push('<span><strong>发布时间</strong>' + escapeHtml(item.published_at.slice(0, 19)) + '</span>');
+        var st = (item.sub_type || '').trim();
+        var isZb = st && (st.indexOf('中标') >= 0 || st.indexOf('成交结果') >= 0 || st.indexOf('预成交') >= 0);
+        if (item.bid_deadline && !isZb) {
+          metaParts.push('<span><strong>截止时间</strong>' + escapeHtml(String(item.bid_deadline).replace('T', ' ').slice(0, 19)) + '</span>');
+        }
+        if (item.detail_url) metaParts.push('<span><strong>外部链接</strong> <a href="' + escapeAttr(item.detail_url) + '" target="_blank" rel="noopener">打开源站</a></span>');
+        document.getElementById('meta').innerHTML = metaParts.length ? metaParts.join('') : '';
+
+        document.getElementById('content').textContent = item.detail || '（无爬取正文）';
+      })
+      .catch(err => {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('loading').textContent = '请求失败：' + err.message;
+        document.getElementById('loading').className = 'loading error';
+      });
+
+    function escapeHtml(s) {
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+    function escapeAttr(s) {
+      return escapeHtml(s).replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

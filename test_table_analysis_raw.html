@@ -1,0 +1,1149 @@
+<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" style="--aliyun-zoom-ratio: 1;"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta charset="utf-8"><title>
+	中国采招网-用户登录
+</title><link rel="shortcut icon" href="//img.bidcenter.com.cn/www/images/favicon.ico"><link rel="stylesheet" type="text/css" href="//static.bidcenter.com.cn/css/sso/css/news_login.css">
+    
+    <script src="https://zz.bdstatic.com/linksubmit/push.js"></script><script src="https://hm.baidu.com/hm.js?4c05dfde8a8c772de99bf56bbd4964b8"></script><script src="//static.bidcenter.com.cn/js/www/js/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="/resource/layer-v3.1/layer.js" type="text/javascript"></script><link rel="stylesheet" href="https://sso.bidcenter.com.cn/resource/layer-v3.1/theme/default/layer.css?v=3.1.0" id="layuicss-layer">
+    <script src="//static.bidcenter.com.cn/js/www/zhaobiao/js/zhaobiao2021/config.js"></script>
+    <script src="//static.bidcenter.com.cn/js/www/js/cookietool.js" type="text/javascript"></script>
+    <script type="text/javascript" src="//o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js"></script><style type="text/css">@font-face {font-family: "aliyun-captcha-iconfont";src: url("data:application/font-woff2;base64,d09GMgABAAAAAALkAAsAAAAABsQAAAKWAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHFQGYACCcAqBPIFbATYCJAMICwYABCAFhGcHNBsbBsguIScbXkQAFdTQssL1nfvZdRAAEA9P++M7d2Y+gEQ2KYPpNy9CW0eo1U19I5Q3v8tly9PaeNQqTnVHKyWf21zpydI0kkEJjMNhS1NgcS8c7mDGGbqsy2VfE8ZVW6+51wjbM68AJtNv0/z/v3f8G0Ab5B7Pbc1Fa+MD66RR1gdqrGURdvLQUxFvOehefkWg0ZIxTQdzKzus7ymnnPVr4TQHeWY8jQLOOmSfoiBZL9RSVxbxRQ3pbSp8jj8f/6xEPUlN5uQc38367GnumPy6ek3+5vVyNTgvoQYZc5hCnPfHDjWLNkqzRluLEVQWwU9VFRrEobVC+uuc9GYwDN4z8X3Bo7ImUOjOGubxpF7kgZ6eZ/eY8Zi2082MvV2m799Z8I5rGtvt0OS+ofE94xac7Oxu7O1s7e9t70Lz6wcxjgceOuPsxWNH7IxdbH1mvLT0DBaucVgMDophbHjsqLMYxOFGLX/o3cuQE7AhFo/fDobqdaH85gf/xuoXr20b/+ubCvjeT4aA5qD+DmzB75RfEZHF9JNKG19OJWua71DS6AapOK5Ov1NVXbedCvW6bt5RZyiHrN4IVsgzUKPJCtSqtwmNZs2ub9Kl1CxKAybcMQjtHiFp9RWyds9YIX9DjV5/UKvdPzS6jJbdmkzE9bRCTuhD/RYiUeTSU1KMdwuDy5SrpvAeKh0hCK7lVJPzmKOaY46+CjwiCVIVGcyJ52GaFlCqIkZBVkhUDtm2bHuLJYqMTVMQR5AP1N0CEaGQkyGayt+3BQUupThFxPZiihYBP3BZHAI2L8tJDQ+yj3Yl4CFEApJiiQyYk4ehVKoAyvZhMSQQSzghUhpiuyhJlVnbK7Jf2waNHHUKd1HWeJ0WGs00ypExAAA=") format("woff2");}.iconfont-aliyun-captcha {font-family: "aliyun-captcha-iconfont" !important;font-size: 16px;font-style: normal;-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}.aliyun-captcha .icon-close-line:before {content: "\e67e";}</style>
+    <script src="//static.bidcenter.com.cn/js/shuju/js/Ali.Captcha2-v4.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/loginstyle.css">
+    <style>
+        .scanCodeSuc { width: 180px; height: 200px; position: absolute; font-size: 18px; top: 197px; left: 149px; text-align: center; background-color: white; display: none; }
+        .codeInvalid { width: 161px; height: 162px; position: absolute; font-size: 18px; top: 217px; left: 160px; background-color: rgba(0, 0, 0, 0.6); display: none; }
+        .codeInvalid p { font-weight: 700; font-size: 14px; text-align: center; margin-bottom: 15px; padding-top: 50px; color: #fff; }
+        .scanCodeSuc-tishi { font-size: 12px; text-align: center; margin-bottom: 15px; color: #939393; }
+        .refreshCode { display: block; font-size: 14px; text-align: center; color: white; width: 108px; height: 32px; border-radius: 2px; line-height: 32px; background-color: #ff4a00; margin: 0 auto; }
+
+        .clear { clear: both; }
+        .daoqi-tk { width: 370px; background: #fff; border-radius: 5px; }
+        .daoqi-close { margin: 10px; background: url(/images/close.png); background-repeat: no-repeat; width: 17px; height: 17px; display: block; float: right; }
+        .daoqi-tixing { display: block; margin: 0 auto; }
+        .daoqi-btn { width: 190px; font-family: '微软雅黑'; height: 40px; line-height: 40px; text-align: center; color: #fff; display: block; background: #e55a5a; border-radius: 3px; text-decoration: none; margin: 30px auto; }
+        .daoqi-wenzi1 { font-size: 18px; text-align: center; padding-top: 20px; color: #464646; font-family: '微软雅黑'; }
+        .daoqi-wenzi2 { font-size: 14px; text-align: center; color: #a4a4a4; margin-top: 7px; font-family: '微软雅黑'; }
+        .daoqi-wenzi3 { font-size: 12px; text-align: center; color: #939393; padding-bottom: 30px; font-family: '微软雅黑'; }
+        .bangding-btn a.cxfs { background-color: #fff; color: #cccccc; font-size: 12px; font-weight: 100; }
+        .nc-container#Validate5 #nc_1_wrapper, .nc-container.tb-login #nc_1_wrapper { width: 100%; }
+        body .bangding-btn { width: 290px; margin: 25px auto 0; }
+        .tel-img { display: block; margin: 10px auto; }
+        #bdsjh_yzm .bangding-btn .btn-active { background: #FF5722; }
+
+        .saosao-bottom { position: absolute; right: 0; bottom: 25px; }
+        .saosao-bottom .login-text { color: #333; margin-right: 25px; font-size: 12px; }
+        .login-form_cell .login-input { background-color: inherit; }
+        .login-form_cell2 .login-form_cell { white-space: nowrap; }
+
+        .ewm-login { height: 35px; }
+    </style>
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?4c05dfde8a8c772de99bf56bbd4964b8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+        var token = cookieFn.getCookieValue("aspcn", "Token");
+        var guid = "21adb3ff-86a8-4478-869c-b0da871aace1";
+    </script>
+<script charset="UTF-8" async="" src="https://g.alicdn.com/captcha-frontend/FeiLin/1.3.3/feilin121.7f3b541f592724c75a61.js"></script><script charset="UTF-8" async="" src="https://g.alicdn.com/captcha-frontend/dynamicJS/3.24.0/sg.049.dab6246725a0d334.js"></script><link type="text/css" rel="stylesheet" href="https://g.alicdn.com/captcha-frontend/dynamicJS/3.24.0/main.css" media="all"><style>#aliyunCaptcha-float-wrapper{z-index:var(--aliyun-captcha-z-index-base);position:relative;display:inline-block;transform:scale(var(--aliyun-zoom-ratio, 1));-ms-transform:scale(var(--aliyun-zoom-ratio, 1))}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper{z-index:var(--aliyun-captcha-z-index-base);position:relative;margin-bottom:4px}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body{display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-align:center;-webkit-align-items:center;align-items:center;-ms-flex-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;height:var(--aliyun-slide-height);width:var(--aliyun-slide-width);background:#f1f1f2;position:relative;margin:0;border-radius:4px;-ms-user-select:none;-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-user-drag:none;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body #aliyunCaptcha-captcha-left{display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-align:center;-webkit-align-items:center;align-items:center;-ms-flex-pack:start;-webkit-justify-content:flex-start;justify-content:flex-start;margin-left:var(--aliyun-captcha-size);height:100%}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body #aliyunCaptcha-captcha-left #aliyunCaptcha-start-icon{-ms-flex-negative:0;-webkit-flex-shrink:0;flex-shrink:0;font-family:"aliyun-captcha-iconfont";width:var(--aliyun-captcha-size);height:var(--aliyun-captcha-size);margin-right:8px;opacity:1;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body #aliyunCaptcha-captcha-left #aliyunCaptcha-captcha-text-box{-ms-flex-positive:1;-webkit-flex-grow:1;flex-grow:1;height:100%;z-index:1;background:rgba(0,0,0,0);cursor:pointer;font-size:14px;font-weight:400;display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-align:center;-webkit-align-items:center;align-items:center;-ms-flex-pack:start;-webkit-justify-content:flex-start;justify-content:flex-start;font-family:"aliyun-captcha-iconfont"}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body #aliyunCaptcha-captcha-left #aliyunCaptcha-captcha-text-box.verified{color:#009431}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body #aliyunCaptcha-captcha-left #aliyunCaptcha-captcha-text-box.fail{color:#e00000}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body #aliyunCaptcha-captcha-left #aliyunCaptcha-loading{width:var(--aliyun-captcha-size);height:var(--aliyun-captcha-size);position:relative;display:none;margin-right:8px;-ms-flex-align:center;-webkit-align-items:center;align-items:center;-ms-flex-pack:center;-webkit-justify-content:center;justify-content:center}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body #aliyunCaptcha-captcha-left #aliyunCaptcha-loading .aliyunCaptcha-loader{font-size:2px;color:#333}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body.verified{-ms-flex-pack:center;-webkit-justify-content:center;justify-content:center;background:#e4ffed}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body.fail{-ms-flex-pack:center;-webkit-justify-content:center;justify-content:center;background-color:#ffeaea}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body #aliyunCaptcha-captcha-logo{height:var(--aliyun-captcha-size);font-family:"aliyun-captcha-iconfont";margin-right:var(--aliyun-captcha-size)}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body.hover-active:hover{cursor:pointer;color:#0064c8;background:#f7f9fa}#aliyunCaptcha-float-wrapper #aliyunCaptcha-captcha-wrapper #aliyunCaptcha-captcha-body.hover-active:active{background:#e6eef5}
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9jb21wb25lbnQvQ29tbW9uL0NhcHRjaGFSZWN0L2luZGV4LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsNkJBQ0UsMENBQUEsQ0FDQSxpQkFBQSxDQUNBLG9CQUFBLENBQ0EsNENBQUEsQ0FDQSxnREFBQSxDQUVBLDREQUNFLDBDQUFBLENBQ0EsaUJBQUEsQ0FDQSxpQkFBQSxDQUVBLHdGQUNFLG1CQUFBLENBQ0Esb0JBQUEsQ0FDQSxZQUFBLENBQ0EscUJBQUEsQ0FDQSwwQkFBQSxDQUNBLGtCQUFBLENBQ0EscUJBQUEsQ0FDQSxxQ0FBQSxDQUNBLDZCQUFBLENBQ0EsaUNBQUEsQ0FDQSwrQkFBQSxDQUNBLGtCQUFBLENBQ0EsaUJBQUEsQ0FDQSxRQUFBLENBQ0EsaUJBQUEsQ0FDQSxvQkFBQSxDQUNBLHdCQUFBLENBQ0EscUJBQUEsQ0FDQSxnQkFBQSxDQUNBLDBCQUFBLENBQ0Esc0JBQUEsQ0FDQSw2QkFBQSxDQUNBLDBCQUFBLENBQ0EscUJBQUEsQ0FFQSxvSEFDRSxtQkFBQSxDQUNBLG9CQUFBLENBQ0EsWUFBQSxDQUNBLHFCQUFBLENBQ0EsMEJBQUEsQ0FDQSxrQkFBQSxDQUNBLG1CQUFBLENBQ0Esa0NBQUEsQ0FDQSwwQkFBQSxDQUNBLHNDQUFBLENBQ0EsV0FBQSxDQUVBLDhJQUNFLG1CQUFBLENBQ0EscUJBQUEsQ0FDQSxhQUFBLENBQ0EscUNBQUEsQ0FDQSxnQ0FBQSxDQUNBLGlDQUFBLENBQ0EsZ0JBQUEsQ0FDQSxTQUFBLENBQ0EsNkJBQUEsQ0FDQSwwQkFBQSxDQUNBLHFCQUFBLENBR0Ysb0pBQ0UsbUJBQUEsQ0FDQSxtQkFBQSxDQUNBLFdBQUEsQ0FDQSxXQUFBLENBQ0EsU0FBQSxDQUNBLHdCQUFBLENBQ0EsY0FBQSxDQUNBLGNBQUEsQ0FDQSxlQUFBLENBQ0EsbUJBQUEsQ0FDQSxvQkFBQSxDQUNBLFlBQUEsQ0FDQSxxQkFBQSxDQUNBLDBCQUFBLENBQ0Esa0JBQUEsQ0FDQSxtQkFBQSxDQUNBLGtDQUFBLENBQ0EsMEJBQUEsQ0FDQSxxQ0FBQSxDQUVBLDZKQUNFLGFBQUEsQ0FHRix5SkFDRSxhQUFBLENBSUosMklBQ0UsZ0NBQUEsQ0FDQSxpQ0FBQSxDQUNBLGlCQUFBLENBQ0EsWUFBQSxDQUNBLGdCQUFBLENBQ0EscUJBQUEsQ0FDQSwwQkFBQSxDQUNBLGtCQUFBLENBQ0Esb0JBQUEsQ0FDQSw4QkFBQSxDQUNBLHNCQUFBLENBRUEsaUtBQ0UsYUFBQSxDQUNBLFVBQUEsQ0FLTixpR0FDRSxvQkFBQSxDQUNBLDhCQUFBLENBQ0Esc0JBQUEsQ0FDQSxrQkFBQSxDQUdGLDZGQUNFLG9CQUFBLENBQ0EsOEJBQUEsQ0FDQSxzQkFBQSxDQUNBLHdCQUFBLENBR0Ysb0hBQ0UsaUNBQUEsQ0FDQSxxQ0FBQSxDQUNBLHVDQUFBLENBSUEsMkdBQ0UsY0FBQSxDQUNBLGFBQUEsQ0FDQSxrQkFBQSxDQUdGLDRHQUNFLGtCQUFBIiwic291cmNlc0NvbnRlbnQiOlsiI2FsaXl1bkNhcHRjaGEtZmxvYXQtd3JhcHBlciB7XG4gIHotaW5kZXg6IHZhcigtLWFsaXl1bi1jYXB0Y2hhLXotaW5kZXgtYmFzZSk7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB0cmFuc2Zvcm06IHNjYWxlKHZhcigtLWFsaXl1bi16b29tLXJhdGlvLCAxKSk7XG4gIC1tcy10cmFuc2Zvcm06IHNjYWxlKHZhcigtLWFsaXl1bi16b29tLXJhdGlvLCAxKSk7XG5cbiAgI2FsaXl1bkNhcHRjaGEtY2FwdGNoYS13cmFwcGVyIHtcbiAgICB6LWluZGV4OiB2YXIoLS1hbGl5dW4tY2FwdGNoYS16LWluZGV4LWJhc2UpO1xuICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICBtYXJnaW4tYm90dG9tOiA0cHg7XG4gIFxuICAgICNhbGl5dW5DYXB0Y2hhLWNhcHRjaGEtYm9keSB7XG4gICAgICBkaXNwbGF5OiAtbXMtZmxleGJveDtcbiAgICAgIGRpc3BsYXk6IC13ZWJraXQtZmxleDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICAtbXMtZmxleC1hbGlnbjogY2VudGVyO1xuICAgICAgLXdlYmtpdC1hbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgIC1tcy1mbGV4LXBhY2s6IGp1c3RpZnk7XG4gICAgICAtd2Via2l0LWp1c3RpZnktY29udGVudDogc3BhY2UtYmV0d2VlbjtcbiAgICAgIGp1c3RpZnktY29udGVudDogc3BhY2UtYmV0d2VlbjtcbiAgICAgIGhlaWdodDogdmFyKC0tYWxpeXVuLXNsaWRlLWhlaWdodCk7XG4gICAgICB3aWR0aDogdmFyKC0tYWxpeXVuLXNsaWRlLXdpZHRoKTtcbiAgICAgIGJhY2tncm91bmQ6ICNmMWYxZjI7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICBtYXJnaW46IDA7XG4gICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAtbXMtdXNlci1zZWxlY3Q6IG5vbmU7XG4gICAgICAtd2Via2l0LXVzZXItc2VsZWN0OiBub25lO1xuICAgICAgLW1vei11c2VyLXNlbGVjdDogbm9uZTtcbiAgICAgIHVzZXItc2VsZWN0OiBub25lO1xuICAgICAgLXdlYmtpdC10b3VjaC1jYWxsb3V0OiBub25lO1xuICAgICAgLXdlYmtpdC11c2VyLWRyYWc6IG5vbmU7XG4gICAgICAtd2Via2l0LWJveC1zaXppbmc6IGJvcmRlci1ib3g7XG4gICAgICAtbW96LWJveC1zaXppbmc6IGJvcmRlci1ib3g7XG4gICAgICBib3gtc2l6aW5nOiBib3JkZXItYm94O1xuXG4gICAgICAjYWxpeXVuQ2FwdGNoYS1jYXB0Y2hhLWxlZnQge1xuICAgICAgICBkaXNwbGF5OiAtbXMtZmxleGJveDtcbiAgICAgICAgZGlzcGxheTogLXdlYmtpdC1mbGV4O1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICAtbXMtZmxleC1hbGlnbjogY2VudGVyO1xuICAgICAgICAtd2Via2l0LWFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgIC1tcy1mbGV4LXBhY2s6IHN0YXJ0O1xuICAgICAgICAtd2Via2l0LWp1c3RpZnktY29udGVudDogZmxleC1zdGFydDtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBmbGV4LXN0YXJ0O1xuICAgICAgICBtYXJnaW4tbGVmdDogdmFyKC0tYWxpeXVuLWNhcHRjaGEtc2l6ZSk7XG4gICAgICAgIGhlaWdodDogMTAwJTtcblxuICAgICAgICAjYWxpeXVuQ2FwdGNoYS1zdGFydC1pY29uIHtcbiAgICAgICAgICAtbXMtZmxleC1uZWdhdGl2ZTogMDtcbiAgICAgICAgICAtd2Via2l0LWZsZXgtc2hyaW5rOiAwO1xuICAgICAgICAgIGZsZXgtc2hyaW5rOiAwO1xuICAgICAgICAgIGZvbnQtZmFtaWx5OiAnYWxpeXVuLWNhcHRjaGEtaWNvbmZvbnQnO1xuICAgICAgICAgIHdpZHRoOiB2YXIoLS1hbGl5dW4tY2FwdGNoYS1zaXplKTtcbiAgICAgICAgICBoZWlnaHQ6IHZhcigtLWFsaXl1bi1jYXB0Y2hhLXNpemUpO1xuICAgICAgICAgIG1hcmdpbi1yaWdodDogOHB4O1xuICAgICAgICAgIG9wYWNpdHk6IDE7XG4gICAgICAgICAgLXdlYmtpdC1ib3gtc2l6aW5nOiBib3JkZXItYm94O1xuICAgICAgICAgIC1tb3otYm94LXNpemluZzogYm9yZGVyLWJveDtcbiAgICAgICAgICBib3gtc2l6aW5nOiBib3JkZXItYm94O1xuICAgICAgICB9XG5cbiAgICAgICAgI2FsaXl1bkNhcHRjaGEtY2FwdGNoYS10ZXh0LWJveCB7XG4gICAgICAgICAgLW1zLWZsZXgtcG9zaXRpdmU6IDE7XG4gICAgICAgICAgLXdlYmtpdC1mbGV4LWdyb3c6IDE7XG4gICAgICAgICAgZmxleC1ncm93OiAxO1xuICAgICAgICAgIGhlaWdodDogMTAwJTtcbiAgICAgICAgICB6LWluZGV4OiAxO1xuICAgICAgICAgIGJhY2tncm91bmQ6IHRyYW5zcGFyZW50O1xuICAgICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgICAgZm9udC13ZWlnaHQ6IDQwMDtcbiAgICAgICAgICBkaXNwbGF5OiAtbXMtZmxleGJveDtcbiAgICAgICAgICBkaXNwbGF5OiAtd2Via2l0LWZsZXg7XG4gICAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgICAtbXMtZmxleC1hbGlnbjogY2VudGVyO1xuICAgICAgICAgIC13ZWJraXQtYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICAgIC1tcy1mbGV4LXBhY2s6IHN0YXJ0O1xuICAgICAgICAgIC13ZWJraXQtanVzdGlmeS1jb250ZW50OiBmbGV4LXN0YXJ0O1xuICAgICAgICAgIGp1c3RpZnktY29udGVudDogZmxleC1zdGFydDtcbiAgICAgICAgICBmb250LWZhbWlseTogJ2FsaXl1bi1jYXB0Y2hhLWljb25mb250JztcblxuICAgICAgICAgICYudmVyaWZpZWQge1xuICAgICAgICAgICAgY29sb3I6ICMwMDk0MzE7XG4gICAgICAgICAgfVxuXG4gICAgICAgICAgJi5mYWlsIHtcbiAgICAgICAgICAgIGNvbG9yOiAjRTAwMDAwO1xuICAgICAgICAgIH1cbiAgICAgICAgfVxuXG4gICAgICAgICNhbGl5dW5DYXB0Y2hhLWxvYWRpbmcge1xuICAgICAgICAgIHdpZHRoOiB2YXIoLS1hbGl5dW4tY2FwdGNoYS1zaXplKTtcbiAgICAgICAgICBoZWlnaHQ6IHZhcigtLWFsaXl1bi1jYXB0Y2hhLXNpemUpO1xuICAgICAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgICAgICBkaXNwbGF5OiBub25lO1xuICAgICAgICAgIG1hcmdpbi1yaWdodDogOHB4O1xuICAgICAgICAgIC1tcy1mbGV4LWFsaWduOiBjZW50ZXI7XG4gICAgICAgICAgLXdlYmtpdC1hbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgICAgLW1zLWZsZXgtcGFjazogY2VudGVyO1xuICAgICAgICAgIC13ZWJraXQtanVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG5cbiAgICAgICAgICAuYWxpeXVuQ2FwdGNoYS1sb2FkZXIge1xuICAgICAgICAgICAgZm9udC1zaXplOiAycHg7XG4gICAgICAgICAgICBjb2xvcjogIzMzMzMzMztcbiAgICAgICAgICB9XG4gICAgICAgIH1cbiAgICAgIH1cblxuICAgICAgJi52ZXJpZmllZCB7XG4gICAgICAgIC1tcy1mbGV4LXBhY2s6IGNlbnRlcjtcbiAgICAgICAgLXdlYmtpdC1qdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIGJhY2tncm91bmQ6ICNFNEZGRUQ7XG4gICAgICB9XG5cbiAgICAgICYuZmFpbCB7XG4gICAgICAgIC1tcy1mbGV4LXBhY2s6IGNlbnRlcjtcbiAgICAgICAgLXdlYmtpdC1qdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIGJhY2tncm91bmQtY29sb3I6ICNGRkVBRUE7XG4gICAgICB9XG5cbiAgICAgICNhbGl5dW5DYXB0Y2hhLWNhcHRjaGEtbG9nbyB7XG4gICAgICAgIGhlaWdodDogdmFyKC0tYWxpeXVuLWNhcHRjaGEtc2l6ZSk7XG4gICAgICAgIGZvbnQtZmFtaWx5OiAnYWxpeXVuLWNhcHRjaGEtaWNvbmZvbnQnO1xuICAgICAgICBtYXJnaW4tcmlnaHQ6IHZhcigtLWFsaXl1bi1jYXB0Y2hhLXNpemUpO1xuICAgICAgfVxuXG4gICAgICAmLmhvdmVyLWFjdGl2ZSB7XG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgICBjb2xvcjogIzAwNjRDODtcbiAgICAgICAgICBiYWNrZ3JvdW5kOiAjRjdGOUZBO1xuICAgICAgICB9XG5cbiAgICAgICAgJjphY3RpdmUge1xuICAgICAgICAgIGJhY2tncm91bmQ6ICNFNkVFRjU7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn0iXSwic291cmNlUm9vdCI6IiJ9 */</style><style>#aliyunCaptcha-sliding-wrapper{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;margin-bottom:4px}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body{height:var(--aliyun-slide-height);background:#f1f1f2;position:relative;margin:0;padding:0;border-radius:4px;user-select:none;-ms-user-select:none;-webkit-user-select:none;-moz-user-select:none;-webkit-touch-callout:none;-webkit-user-drag:none}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body.sliding{width:var(--aliyun-slide-width)}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-left{position:absolute;height:100%;border-radius:4px;background-color:#e4ffed}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-left.width-change{transition:width .5s}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-left.width-change.initial{width:0}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-left.finished{background-color:#f6f6f6}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-left.fail{background-color:#ffeaea}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-slider{text-align:center;width:var(--aliyun-slide-height);height:var(--aliyun-slide-height);line-height:var(--aliyun-slide-height);font-size:16px;position:absolute;left:0;background:#fff;color:#aaa;z-index:2;font-family:"aliyun-captcha-iconfont";box-shadow:0px 4px 10px 0px rgba(0,0,0,.1);border-radius:4px;border-width:1px}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-slider:hover{cursor:pointer}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-slider.slider-move{transition:left .5s}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-slider.slider-move.initial{left:0}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-slider.ok{color:#00a700}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-slider.fail{color:#c80000}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-slider::before{font-family:"aliyun-captcha-iconfont" !important;content:""}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-text-box{height:100%;width:100%;text-align:center;position:absolute;z-index:1;background:rgba(0,0,0,0);cursor:pointer;font-size:14px;font-weight:400;display:flex;align-items:center;justify-content:center;font-family:"aliyun-captcha-iconfont";color:#f6f6f6}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-text-box .aliyunCaptcha-sliding-text{color:#aaa;background-image:-webkit-gradient(linear, left top, right top, color-stop(0, #b3b3b3), color-stop(0.4, #b3b3b3), color-stop(0.5, #fff), color-stop(0.6, #b3b3b3), color-stop(1, #b3b3b3));background-size:300% 100%;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:rgba(0,0,0,0);animation:6s linear infinite slidingtext;-webkit-animation:6s linear infinite slidingtext;width:var(--aliyun-text-width, 280px)}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-text-box.slided{color:#555}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-text-box.verified{color:#009431}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-text-box.fail{color:#e00000}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-body #aliyunCaptcha-sliding-text-box.fail #aliyunCaptcha-sliding-refresh{font-size:14px;color:#333}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-failTip{border-radius:4px;display:none;justify-content:center;align-items:center;background-color:#ffeaea;width:var(--aliyun-slide-width);height:var(--aliyun-slide-height);line-height:var(--aliyun-slide-height)}#aliyunCaptcha-sliding-wrapper #aliyunCaptcha-sliding-failTip #aliyunCaptcha-sliding-fail-text{font-family:"aliyun-captcha-iconfont";font-size:12px}#aliyunCaptcha-sliding-errorCode{display:none;margin-left:4px;margin-top:4px;position:relative;width:var(--aliyun-slide-width);height:20px;opacity:1;font-family:PingFang SC;font-size:12px;line-height:20px;color:gray;z-index:0}@-webkit-keyframes slidingtext{0%{background-position:150% 0}100%{background-position:-150% 0}}@keyframes slidingtext{0%{background-position:150% 0}100%{background-position:-150% 0}}
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9jb21wb25lbnQvU2xpZGluZy9pbmRleC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLCtCQUFBLGlCQUNFLENBQUEsWUFDQSxDQUFBLHFCQUNBLENBQUEsc0JBQ0EsQ0FBQSxrQkFDQSxDQUFBLGlCQUNBLENBQUEsMkRBRUEsaUNBQ0UsQ0FBQSxrQkFDQSxDQUFBLGlCQUNBLENBQUEsUUFDQSxDQUFBLFNBQ0EsQ0FBQSxpQkFDQSxDQUFBLGdCQUNBLENBQUEsb0JBQ0EsQ0FBQSx3QkFDQSxDQUFBLHFCQUNBLENBQUEsMEJBQ0EsQ0FBQSxzQkFDQSxDQUFBLG1FQUVBLCtCQUNFLENBQUEsdUZBR0YsaUJBQ0UsQ0FBQSxXQUNBLENBQUEsaUJBQ0EsQ0FBQSx3QkFDQSxDQUFBLG9HQUVBLG9CQUNFLENBQUEsNEdBRUEsT0FDRSxDQUFBLGdHQUlKLHdCQUNFLENBQUEsNEZBR0Ysd0JBQ0UsQ0FBQSx5RkFJSixpQkFDRSxDQUFBLGdDQUNBLENBQUEsaUNBQ0EsQ0FBQSxzQ0FDQSxDQUFBLGNBQ0EsQ0FBQSxpQkFDQSxDQUFBLE1BQ0EsQ0FBQSxlQUNBLENBQUEsVUFDQSxDQUFBLFNBQ0EsQ0FBQSxxQ0FDQSxDQUFBLDBDQUNBLENBQUEsaUJBQ0EsQ0FBQSxnQkFDQSxDQUFBLCtGQUVBLGNBQ0UsQ0FBQSxxR0FHRixtQkFDRSxDQUFBLDZHQUVBLE1BQ0UsQ0FBQSw0RkFJSixhQUNFLENBQUEsOEZBR0YsYUFDRSxDQUFBLGlHQUlKLGdEQUNFLENBQUEsV0FDQSxDQUFBLDJGQUdGLFdBQ0UsQ0FBQSxVQUNBLENBQUEsaUJBQ0EsQ0FBQSxpQkFDQSxDQUFBLFNBQ0EsQ0FBQSx3QkFDQSxDQUFBLGNBQ0EsQ0FBQSxjQUNBLENBQUEsZUFDQSxDQUFBLFlBQ0EsQ0FBQSxrQkFDQSxDQUFBLHNCQUNBLENBQUEscUNBQ0EsQ0FBQSxhQUNBLENBQUEsdUhBRUEsVUFDRSxDQUFBLHlMQUNBLENBQUEseUJBQ0EsQ0FBQSxvQkFDQSxDQUFBLDRCQUNBLENBQUEscUNBQ0EsQ0FBQSx3Q0FDQSxDQUFBLGdEQUNBLENBQUEscUNBQ0EsQ0FBQSxrR0FHRixVQUNFLENBQUEsb0dBR0YsYUFDRSxDQUFBLGdHQUdGLGFBQ0UsQ0FBQSwrSEFFQSxjQUNFLENBQUEsVUFDQSxDQUFBLDhEQU1SLGlCQUNFLENBQUEsWUFDQSxDQUFBLHNCQUNBLENBQUEsa0JBQ0EsQ0FBQSx3QkFDQSxDQUFBLCtCQUNBLENBQUEsaUNBQ0EsQ0FBQSxzQ0FDQSxDQUFBLCtGQUVBLHFDQUNFLENBQUEsY0FDQSxDQUFBLGlDQUtOLFlBQ0UsQ0FBQSxlQUNBLENBQUEsY0FDQSxDQUFBLGlCQUNBLENBQUEsK0JBQ0EsQ0FBQSxXQUNBLENBQUEsU0FDQSxDQUFBLHVCQUNBLENBQUEsY0FDQSxDQUFBLGdCQUNBLENBQUEsVUFDQSxDQUFBLFNBQ0EsQ0FBQSwrQkFHRixHQUNFLDBCQUNFLENBQUEsS0FHRiwyQkFDRSxDQUFBLENBQUEsdUJBSUosR0FDRSwwQkFDRSxDQUFBLEtBR0YsMkJBQ0UsQ0FBQSIsInNvdXJjZXNDb250ZW50IjpbIiNhbGl5dW5DYXB0Y2hhLXNsaWRpbmctd3JhcHBlciB7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxleC1kaXJlY3Rpb246IGNvbHVtbjtcbiAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gIG1hcmdpbi1ib3R0b206IDRweDtcblxuICAjYWxpeXVuQ2FwdGNoYS1zbGlkaW5nLWJvZHkge1xuICAgIGhlaWdodDogdmFyKC0tYWxpeXVuLXNsaWRlLWhlaWdodCk7XG4gICAgYmFja2dyb3VuZDogI2YxZjFmMjtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgbWFyZ2luOiAwO1xuICAgIHBhZGRpbmc6IDA7XG4gICAgYm9yZGVyLXJhZGl1czogNHB4O1xuICAgIHVzZXItc2VsZWN0OiBub25lO1xuICAgIC1tcy11c2VyLXNlbGVjdDogbm9uZTtcbiAgICAtd2Via2l0LXVzZXItc2VsZWN0OiBub25lO1xuICAgIC1tb3otdXNlci1zZWxlY3Q6IG5vbmU7XG4gICAgLXdlYmtpdC10b3VjaC1jYWxsb3V0OiBub25lO1xuICAgIC13ZWJraXQtdXNlci1kcmFnOiBub25lO1xuXG4gICAgJi5zbGlkaW5nIHtcbiAgICAgIHdpZHRoOiB2YXIoLS1hbGl5dW4tc2xpZGUtd2lkdGgpO1xuICAgIH1cblxuICAgICNhbGl5dW5DYXB0Y2hhLXNsaWRpbmctbGVmdCB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBoZWlnaHQ6IDEwMCU7XG4gICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjRTRGRkVEO1xuICBcbiAgICAgICYud2lkdGgtY2hhbmdlIHtcbiAgICAgICAgdHJhbnNpdGlvbjogd2lkdGggMC41cztcbiAgICAgICAgXG4gICAgICAgICYuaW5pdGlhbCB7XG4gICAgICAgICAgd2lkdGg6IDA7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgXG4gICAgICAmLmZpbmlzaGVkIHtcbiAgICAgICAgYmFja2dyb3VuZC1jb2xvcjogI0Y2RjZGNjtcbiAgICAgIH1cblxuICAgICAgJi5mYWlsIHtcbiAgICAgICAgYmFja2dyb3VuZC1jb2xvcjogI0ZGRUFFQTtcbiAgICAgIH1cbiAgICB9XG4gIFxuICAgICNhbGl5dW5DYXB0Y2hhLXNsaWRpbmctc2xpZGVyIHtcbiAgICAgIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgICAgIHdpZHRoOiB2YXIoLS1hbGl5dW4tc2xpZGUtaGVpZ2h0KTtcbiAgICAgIGhlaWdodDogdmFyKC0tYWxpeXVuLXNsaWRlLWhlaWdodCk7XG4gICAgICBsaW5lLWhlaWdodDogdmFyKC0tYWxpeXVuLXNsaWRlLWhlaWdodCk7XG4gICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBsZWZ0OiAwO1xuICAgICAgYmFja2dyb3VuZDogd2hpdGU7XG4gICAgICBjb2xvcjogI0FBQUFBQTtcbiAgICAgIHotaW5kZXg6IDI7XG4gICAgICBmb250LWZhbWlseTogXCJhbGl5dW4tY2FwdGNoYS1pY29uZm9udFwiO1xuICAgICAgYm94LXNoYWRvdzogMHB4IDRweCAxMHB4IDBweCByZ2JhKDAsIDAsIDAsIDAuMTApO1xuICAgICAgYm9yZGVyLXJhZGl1czogNHB4O1xuICAgICAgYm9yZGVyLXdpZHRoOiAxcHg7XG4gIFxuICAgICAgJjpob3ZlciB7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgIH1cbiAgXG4gICAgICAmLnNsaWRlci1tb3ZlIHtcbiAgICAgICAgdHJhbnNpdGlvbjogbGVmdCAwLjVzO1xuICBcbiAgICAgICAgJi5pbml0aWFsIHtcbiAgICAgICAgICBsZWZ0OiAwO1xuICAgICAgICB9XG4gICAgICB9XG4gIFxuICAgICAgJi5vayB7XG4gICAgICAgIGNvbG9yOiAjMDBBNzAwO1xuICAgICAgfVxuICBcbiAgICAgICYuZmFpbCB7XG4gICAgICAgIGNvbG9yOiAjYzgwMDAwO1xuICAgICAgfVxuICAgIH1cblxuICAgICNhbGl5dW5DYXB0Y2hhLXNsaWRpbmctc2xpZGVyOjpiZWZvcmV7XG4gICAgICBmb250LWZhbWlseTogXCJhbGl5dW4tY2FwdGNoYS1pY29uZm9udFwiICFpbXBvcnRhbnQ7XG4gICAgICBjb250ZW50OiBcIlxcZTYyNFwiO1xuICAgIH1cbiAgXG4gICAgI2FsaXl1bkNhcHRjaGEtc2xpZGluZy10ZXh0LWJveCB7XG4gICAgICBoZWlnaHQ6IDEwMCU7XG4gICAgICB3aWR0aDogMTAwJTtcbiAgICAgIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICAgIHotaW5kZXg6IDE7XG4gICAgICBiYWNrZ3JvdW5kOiB0cmFuc3BhcmVudDtcbiAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgIGZvbnQtd2VpZ2h0OiA0MDA7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgICAgZm9udC1mYW1pbHk6ICdhbGl5dW4tY2FwdGNoYS1pY29uZm9udCc7XG4gICAgICBjb2xvcjogI0Y2RjZGNjtcbiAgXG4gICAgICAuYWxpeXVuQ2FwdGNoYS1zbGlkaW5nLXRleHQge1xuICAgICAgICBjb2xvcjogI0FBQUFBQTtcbiAgICAgICAgYmFja2dyb3VuZC1pbWFnZTogLXdlYmtpdC1ncmFkaWVudChsaW5lYXIsIGxlZnQgdG9wLCByaWdodCB0b3AsIGNvbG9yLXN0b3AoMCwgI2IzYjNiMyksIGNvbG9yLXN0b3AoMC40LCAjYjNiM2IzKSwgY29sb3Itc3RvcCgwLjUsICNmZmYpLCBjb2xvci1zdG9wKDAuNiwgI2IzYjNiMyksIGNvbG9yLXN0b3AoMSwgI2IzYjNiMykpO1xuICAgICAgICBiYWNrZ3JvdW5kLXNpemU6IDMwMCUgMTAwJTtcbiAgICAgICAgYmFja2dyb3VuZC1jbGlwOiB0ZXh0O1xuICAgICAgICAtd2Via2l0LWJhY2tncm91bmQtY2xpcDogdGV4dDtcbiAgICAgICAgLXdlYmtpdC10ZXh0LWZpbGwtY29sb3I6IHRyYW5zcGFyZW50O1xuICAgICAgICBhbmltYXRpb246IDZzIGxpbmVhciBpbmZpbml0ZSBzbGlkaW5ndGV4dDtcbiAgICAgICAgLXdlYmtpdC1hbmltYXRpb246IDZzIGxpbmVhciBpbmZpbml0ZSBzbGlkaW5ndGV4dDtcbiAgICAgICAgd2lkdGg6IHZhcigtLWFsaXl1bi10ZXh0LXdpZHRoLCAyODBweCk7XG4gICAgICB9XG5cbiAgICAgICYuc2xpZGVkIHtcbiAgICAgICAgY29sb3I6ICM1NTU1NTU7XG4gICAgICB9XG5cbiAgICAgICYudmVyaWZpZWQge1xuICAgICAgICBjb2xvcjogIzAwOTQzMTtcbiAgICAgIH1cblxuICAgICAgJi5mYWlsIHtcbiAgICAgICAgY29sb3I6ICNFMDAwMDA7XG5cbiAgICAgICAgI2FsaXl1bkNhcHRjaGEtc2xpZGluZy1yZWZyZXNoIHtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgICAgY29sb3I6ICMzMzMzMzM7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cblxuICAjYWxpeXVuQ2FwdGNoYS1zbGlkaW5nLWZhaWxUaXAge1xuICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICBkaXNwbGF5OiBub25lO1xuICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogI0ZGRUFFQTtcbiAgICB3aWR0aDogdmFyKC0tYWxpeXVuLXNsaWRlLXdpZHRoKTtcbiAgICBoZWlnaHQ6IHZhcigtLWFsaXl1bi1zbGlkZS1oZWlnaHQpO1xuICAgIGxpbmUtaGVpZ2h0OiB2YXIoLS1hbGl5dW4tc2xpZGUtaGVpZ2h0KTtcblxuICAgICNhbGl5dW5DYXB0Y2hhLXNsaWRpbmctZmFpbC10ZXh0IHtcbiAgICAgIGZvbnQtZmFtaWx5OiAnYWxpeXVuLWNhcHRjaGEtaWNvbmZvbnQnO1xuICAgICAgZm9udC1zaXplOiAxMnB4O1xuICAgIH1cbiAgfVxufVxuXG4jYWxpeXVuQ2FwdGNoYS1zbGlkaW5nLWVycm9yQ29kZSB7XG4gIGRpc3BsYXk6IG5vbmU7XG4gIG1hcmdpbi1sZWZ0OiA0cHg7XG4gIG1hcmdpbi10b3A6IDRweDtcbiAgcG9zaXRpb246IHJlbGF0aXZlO1xuICB3aWR0aDogdmFyKC0tYWxpeXVuLXNsaWRlLXdpZHRoKTtcbiAgaGVpZ2h0OiAyMHB4O1xuICBvcGFjaXR5OiAxO1xuICBmb250LWZhbWlseTogUGluZ0ZhbmcgU0M7XG4gIGZvbnQtc2l6ZTogMTJweDtcbiAgbGluZS1oZWlnaHQ6IDIwcHg7XG4gIGNvbG9yOiAjODA4MDgwO1xuICB6LWluZGV4OiAwO1xufVxuXG5ALXdlYmtpdC1rZXlmcmFtZXMgc2xpZGluZ3RleHQge1xuICAwJSB7XG4gICAgYmFja2dyb3VuZC1wb3NpdGlvbjogMTUwJSAwO1xuICB9XG5cbiAgMTAwJSB7XG4gICAgYmFja2dyb3VuZC1wb3NpdGlvbjogLTE1MCUgMDtcbiAgfVxufVxuXG5Aa2V5ZnJhbWVzIHNsaWRpbmd0ZXh0IHtcbiAgMCUge1xuICAgIGJhY2tncm91bmQtcG9zaXRpb246IDE1MCUgMDtcbiAgfVxuXG4gIDEwMCUge1xuICAgIGJhY2tncm91bmQtcG9zaXRpb246IC0xNTAlIDA7XG4gIH1cbn1cblxuXG4iXSwic291cmNlUm9vdCI6IiJ9 */</style><style>:root{--aliyun-captcha-z-index-base: 10000000}#aliyunCaptcha-mask{width:100%;height:100%;position:fixed;left:0;top:0;background:#000;opacity:0;z-index:var(--aliyun-captcha-z-index-base);transition:all .4s ease-in-out}#aliyunCaptcha-mask.mask-show{opacity:.5}#aliyunCaptcha-mask.mask-hidden{opacity:0}#aliyunCaptcha-overlay{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background-color:hsla(0,0%,100%,.5);pointer-events:none}#aliyunCaptcha-window-popup{padding:16px 16px 12px 16px;border-radius:4px;background-color:#fff;box-shadow:0px 4px 8px 0px rgba(0,0,0,.2);visibility:visible;z-index:calc(var(--aliyun-captcha-z-index-base) + 1);position:fixed;top:45%;left:50%;transform:translate(-50%, -50%) scale(var(--aliyun-zoom-ratio, 1));-ms-transform:translate(-50%, -50%) scale(var(--aliyun-zoom-ratio, 1));transition:all .4s ease-in-out;-webkit-text-size-adjust:100% !important;-ms-text-size-adjust:100% !important;-moz-text-size-adjust:100% !important;text-size-adjust:100% !important}#aliyunCaptcha-window-popup.window-show{top:45%;opacity:1}#aliyunCaptcha-window-popup.window-hidden{top:42%;opacity:0}#aliyunCaptcha-window-popup img{-o-animation:fadeIn .5s ease-in-out forwards;-moz-animation:fadeIn .5s ease-in-out forwards;-webkit-animation:fadeIn .5s ease-in-out forwards;animation:fadeIn .5s ease-in-out forwards}#aliyunCaptcha-window-embed{padding:12px;border-radius:4px;background-color:#fff;visibility:visible;z-index:calc(var(--aliyun-captcha-z-index-base) + 1);display:inline-block;position:relative;transform:scale(var(--aliyun-zoom-ratio, 1));-ms-transform:scale(var(--aliyun-zoom-ratio, 1));-webkit-text-size-adjust:100% !important;-ms-text-size-adjust:100% !important;-moz-text-size-adjust:100% !important;text-size-adjust:100% !important}#aliyunCaptcha-window-embed img{opacity:0;-o-animation:fadeIn .5s ease-in-out forwards;-moz-animation:fadeIn .5s ease-in-out forwards;-webkit-animation:fadeIn .5s ease-in-out forwards;animation:fadeIn .5s ease-in-out forwards}#aliyunCaptcha-window-float{padding:16px 16px 12px 16px;border-radius:4px;background-color:#fff;visibility:visible;box-shadow:0px 4px 8px 0px rgba(0,0,0,.2);opacity:0;position:absolute;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);-ms-transform:translate(-50%, -50%);transition:opacity .4s ease-in-out;-webkit-text-size-adjust:100% !important;-ms-text-size-adjust:100% !important;-moz-text-size-adjust:100% !important;text-size-adjust:100% !important}#aliyunCaptcha-window-float.window-show{opacity:1;z-index:calc(var(--aliyun-captcha-z-index-base) + 1)}#aliyunCaptcha-window-float.window-hidden{opacity:0}#aliyunCaptcha-window-float img{opacity:0;-o-animation:fadeIn .5s ease-in-out forwards;-moz-animation:fadeIn .5s ease-in-out forwards;-webkit-animation:fadeIn .5s ease-in-out forwards;animation:fadeIn .5s ease-in-out forwards}.aliyunCaptcha-hidden{display:none}.aliyunCaptcha-show{display:block}.aliyunCaptcha-loading{position:absolute;left:0;top:0;width:100%;height:100%;font-size:14px;color:rgba(178,178,178,.3);display:flex;flex-direction:column;-ms-flex-direction:column;align-items:center;justify-content:center}.aliyunCaptcha-top{display:flex;flex-direction:row;-ms-flex-direction:row;justify-content:space-between;align-items:center;height:32px;margin-bottom:4px}.aliyunCaptcha-top #aliyunCaptcha-title{float:left;line-height:36px}.aliyunCaptcha-top #aliyunCaptcha-option{float:right}#aliyunCaptcha-errorTip{display:flex;justify-content:center;align-items:center;font-family:"aliyun-captcha-iconfont";background-color:#fff;border-width:1px;box-shadow:0px 4px 8px 0px rgba(0,0,0,.16);border-radius:2px;height:36px;width:200px;padding:4px;font-size:14px;visibility:visible;z-index:calc(var(--aliyun-captcha-z-index-base) + 1);position:fixed;top:45%;left:50%;transform:translate(-50%, -50%);-ms-transform:translate(-50%, -50%)}#aliyunCaptcha-errorTip .aliyunCaptcha-errorTip-content{display:flex;align-items:center;position:absolute;left:10px}#aliyunCaptcha-errorTip .aliyunCaptcha-sliding-warning{color:#e00000;margin-right:4px}#aliyunCaptcha-errorTip button{cursor:pointer;font-size:14px;color:#999;position:absolute;right:10px}.aliyunCaptcha-loader,.aliyunCaptcha-loader:after{position:relative;box-sizing:border-box}.aliyunCaptcha-loader{color:#fff;font-size:5px;width:1em;height:1em;border-radius:50%;position:relative;text-indent:-9999em;animation:AliyunCaptchaLoaderSpin 1.3s infinite linear;transform:translateZ(0)}@keyframes AliyunCaptchaLoaderSpin{0%,100%{box-shadow:0 -3em 0 .2em,2em -2em 0 0em,3em 0 0 -1em,2em 2em 0 -1em,0 3em 0 -1em,-2em 2em 0 -1em,-3em 0 0 -1em,-2em -2em 0 0}12.5%{box-shadow:0 -3em 0 0,2em -2em 0 .2em,3em 0 0 0,2em 2em 0 -1em,0 3em 0 -1em,-2em 2em 0 -1em,-3em 0 0 -1em,-2em -2em 0 -1em}25%{box-shadow:0 -3em 0 -0.5em,2em -2em 0 0,3em 0 0 .2em,2em 2em 0 0,0 3em 0 -1em,-2em 2em 0 -1em,-3em 0 0 -1em,-2em -2em 0 -1em}37.5%{box-shadow:0 -3em 0 -1em,2em -2em 0 -1em,3em 0em 0 0,2em 2em 0 .2em,0 3em 0 0em,-2em 2em 0 -1em,-3em 0em 0 -1em,-2em -2em 0 -1em}50%{box-shadow:0 -3em 0 -1em,2em -2em 0 -1em,3em 0 0 -1em,2em 2em 0 0em,0 3em 0 .2em,-2em 2em 0 0,-3em 0em 0 -1em,-2em -2em 0 -1em}62.5%{box-shadow:0 -3em 0 -1em,2em -2em 0 -1em,3em 0 0 -1em,2em 2em 0 -1em,0 3em 0 0,-2em 2em 0 .2em,-3em 0 0 0,-2em -2em 0 -1em}75%{box-shadow:0em -3em 0 -1em,2em -2em 0 -1em,3em 0em 0 -1em,2em 2em 0 -1em,0 3em 0 -1em,-2em 2em 0 0,-3em 0em 0 .2em,-2em -2em 0 0}87.5%{box-shadow:0em -3em 0 0,2em -2em 0 -1em,3em 0 0 -1em,2em 2em 0 -1em,0 3em 0 -1em,-2em 2em 0 0,-3em 0em 0 0,-2em -2em 0 .2em}}#aliyunCaptcha-btn-close{font-size:20px;border:none;background-color:rgba(0,0,0,0);outline:none;color:gray;padding:0 4px;font-family:"aliyun-captcha-iconfont"}#aliyunCaptcha-btn-close:hover{color:#000;cursor:pointer}#aliyunCaptcha-btn-refresh{line-height:32px;font-size:20px;border:none;background-color:rgba(0,0,0,0);outline:none;color:gray;padding:0 4px;font-family:"aliyun-captcha-iconfont";z-index:calc(var(--aliyun-captcha-z-index-base) + 1)}@media(hover: hover){#aliyunCaptcha-btn-refresh:hover{color:#000;cursor:pointer}}#aliyunCaptcha-captcha-success{font-family:"aliyun-captcha-iconfont";font-size:12px;color:#009431;margin-right:4px}#aliyunCaptcha-captcha-refresh{font-family:"aliyun-captcha-iconfont";font-size:14px;color:#333}#aliyunCaptcha-captcha-refresh:hover{cursor:pointer}#aliyunCaptcha-captcha-fail{font-family:"aliyun-captcha-iconfont";font-size:14px;color:#e00000;margin-right:4px}#aliyunCaptcha-certifyId{display:none;font-size:6px;opacity:.15;float:left}@keyframes fadeIn{0%{opacity:0}100%{opacity:1}}
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9jb21wb25lbnQvaW5kZXguc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxNQUNFLHVDQUFBLENBR0Ysb0JBQ0UsVUFBQSxDQUNBLFdBQUEsQ0FDQSxjQUFBLENBQ0EsTUFBQSxDQUNBLEtBQUEsQ0FDQSxlQUFBLENBQ0EsU0FBQSxDQUNBLDBDQUFBLENBQ0EsOEJBQUEsQ0FFQSw4QkFDRSxVQUFBLENBR0YsZ0NBQ0UsU0FBQSxDQUlKLHVCQUNFLFlBQUEsQ0FDQSxpQkFBQSxDQUNBLEtBQUEsQ0FDQSxNQUFBLENBQ0EsVUFBQSxDQUNBLFdBQUEsQ0FDQSxtQ0FBQSxDQUNBLG1CQUFBLENBSUEsNEJBQ0UsMkJBQUEsQ0FDQSxpQkFBQSxDQUNBLHFCQUFBLENBQ0EseUNBQUEsQ0FDQSxrQkFBQSxDQUNBLG9EQUFBLENBQ0EsY0FBQSxDQUNBLE9BQUEsQ0FDQSxRQUFBLENBQ0Esa0VBQUEsQ0FDQSxzRUFBQSxDQUNBLDhCQUFBLENBQ0Esd0NBQUEsQ0FDQSxvQ0FBQSxDQUNBLHFDQUFBLENBQ0EsZ0NBQUEsQ0FFQSx3Q0FDRSxPQUFBLENBQ0EsU0FBQSxDQUdGLDBDQUNFLE9BQUEsQ0FDQSxTQUFBLENBR0YsZ0NBQ0UsNENBQUEsQ0FDQSw4Q0FBQSxDQUNBLGlEQUFBLENBQ0EseUNBQUEsQ0FJSiw0QkFDRSxZQUFBLENBQ0EsaUJBQUEsQ0FDQSxxQkFBQSxDQUNBLGtCQUFBLENBQ0Esb0RBQUEsQ0FDQSxvQkFBQSxDQUNBLGlCQUFBLENBQ0EsNENBQUEsQ0FDQSxnREFBQSxDQUNBLHdDQUFBLENBQ0Esb0NBQUEsQ0FDQSxxQ0FBQSxDQUNBLGdDQUFBLENBRUEsZ0NBQ0UsU0FBQSxDQUNBLDRDQUFBLENBQ0EsOENBQUEsQ0FDQSxpREFBQSxDQUNBLHlDQUFBLENBSUosNEJBQ0UsMkJBQUEsQ0FDQSxpQkFBQSxDQUNBLHFCQUFBLENBQ0Esa0JBQUEsQ0FDQSx5Q0FBQSxDQUNBLFNBQUEsQ0FDQSxpQkFBQSxDQUNBLGlCQUFBLENBQ0EsT0FBQSxDQUNBLFFBQUEsQ0FDQSwrQkFBQSxDQUNBLG1DQUFBLENBQ0Esa0NBQUEsQ0FDQSx3Q0FBQSxDQUNBLG9DQUFBLENBQ0EscUNBQUEsQ0FDQSxnQ0FBQSxDQUVBLHdDQUNFLFNBQUEsQ0FDQSxvREFBQSxDQUdGLDBDQUNFLFNBQUEsQ0FHRixnQ0FDRSxTQUFBLENBQ0EsNENBQUEsQ0FDQSw4Q0FBQSxDQUNBLGlEQUFBLENBQ0EseUNBQUEsQ0FLTixzQkFDRSxZQUFBLENBR0Ysb0JBQ0UsYUFBQSxDQUdGLHVCQUNFLGlCQUFBLENBQ0EsTUFBQSxDQUNBLEtBQUEsQ0FDQSxVQUFBLENBQ0EsV0FBQSxDQUNBLGNBQUEsQ0FDQSwwQkFBQSxDQUNBLFlBQUEsQ0FDQSxxQkFBQSxDQUNBLHlCQUFBLENBQ0Esa0JBQUEsQ0FDQSxzQkFBQSxDQUdGLG1CQUNFLFlBQUEsQ0FDQSxrQkFBQSxDQUNBLHNCQUFBLENBQ0EsNkJBQUEsQ0FDQSxrQkFBQSxDQUNBLFdBQUEsQ0FDQSxpQkFBQSxDQUVBLHdDQUNFLFVBQUEsQ0FDQSxnQkFBQSxDQUdGLHlDQUNFLFdBQUEsQ0FJSix3QkFDRSxZQUFBLENBQ0Esc0JBQUEsQ0FDQSxrQkFBQSxDQUNBLHFDQUFBLENBQ0EscUJBQUEsQ0FDQSxnQkFBQSxDQUNBLDBDQUFBLENBQ0EsaUJBQUEsQ0FDQSxXQUFBLENBQ0EsV0FBQSxDQUNBLFdBQUEsQ0FDQSxjQUFBLENBQ0Esa0JBQUEsQ0FDQSxvREFBQSxDQUNBLGNBQUEsQ0FDQSxPQUFBLENBQ0EsUUFBQSxDQUNBLCtCQUFBLENBQ0EsbUNBQUEsQ0FFQSx3REFDRSxZQUFBLENBQ0Esa0JBQUEsQ0FDQSxpQkFBQSxDQUNBLFNBQUEsQ0FHRix1REFDRSxhQUFBLENBQ0EsZ0JBQUEsQ0FHRiwrQkFDRSxjQUFBLENBQ0EsY0FBQSxDQUNBLFVBQUEsQ0FDQSxpQkFBQSxDQUNBLFVBQUEsQ0FJSixrREFFRSxpQkFBQSxDQUNBLHFCQUFBLENBR0Ysc0JBQ0UsVUFBQSxDQUNBLGFBQUEsQ0FDQSxTQUFBLENBQ0EsVUFBQSxDQUNBLGlCQUFBLENBQ0EsaUJBQUEsQ0FDQSxtQkFBQSxDQUNBLHNEQUFBLENBQ0EsdUJBQUEsQ0FHRixtQ0FDRSxRQUVFLDRIQUFBLENBTUYsTUFDRSwwSEFBQSxDQUtGLElBQ0UsNEhBQUEsQ0FNRixNQUNFLGdJQUFBLENBSUYsSUFDRSw4SEFBQSxDQUlGLE1BQ0UsMEhBQUEsQ0FJRixJQUNFLGdJQUFBLENBSUYsTUFDRSwySEFBQSxDQUFBLENBTUoseUJBQ0UsY0FBQSxDQUNBLFdBQUEsQ0FDQSw4QkFBQSxDQUNBLFlBQUEsQ0FDQSxVQUFBLENBQ0EsYUFBQSxDQUNBLHFDQUFBLENBRUEsK0JBQ0UsVUFBQSxDQUNBLGNBQUEsQ0FJSiwyQkFDRSxnQkFBQSxDQUNBLGNBQUEsQ0FDQSxXQUFBLENBQ0EsOEJBQUEsQ0FDQSxZQUFBLENBQ0EsVUFBQSxDQUNBLGFBQUEsQ0FDQSxxQ0FBQSxDQUNBLG9EQUFBLENBRUEscUJBQ0UsaUNBQ0UsVUFBQSxDQUNBLGNBQUEsQ0FBQSxDQUtOLCtCQUNFLHFDQUFBLENBQ0EsY0FBQSxDQUNBLGFBQUEsQ0FDQSxnQkFBQSxDQUdGLCtCQUNFLHFDQUFBLENBQ0EsY0FBQSxDQUNBLFVBQUEsQ0FFQSxxQ0FDRSxjQUFBLENBSUosNEJBQ0UscUNBQUEsQ0FDQSxjQUFBLENBQ0EsYUFBQSxDQUNBLGdCQUFBLENBR0YseUJBQ0UsWUFBQSxDQUNBLGFBQUEsQ0FDQSxXQUFBLENBQ0EsVUFBQSxDQUdGLGtCQUNFLEdBQ0UsU0FBQSxDQUVGLEtBQ0UsU0FBQSxDQUFBIiwic291cmNlc0NvbnRlbnQiOlsiOnJvb3Qge1xuICAtLWFsaXl1bi1jYXB0Y2hhLXotaW5kZXgtYmFzZTogMTAwMDAwMDA7XG59XG5cbiNhbGl5dW5DYXB0Y2hhLW1hc2sge1xuICB3aWR0aDogMTAwJTtcbiAgaGVpZ2h0OiAxMDAlO1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGxlZnQ6IDA7XG4gIHRvcDogMDtcbiAgYmFja2dyb3VuZDogIzAwMDtcbiAgb3BhY2l0eTogMDtcbiAgei1pbmRleDogdmFyKC0tYWxpeXVuLWNhcHRjaGEtei1pbmRleC1iYXNlKTtcbiAgdHJhbnNpdGlvbjogYWxsIDAuNHMgZWFzZS1pbi1vdXQ7XG5cbiAgJi5tYXNrLXNob3cge1xuICAgIG9wYWNpdHk6IDAuNTtcbiAgfVxuXG4gICYubWFzay1oaWRkZW4ge1xuICAgIG9wYWNpdHk6IDA7XG4gIH1cbn1cblxuI2FsaXl1bkNhcHRjaGEtb3ZlcmxheSB7XG4gIGRpc3BsYXk6IG5vbmU7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgdG9wOiAwO1xuICBsZWZ0OiAwO1xuICB3aWR0aDogMTAwJTtcbiAgaGVpZ2h0OiAxMDAlO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKDI1NSwgMjU1LCAyNTUsIDAuNSk7XG4gIHBvaW50ZXItZXZlbnRzOiBub25lO1xufVxuXG4jYWxpeXVuQ2FwdGNoYS13aW5kb3cge1xuICAmLXBvcHVwIHtcbiAgICBwYWRkaW5nOiAxNnB4IDE2cHggMTJweCAxNnB4O1xuICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjZmZmO1xuICAgIGJveC1zaGFkb3c6IDBweCA0cHggOHB4IDBweCByZ2JhKDAsIDAsIDAsIDAuMjApO1xuICAgIHZpc2liaWxpdHk6IHZpc2libGU7XG4gICAgei1pbmRleDogY2FsYyh2YXIoLS1hbGl5dW4tY2FwdGNoYS16LWluZGV4LWJhc2UpICsgMSk7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNDUlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKSBzY2FsZSh2YXIoLS1hbGl5dW4tem9vbS1yYXRpbywgMSkpO1xuICAgIC1tcy10cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKSBzY2FsZSh2YXIoLS1hbGl5dW4tem9vbS1yYXRpbywgMSkpO1xuICAgIHRyYW5zaXRpb246IGFsbCAwLjRzIGVhc2UtaW4tb3V0O1xuICAgIC13ZWJraXQtdGV4dC1zaXplLWFkanVzdDogMTAwJSAhaW1wb3J0YW50O1xuICAgIC1tcy10ZXh0LXNpemUtYWRqdXN0OiAxMDAlICFpbXBvcnRhbnQ7XG4gICAgLW1vei10ZXh0LXNpemUtYWRqdXN0OiAxMDAlICFpbXBvcnRhbnQ7XG4gICAgdGV4dC1zaXplLWFkanVzdDogMTAwJSAhaW1wb3J0YW50O1xuXG4gICAgJi53aW5kb3ctc2hvdyB7XG4gICAgICB0b3A6IDQ1JTtcbiAgICAgIG9wYWNpdHk6IDE7XG4gICAgfVxuXG4gICAgJi53aW5kb3ctaGlkZGVuIHtcbiAgICAgIHRvcDogNDIlO1xuICAgICAgb3BhY2l0eTogMDtcbiAgICB9XG5cbiAgICBpbWcge1xuICAgICAgLW8tYW5pbWF0aW9uOiBmYWRlSW4gMC41cyBlYXNlLWluLW91dCBmb3J3YXJkcztcbiAgICAgIC1tb3otYW5pbWF0aW9uOiBmYWRlSW4gMC41cyBlYXNlLWluLW91dCBmb3J3YXJkcztcbiAgICAgIC13ZWJraXQtYW5pbWF0aW9uOiBmYWRlSW4gMC41cyBlYXNlLWluLW91dCBmb3J3YXJkcztcbiAgICAgIGFuaW1hdGlvbjogZmFkZUluIDAuNXMgZWFzZS1pbi1vdXQgZm9yd2FyZHM7XG4gICAgfVxuICB9XG5cbiAgJi1lbWJlZCB7XG4gICAgcGFkZGluZzogMTJweDtcbiAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogI2ZmZjtcbiAgICB2aXNpYmlsaXR5OiB2aXNpYmxlO1xuICAgIHotaW5kZXg6IGNhbGModmFyKC0tYWxpeXVuLWNhcHRjaGEtei1pbmRleC1iYXNlKSArIDEpO1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgdHJhbnNmb3JtOiBzY2FsZSh2YXIoLS1hbGl5dW4tem9vbS1yYXRpbywgMSkpO1xuICAgIC1tcy10cmFuc2Zvcm06IHNjYWxlKHZhcigtLWFsaXl1bi16b29tLXJhdGlvLCAxKSk7XG4gICAgLXdlYmtpdC10ZXh0LXNpemUtYWRqdXN0OiAxMDAlICFpbXBvcnRhbnQ7XG4gICAgLW1zLXRleHQtc2l6ZS1hZGp1c3Q6IDEwMCUgIWltcG9ydGFudDtcbiAgICAtbW96LXRleHQtc2l6ZS1hZGp1c3Q6IDEwMCUgIWltcG9ydGFudDtcbiAgICB0ZXh0LXNpemUtYWRqdXN0OiAxMDAlICFpbXBvcnRhbnQ7XG5cbiAgICBpbWcge1xuICAgICAgb3BhY2l0eTogMDtcbiAgICAgIC1vLWFuaW1hdGlvbjogZmFkZUluIDAuNXMgZWFzZS1pbi1vdXQgZm9yd2FyZHM7XG4gICAgICAtbW96LWFuaW1hdGlvbjogZmFkZUluIDAuNXMgZWFzZS1pbi1vdXQgZm9yd2FyZHM7XG4gICAgICAtd2Via2l0LWFuaW1hdGlvbjogZmFkZUluIDAuNXMgZWFzZS1pbi1vdXQgZm9yd2FyZHM7XG4gICAgICBhbmltYXRpb246IGZhZGVJbiAwLjVzIGVhc2UtaW4tb3V0IGZvcndhcmRzO1xuICAgIH1cbiAgfVxuXG4gICYtZmxvYXQge1xuICAgIHBhZGRpbmc6IDE2cHggMTZweCAxMnB4IDE2cHg7XG4gICAgYm9yZGVyLXJhZGl1czogNHB4O1xuICAgIGJhY2tncm91bmQtY29sb3I6ICNmZmY7XG4gICAgdmlzaWJpbGl0eTogdmlzaWJsZTtcbiAgICBib3gtc2hhZG93OiAwcHggNHB4IDhweCAwcHggcmdiYSgwLCAwLCAwLCAwLjIwKTtcbiAgICBvcGFjaXR5OiAwO1xuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgdG9wOiA1MCU7XG4gICAgbGVmdDogNTAlO1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAgIC1tcy10cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTsgXG4gICAgdHJhbnNpdGlvbjogb3BhY2l0eSAwLjRzIGVhc2UtaW4tb3V0O1xuICAgIC13ZWJraXQtdGV4dC1zaXplLWFkanVzdDogMTAwJSAhaW1wb3J0YW50O1xuICAgIC1tcy10ZXh0LXNpemUtYWRqdXN0OiAxMDAlICFpbXBvcnRhbnQ7XG4gICAgLW1vei10ZXh0LXNpemUtYWRqdXN0OiAxMDAlICFpbXBvcnRhbnQ7XG4gICAgdGV4dC1zaXplLWFkanVzdDogMTAwJSAhaW1wb3J0YW50O1xuXG4gICAgJi53aW5kb3ctc2hvdyB7XG4gICAgICBvcGFjaXR5OiAxO1xuICAgICAgei1pbmRleDogY2FsYyh2YXIoLS1hbGl5dW4tY2FwdGNoYS16LWluZGV4LWJhc2UpICsgMSk7XG4gICAgfVxuXG4gICAgJi53aW5kb3ctaGlkZGVuIHtcbiAgICAgIG9wYWNpdHk6IDA7XG4gICAgfVxuXG4gICAgaW1nIHtcbiAgICAgIG9wYWNpdHk6IDA7XG4gICAgICAtby1hbmltYXRpb246IGZhZGVJbiAwLjVzIGVhc2UtaW4tb3V0IGZvcndhcmRzO1xuICAgICAgLW1vei1hbmltYXRpb246IGZhZGVJbiAwLjVzIGVhc2UtaW4tb3V0IGZvcndhcmRzO1xuICAgICAgLXdlYmtpdC1hbmltYXRpb246IGZhZGVJbiAwLjVzIGVhc2UtaW4tb3V0IGZvcndhcmRzO1xuICAgICAgYW5pbWF0aW9uOiBmYWRlSW4gMC41cyBlYXNlLWluLW91dCBmb3J3YXJkcztcbiAgICB9XG4gIH1cbn1cblxuLmFsaXl1bkNhcHRjaGEtaGlkZGVuIHtcbiAgZGlzcGxheTogbm9uZTtcbn1cblxuLmFsaXl1bkNhcHRjaGEtc2hvdyB7XG4gIGRpc3BsYXk6IGJsb2NrO1xufVxuXG4uYWxpeXVuQ2FwdGNoYS1sb2FkaW5nIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDAlO1xuICBoZWlnaHQ6IDEwMCU7XG4gIGZvbnQtc2l6ZTogMTRweDtcbiAgY29sb3I6IHJnYmEoMTc4LCAxNzgsIDE3OCwgMC4zKTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxleC1kaXJlY3Rpb246IGNvbHVtbjtcbiAgLW1zLWZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gIGp1c3RpZnktY29udGVudDogY2VudGVyO1xufVxuXG4uYWxpeXVuQ2FwdGNoYS10b3Age1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbGV4LWRpcmVjdGlvbjogcm93O1xuICAtbXMtZmxleC1kaXJlY3Rpb246IHJvdztcbiAganVzdGlmeS1jb250ZW50OiBzcGFjZS1iZXR3ZWVuO1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xuICBoZWlnaHQ6IDMycHg7XG4gIG1hcmdpbi1ib3R0b206IDRweDtcblxuICAjYWxpeXVuQ2FwdGNoYS10aXRsZSB7XG4gICAgZmxvYXQ6IGxlZnQ7XG4gICAgbGluZS1oZWlnaHQ6IDM2cHg7XG4gIH1cblxuICAjYWxpeXVuQ2FwdGNoYS1vcHRpb24ge1xuICAgIGZsb2F0OiByaWdodDtcbiAgfVxufVxuXG4jYWxpeXVuQ2FwdGNoYS1lcnJvclRpcCB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xuICBmb250LWZhbWlseTogJ2FsaXl1bi1jYXB0Y2hhLWljb25mb250JztcbiAgYmFja2dyb3VuZC1jb2xvcjogd2hpdGU7XG4gIGJvcmRlci13aWR0aDogMXB4O1xuICBib3gtc2hhZG93OiAwcHggNHB4IDhweCAwcHggcmdiYSgwLCAwLCAwLCAwLjE2KTtcbiAgYm9yZGVyLXJhZGl1czogMnB4O1xuICBoZWlnaHQ6IDM2cHg7XG4gIHdpZHRoOiAyMDBweDtcbiAgcGFkZGluZzogNHB4O1xuICBmb250LXNpemU6IDE0cHg7XG4gIHZpc2liaWxpdHk6IHZpc2libGU7XG4gIHotaW5kZXg6IGNhbGModmFyKC0tYWxpeXVuLWNhcHRjaGEtei1pbmRleC1iYXNlKSArIDEpO1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIHRvcDogNDUlO1xuICBsZWZ0OiA1MCU7XG4gIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAtbXMtdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG5cbiAgLmFsaXl1bkNhcHRjaGEtZXJyb3JUaXAtY29udGVudCB7XG4gICAgZGlzcGxheTogZmxleDtcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICBsZWZ0OiAxMHB4O1xuICB9XG5cbiAgLmFsaXl1bkNhcHRjaGEtc2xpZGluZy13YXJuaW5nIHtcbiAgICBjb2xvcjogI0UwMDAwMDtcbiAgICBtYXJnaW4tcmlnaHQ6IDRweDtcbiAgfVxuXG4gIGJ1dHRvbiB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICBjb2xvcjogIzk5OTtcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgcmlnaHQ6IDEwcHg7XG4gIH1cbn1cblxuLmFsaXl1bkNhcHRjaGEtbG9hZGVyLFxuLmFsaXl1bkNhcHRjaGEtbG9hZGVyOmFmdGVyIHtcbiAgcG9zaXRpb246IHJlbGF0aXZlO1xuICBib3gtc2l6aW5nOiBib3JkZXItYm94O1xufVxuXG4uYWxpeXVuQ2FwdGNoYS1sb2FkZXIge1xuICBjb2xvcjogI2ZmZjtcbiAgZm9udC1zaXplOiA1cHg7XG4gIHdpZHRoOiAxZW07XG4gIGhlaWdodDogMWVtO1xuICBib3JkZXItcmFkaXVzOiA1MCU7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgdGV4dC1pbmRlbnQ6IC05OTk5ZW07XG4gIGFuaW1hdGlvbjogQWxpeXVuQ2FwdGNoYUxvYWRlclNwaW4gMS4zcyBpbmZpbml0ZSBsaW5lYXI7XG4gIHRyYW5zZm9ybTogdHJhbnNsYXRlWigwKTtcbn1cblxuQGtleWZyYW1lcyBBbGl5dW5DYXB0Y2hhTG9hZGVyU3BpbiB7XG4gIDAlLFxuICAxMDAlIHtcbiAgICBib3gtc2hhZG93OiAwIC0zZW0gMCAwLjJlbSwgXG4gICAgMmVtIC0yZW0gMCAwZW0sIDNlbSAwIDAgLTFlbSwgXG4gICAgMmVtIDJlbSAwIC0xZW0sIDAgM2VtIDAgLTFlbSwgXG4gICAgLTJlbSAyZW0gMCAtMWVtLCAtM2VtIDAgMCAtMWVtLCBcbiAgICAtMmVtIC0yZW0gMCAwO1xuICB9XG4gIDEyLjUlIHtcbiAgICBib3gtc2hhZG93OiAwIC0zZW0gMCAwLCAyZW0gLTJlbSAwIDAuMmVtLCBcbiAgICAzZW0gMCAwIDAsIDJlbSAyZW0gMCAtMWVtLCAwIDNlbSAwIC0xZW0sIFxuICAgIC0yZW0gMmVtIDAgLTFlbSwgLTNlbSAwIDAgLTFlbSwgXG4gICAgLTJlbSAtMmVtIDAgLTFlbTtcbiAgfVxuICAyNSUge1xuICAgIGJveC1zaGFkb3c6IDAgLTNlbSAwIC0wLjVlbSwgXG4gICAgMmVtIC0yZW0gMCAwLCAzZW0gMCAwIDAuMmVtLCBcbiAgICAyZW0gMmVtIDAgMCwgMCAzZW0gMCAtMWVtLCBcbiAgICAtMmVtIDJlbSAwIC0xZW0sIC0zZW0gMCAwIC0xZW0sIFxuICAgIC0yZW0gLTJlbSAwIC0xZW07XG4gIH1cbiAgMzcuNSUge1xuICAgIGJveC1zaGFkb3c6IDAgLTNlbSAwIC0xZW0sIDJlbSAtMmVtIDAgLTFlbSxcbiAgICAgM2VtIDBlbSAwIDAsIDJlbSAyZW0gMCAwLjJlbSwgMCAzZW0gMCAwZW0sIFxuICAgICAtMmVtIDJlbSAwIC0xZW0sIC0zZW0gMGVtIDAgLTFlbSwgLTJlbSAtMmVtIDAgLTFlbTtcbiAgfVxuICA1MCUge1xuICAgIGJveC1zaGFkb3c6IDAgLTNlbSAwIC0xZW0sIDJlbSAtMmVtIDAgLTFlbSxcbiAgICAgM2VtIDAgMCAtMWVtLCAyZW0gMmVtIDAgMGVtLCAwIDNlbSAwIDAuMmVtLCBcbiAgICAgLTJlbSAyZW0gMCAwLCAtM2VtIDBlbSAwIC0xZW0sIC0yZW0gLTJlbSAwIC0xZW07XG4gIH1cbiAgNjIuNSUge1xuICAgIGJveC1zaGFkb3c6IDAgLTNlbSAwIC0xZW0sIDJlbSAtMmVtIDAgLTFlbSxcbiAgICAgM2VtIDAgMCAtMWVtLCAyZW0gMmVtIDAgLTFlbSwgMCAzZW0gMCAwLCBcbiAgICAgLTJlbSAyZW0gMCAwLjJlbSwgLTNlbSAwIDAgMCwgLTJlbSAtMmVtIDAgLTFlbTtcbiAgfVxuICA3NSUge1xuICAgIGJveC1zaGFkb3c6IDBlbSAtM2VtIDAgLTFlbSwgMmVtIC0yZW0gMCAtMWVtLCBcbiAgICAzZW0gMGVtIDAgLTFlbSwgMmVtIDJlbSAwIC0xZW0sIDAgM2VtIDAgLTFlbSwgXG4gICAgLTJlbSAyZW0gMCAwLCAtM2VtIDBlbSAwIDAuMmVtLCAtMmVtIC0yZW0gMCAwO1xuICB9XG4gIDg3LjUlIHtcbiAgICBib3gtc2hhZG93OiAwZW0gLTNlbSAwIDAsIDJlbSAtMmVtIDAgLTFlbSwgXG4gICAgM2VtIDAgMCAtMWVtLCAyZW0gMmVtIDAgLTFlbSwgMCAzZW0gMCAtMWVtLCBcbiAgICAtMmVtIDJlbSAwIDAsIC0zZW0gMGVtIDAgMCwgLTJlbSAtMmVtIDAgMC4yZW07XG4gIH1cbn1cblxuI2FsaXl1bkNhcHRjaGEtYnRuLWNsb3NlIHtcbiAgZm9udC1zaXplOiAyMHB4O1xuICBib3JkZXI6IG5vbmU7XG4gIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50O1xuICBvdXRsaW5lOiBub25lO1xuICBjb2xvcjogZ3JheTtcbiAgcGFkZGluZzogMCA0cHg7XG4gIGZvbnQtZmFtaWx5OiAnYWxpeXVuLWNhcHRjaGEtaWNvbmZvbnQnO1xuXG4gICY6aG92ZXIge1xuICAgIGNvbG9yOiBibGFjaztcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gIH1cbn1cblxuI2FsaXl1bkNhcHRjaGEtYnRuLXJlZnJlc2gge1xuICBsaW5lLWhlaWdodDogMzJweDtcbiAgZm9udC1zaXplOiAyMHB4O1xuICBib3JkZXI6IG5vbmU7XG4gIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50O1xuICBvdXRsaW5lOiBub25lO1xuICBjb2xvcjogZ3JheTtcbiAgcGFkZGluZzogMCA0cHg7XG4gIGZvbnQtZmFtaWx5OiAnYWxpeXVuLWNhcHRjaGEtaWNvbmZvbnQnO1xuICB6LWluZGV4OiBjYWxjKHZhcigtLWFsaXl1bi1jYXB0Y2hhLXotaW5kZXgtYmFzZSkgKyAxKTtcblxuICBAbWVkaWEgKGhvdmVyOiBob3Zlcikge1xuICAgICY6aG92ZXIge1xuICAgICAgY29sb3I6IGJsYWNrO1xuICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIH1cbiAgfVxufVxuXG4jYWxpeXVuQ2FwdGNoYS1jYXB0Y2hhLXN1Y2Nlc3Mge1xuICBmb250LWZhbWlseTogJ2FsaXl1bi1jYXB0Y2hhLWljb25mb250JztcbiAgZm9udC1zaXplOiAxMnB4O1xuICBjb2xvcjogIzAwOTQzMTtcbiAgbWFyZ2luLXJpZ2h0OiA0cHg7XG59XG5cbiNhbGl5dW5DYXB0Y2hhLWNhcHRjaGEtcmVmcmVzaCB7XG4gIGZvbnQtZmFtaWx5OiAnYWxpeXVuLWNhcHRjaGEtaWNvbmZvbnQnO1xuICBmb250LXNpemU6IDE0cHg7XG4gIGNvbG9yOiAjMzMzMzMzOyAgXG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICB9XG59XG5cbiNhbGl5dW5DYXB0Y2hhLWNhcHRjaGEtZmFpbCB7XG4gIGZvbnQtZmFtaWx5OiAnYWxpeXVuLWNhcHRjaGEtaWNvbmZvbnQnO1xuICBmb250LXNpemU6IDE0cHg7XG4gIGNvbG9yOiAjRTAwMDAwO1xuICBtYXJnaW4tcmlnaHQ6IDRweDtcbn1cblxuI2FsaXl1bkNhcHRjaGEtY2VydGlmeUlkIHtcbiAgZGlzcGxheTogbm9uZTtcbiAgZm9udC1zaXplOiA2cHg7XG4gIG9wYWNpdHk6IDAuMTU7XG4gIGZsb2F0OiBsZWZ0O1xufVxuXG5Aa2V5ZnJhbWVzIGZhZGVJbiB7XG4gIDAlIHtcbiAgICBvcGFjaXR5OiAwO1xuICB9XG4gIDEwMCUge1xuICAgIG9wYWNpdHk6IDE7XG4gIH1cbn0iXSwic291cmNlUm9vdCI6IiJ9 */</style></head>
+<body>
+    
+    <div class="login-main">
+        <div class="login-head">
+            <div class="login-head_left fl">
+                <a href="//www.bidcenter.com.cn" class="logo_img">
+                    <img src="//img.bidcenter.com.cn/sso/images/logo-czw.png">
+                </a>
+            </div>
+            <div class="login-head_right fr">
+                <img src="//img.bidcenter.com.cn/sso/images/dianhua.png" class="fl">
+                <img src="//img.bidcenter.com.cn/sso/images/dianhuahao.png" class="fl dianhuahao">
+                <span class="fl head-right_text">还没有账号？</span>
+                <a href="//www.bidcenter.com.cn/zhuce.html" target="_blank" class="fl mianfeizhuce m-l-10">免费注册</a>
+                <div class="clear"></div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="login-cont">
+            <div class="login-contbg">
+                <div class="login-cont_left fl">
+                    <img src="//img.bidcenter.com.cn/sso/images/login-text.png" class="login-text">
+                    <img src="//img.bidcenter.com.cn/sso/images/login-text2.png" class="login-text2">
+                    <img src="//img.bidcenter.com.cn/sso/images/login-text3.png" class="login-text3">
+                </div>
+                <div class="login-cont_right fl">
+                    <div class="ewm-login">
+                        
+                    </div>
+                    <div class="huiyuan-login" style="display: none;">
+                        <a href="javascript:;" class="ewm_img">
+                            <img src="//img.bidcenter.com.cn/sso/images/tip2_03.png">
+                        </a>
+                        <div class="saomatishi">返回账号登录→</div>
+                    </div>
+                    <ul class="login-tab">
+                        <li class="active" type="0">账号登录 <span class="active_line">&nbsp;</span></li>
+                        <li class="tab_yzm" type="1">短信登录 <span class="active_line">&nbsp;</span></li>
+                        <li class="tab_cgyz" type="2">采购业主登录 <span class="active_line">&nbsp;</span></li>
+                        <div class="clear"></div>
+                    </ul>
+                    <!-- 密码登录 -->
+                    <div class="mimadenglu">
+                        <!-- 会员登录 -->
+                        <div class="login-form">
+                            <div class="login-form_cell srkuang">
+                                <input type="text" class="login-input fl" id="txtusername" value="" placeholder="手机号/用户名" autocomplete="off">
+                                <img src="//img.bidcenter.com.cn/sso/images/denglu_03.png" class="fr">
+                                <div class="clear"></div>
+                                <div style="margin-top: 19px; font-size: 10px; display: none; color: red;" class="txtusername_tips"></div>
+                            </div>
+                            <div class="login-form_cell srkuang">
+                                <input type="password" id="txtpassword" class="login-input fl" placeholder="密码" autocomplete="off">
+                                <img src="//img.bidcenter.com.cn/sso/images/denglu_06.jpg" class="fr">
+                                <div class="clear"></div>
+                                <div style="margin-top: 19px; font-size: 10px; color: red; display: none;" class="txtpassword_tips"></div>
+                            </div>
+                            <div class="" id="jq_trValidate">
+                            </div>
+                            <div class="password-cell" style="margin-top: 35px;">
+                                <div class="jizhumima fl">
+                                    <input type="checkbox" id="jzmm" class="jizhumima_check">
+                                    <label class="font-bold">记住密码</label>
+                                </div>
+                                <div class="wangjimima fr">
+                                    <a href="http://www.bidcenter.com.cn/rway.html" target="_blank" class="font-bold">忘记密码<img src="//img.bidcenter.com.cn/sso/images/dlk_16.png" style="vertical-align: top; margin-top: 1px; margin-left: 10px;">
+                                    </a>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="kuaisudenglu">
+                                <a href="javascript:;" id="login_login_btn" onclick="pub.loginMember()">快速登录</a>
+                            </div>
+                            <div class="meiyouzhanghao">
+                                <a href="//www.bidcenter.com.cn/zhuce.html" target="_blank">还没有账号？ <span style="color: #238aff;">免费注册</span></a>
+                            </div>
+                        </div>
+                        <!-- 验证码登录 -->
+                        <div class="login-form" style="display: none; padding-bottom: 40px;">
+                            <div class="login-form_cell login-form_cell2">
+                                <input type="text" class="login-input fl" id="codeLogin_phone" placeholder="手机号" autocomplete="off">
+                                <img src="//img.bidcenter.com.cn/sso/images/denlu2_03.png" class="fr">
+                                <div class="clear"></div>
+                                <div style="margin-top: 19px; font-size: 10px; display: none; color: red;" class="txtusername_tips"></div>
+                            </div>
+                            <div class="login-form_cell2">
+                                <div class="login-form_cell fl">
+                                    <input type="text" class="login-input fl" maxlength="6" id="codeLogin_code" placeholder="验证码" autocomplete="off">
+                                    <img src="//img.bidcenter.com.cn/sso/images/denlu2_07.jpg" class="fr">
+                                    <div class="clear"></div>
+                                    <div style="margin-top: 19px; font-size: 10px; color: red; display: none;" class="txtpassword_tips"></div>
+                                </div>
+                                <div class="login-yzm_btn fr">
+                                    <a href="javascript:;" id="codeLogin_btn">获取验证码</a>
+                                    <a href="javascript:;" id="codeLogin_btn_djs" style="display: none;">60秒后重发</a>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div id="jq_trValidate1"></div>
+                            <div class="kuaisudenglu">
+                                <a href="javascript:;" onclick="codeLogin_Click();">立即登录</a>
+                            </div>
+                            <div class="meiyouzhanghao">
+                                <a href="//www.bidcenter.com.cn/zhuce.html" target="_blank">还没有账号？ <span style="color: #238aff;">免费注册</span></a>
+                            </div>
+                        </div>
+                        <!-- 采购业主登录 -->
+                        <div class="login-form" style="display: none;">
+                            <div class="login-form_cell">
+                                <input type="text" class="login-input fl" id="txtyzhuname" placeholder="用户名" autocomplete="off">
+                                <img src="//img.bidcenter.com.cn/sso/images/denglu_03.png" class="fr">
+                                <div class="clear"></div>
+                                <div style="margin-top: 19px; font-size: 10px; display: none; color: red;" class="txtusername_tips"></div>
+                            </div>
+                            <div class="login-form_cell">
+                                <input type="password" class="login-input fl" id="txtpass" placeholder="密码" autocomplete="off">
+                                <img src="//img.bidcenter.com.cn/sso/images/denglu_06.jpg" class="fr">
+                                <div class="clear"></div>
+                                <div style="margin-top: 19px; font-size: 10px; color: red; display: none;" class="txtpassword_tips"></div>
+                            </div>
+                            <div class="password-cell" style="margin-top: 35px;">
+                                <div class="jizhumima fl">
+                                    <input type="checkbox" id="yzjzmm" class="jizhumima_check">
+                                    <label class="font-bold">记住密码</label>
+                                </div>
+                                <div class="wangjimima fr">
+                                    <a href="http://www.bidcenter.com.cn/rway.html" class="font-bold">忘记密码<img src="//img.bidcenter.com.cn/sso/images/dlk_16.png" style="vertical-align: top; margin-top: 1px; margin-left: 10px;">
+                                    </a>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="kuaisudenglu caigouyezhu">
+                                <a href="javascript:;" id="yzlogin_btn" onclick="pub.loginYezhu()">采购业主登录</a>
+                            </div>
+                            <div class="meiyouzhanghao caigouyezhu_zhuce">
+                                <a href="//www.bidcenter.com.cn/zhuce.html" target="_blank">还没有账号？ <span style="color: #FF6500;">免费注册</span></a>
+                            </div>
+                        </div>
+                        <div class="login-xiazai">
+                            <p class="xiazai-text">您还可以下载APP登录使用</p>
+                            <ul class="xiazaifangshi">
+                                <li>
+                                    <a href="http://www.bidcenter.com.cn/help/phone/phone.html" target="_blank">
+                                        <img src="//img.bidcenter.com.cn/sso/images/dlk_22.png">
+                                        <p class="xiazaifangshi_text">Android版</p>
+                                    </a>
+                                </li>
+                                <li style="border-right: 0;">
+                                    <a href="https://itunes.apple.com/cn/app/zhong-guo-cai-zhao-wang-ke/id890317566?mt=8" target="_blank">
+                                        <img src="//img.bidcenter.com.cn/sso/images/dlk_24.png">
+                                        <p class="xiazaifangshi_text">IPhone版</p>
+                                    </a>
+                                </li>
+                                <div class="clear"></div>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- 扫码登录 -->
+                    <div class="saomadenglu" style="display: none;">
+                        <div class="saomadenglu-title">手机扫码&nbsp;&nbsp;安全登录</div>
+                        <div class="saomadenglu-ewm">
+                            <img src="//img.bidcenter.com.cn/sso/images/loading.gif" id="codeImg" class="saomadenglu-ewm_img">
+                        </div>
+                        <div class="codeInvalid">
+                            <p style="">二维码已失效</p>
+                            <a href="javascript:;" class="refreshCode" onclick="refresh_Click()">刷新二维码</a>
+                        </div>
+                        <div class="scanCodeSuc">
+                            <img src="/images/u30.png" style="width: 80px; margin-top: 20px;">
+                            <p style="font-size: 18px; text-align: center; margin-bottom: 10px; padding-top: 20px;">扫描成功</p>
+                            <p class="scanCodeSuc-tishi">请勿刷新本页面,按手机提示操作</p>
+                        </div>
+                        <div class="saomadenglu-text">打开手机 <span style="color: #ff7703;">中国采招网APP</span> 扫描二维码</div>
+                        <ul class="saomadenglu-youshi">
+                            <li>
+                                <img src="//img.bidcenter.com.cn/sso/images/tip2_15.png" class="youshi-icon">免输入</li>
+                            <li>
+                                <img src="//img.bidcenter.com.cn/sso/images/tip2_17.png" class="youshi-icon">更快</li>
+                            <li style="margin-right: 0;">
+                                <img src="//img.bidcenter.com.cn/sso/images/tip2_19.png" class="youshi-icon">更安全</li>
+                            <div class="clear"></div>
+                        </ul>
+                        <div class="saomadenglu-foot">
+                            <a href="" title="账号登录" class="huiyuandenglu-label">账号登录</a>
+                            <span style="color: #e7e7e7;">|</span>
+                            <a href="//www.bidcenter.com.cn/zhuce.html" target="_blank" title="免费注册">免费注册</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+
+        </div>
+        <div class="changjianwenti">
+            <div class="changjianwenti-top">
+                <div class="fl cjwt-top_title">
+                    <img src="//img.bidcenter.com.cn/sso/images/tip_28.png" class="m-r-10">常见问题
+                </div>
+                <ul class="fl cjwt-top_tab">
+                    <li class="active"><a href="javascript:;">新手上路 <span class="active_line">&nbsp;</span> </a></li>
+                    <li><a href="javascript:;">搜索问题 <span class="active_line">&nbsp;</span></a></li>
+                    <li><a href="javascript:;">会员服务 <span class="active_line">&nbsp;</span></a></li>
+                    <li><a href="javascript:;">信息发布 <span class="active_line">&nbsp;</span></a></li>
+                    <li><a href="javascript:;">申请认证 <span class="active_line">&nbsp;</span></a></li>
+                    <div class="clear"></div>
+                </ul>
+                <div class="fr">
+                    <a href="//www.bidcenter.com.cn/help/cjwenti.shtml" class="cjwt-top_tips">
+                        <img src="//img.bidcenter.com.cn/sso/images/tip_31.png">
+                    </a>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="changjianwenti-cont">
+                <ul>
+                    <li><a href="//www.bidcenter.com.cn/help/zchlep.shtml" target="_blank" title="如何注册？">如何注册？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/newxgmima.shtml" target="_blank" title="如何修改密码 ？">如何修改密码 ？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/fabu.shtml" target="_blank" title="如何发布信息？">如何发布信息？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/dlmb.shtml" target="_blank" title="登录时需设置密保手机？">登录时需设置密保手机？</a></li>
+                    <li><a href="http://www.bidcenter.com.cn/rway.html" target="_blank" title="忘记密码怎么办？">忘记密码怎么办？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rwfs.shtml" target="_blank" title="如何享受服务？">如何享受服务？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/xiugaimibao.shtml" target="_blank" title="如何修改密保手机 ？">如何修改密保手机 ？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/szmb.shtml" target="_blank" title="如何主动设置密保手机？">如何主动设置密保手机？</a></li>
+                    <div class="clear"></div>
+                </ul>
+            </div>
+            <!-- 搜索问题 -->
+            <div class="changjianwenti-cont" style="display: none;">
+                <ul>
+                    <li><a href="//www.bidcenter.com.cn/help/sousuo.shtml" target="_blank" title="如何搜索项目？">如何搜索项目？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/ssbdsxxm.shtml" target="_blank" title="搜索不到所需要的项目">搜索不到所需要的项目？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/why.shtml" target="_blank" title="搜索出来的项目查看不了？">搜索出来的项目查看不了？</a></li>
+                    <div class="clear"></div>
+                </ul>
+            </div>
+            <!-- 会员服务 -->
+            <div class="changjianwenti-cont" style="display: none;">
+                <ul>
+                    <li><a href="//www.bidcenter.com.cn/help/rhlogin.shtml" target="_blank" title="如何登录？">如何登录？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/dingzhi.shtml" target="_blank" title="如何使用邮件定制">如何使用邮件定制？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/dzzt.shtml" target="_blank" title="接收不到邮件定制？">接收不到邮件定制？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/renzheng.shtml" target="_blank" title="如何会员认证？">如何会员认证？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rzhc.shtml" target="_blank" title="认证的好处">认证的好处？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/shujuku.shtml" target="_blank" title="如何使用数据库查询？">如何使用数据库查询？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/dszb.shtml" target="_blank" title="如何查看对手中标">如何查看对手中标？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/tycx.shtml" target="_blank" title="如何特约项目查询？">如何特约项目查询？</a></li>
+                    <div class="clear"></div>
+                </ul>
+            </div>
+            <!-- 信息发布 -->
+            <div class="changjianwenti-cont" style="display: none;">
+                <ul>
+                    <li><a href="//www.bidcenter.com.cn/help/fbzbgg.shtml" target="_blank" title="如何发布招标公告？">如何发布招标公告？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/fbzbxx.shtml" target="_blank" title="如何发布中标喜讯">如何发布中标喜讯？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/fbcpqg.shtml" target="_blank" title="如何发布产品求购？">如何发布产品求购？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/fabu.shtml" target="_blank" title="如何发布供应信息？">如何发布供应信息？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/ckfbxx.shtml" target="_blank" title="发布的信息怎么查看">发布的信息怎么查看？</a></li>
+                    <div class="clear"></div>
+                </ul>
+            </div>
+            <!-- 申请认证 -->
+            <div class="changjianwenti-cont" style="display: none;">
+                <ul>
+                    <li><a href="//www.bidcenter.com.cn/help/rzcjwt.shtml#1" target="_blank" title="什么是认证服务？">什么是认证服务？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rzcjwt.shtml#3" target="_blank" title="如何申请供应商认证 ？">如何申请供应商认证 ？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rzcjwt.shtml#5" target="_blank" title="已认证的用户，如何获得认证证书？">已认证的用户，如何获得认证证书？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rzcjwt.shtml#7" target="_blank" title="个人能申请供应商认证吗？">个人能申请供应商认证吗？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rzcjwt.shtml#2" target="_blank" title="怎么选择我要认证的身份？">怎么选择我要认证的身份？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rzcjwt.shtml#4" target="_blank" title="认证审核需要几个工作日？">认证审核需要几个工作日？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rzcjwt.shtml#6" target="_blank" title="供应商认证收费吗 ？">供应商认证收费吗 ？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rzcjwt.shtml#8" target="_blank" title="供应商认证有什么条件？">供应商认证有什么条件？</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rzcjwt.shtml#9" target="_blank" title="供应商认证有哪些好处？">供应商认证有哪些好处</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rzcjwt.shtml#10" target="_blank" title="业主认证有哪些好处">业主认证有哪些好处</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rzcjwt.shtml#11" target="_blank" title="认证的有效期多长？">认证的有效期多长</a></li>
+                    <li><a href="//www.bidcenter.com.cn/help/rzcjwt.shtml#12" target="_blank" title="我是采招网的付费会员了，申请供应商认证需要缴费吗">我是采招网的付费会员了，申请供应商认证需要缴费吗？</a></li>
+                    <div class="clear"></div>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--底部导航-->
+    <div class="login-foot">
+        <div class="login-foot_cont">
+            <ul class="login-foot_nav">
+                <li><a href="http://www.bidcenter.com.cn/help/gsjj.shtml" target="_blank" title="网站介绍">网站介绍</a></li>
+                <li><a href="http://www.bidcenter.com.cn/help/rwfs.shtml" target="_blank" title="入网方式">入网方式</a></li>
+                <li><a href="http://www.bidcenter.com.cn/help/fwlb.shtml" target="_blank" title="服务列表">服务列表</a></li>
+                <li><a href="http://www.bidcenter.com.cn/help/contact.shtml" target="_blank" title="联系方式">联系方式</a></li>
+                <li><a href="http://www.bidcenter.com.cn/help/fwtk.shtml" target="_blank" title="服务条款">服务条款</a></li>
+                <li><a href="http://www.bidcenter.com.cn/help/czdl.shtml" target="_blank" title="关于我们">诚征代理</a></li>
+                <li><a href="http://www.bidcenter.com.cn/help/cpyc.shtml" target="_blank" title="诚聘英才">诚聘英才</a></li>
+                <li><a href="http://www.bidcenter.com.cn/help/ggfw.shtml" target="_blank" title="广告服务">广告服务</a></li>
+                <li><a href="http://www.bidcenter.com.cn/Friend.html" target="_blank" title="友情链接">友情链接</a></li>
+                <li style="border-right: 0px;"><a href="http://www.bidcenter.com.cn/help/ditu.shtml" target="_blank" title="网站地图">网站地图</a></li>
+                <div class="clear"></div>
+            </ul>
+            <div class="login-foot_beianhao"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow" style="color: #333333;">京ICP备09044717号-2</a>&nbsp;&nbsp;&nbsp;&nbsp;版权所有©2006-2021&nbsp;&nbsp;采招网&nbsp;&nbsp;&nbsp;本站法律顾问：北斗鼎铭律师事务所 周正国律师</div>
+        </div>
+    </div>
+    <div style="display: none">
+        <script type="text/javascript" src="//static.bidcenter.com.cn/js/www/zhuanti/zhuoluye/js/newtj.js"></script><script src="https://s4.cnzz.com/z_stat.php?id=888048&amp;web_id=888048" language="JavaScript" charset="utf-8"></script>
+    </div>
+
+    <!--右侧快捷方式-->
+    <div class="extra-wrap">
+        <div class="xiazaiApp">
+            <a href="javascript:;">
+                <img src="//img.bidcenter.com.cn/sso/images/tip_03.png">
+                <p class="title">下载APP</p>
+            </a>
+            <div class="guanzhuweixin-hover" style="display: none;">
+                <div class="guanzhuweixin-hover_cont fl">
+                    <img src="//img.bidcenter.com.cn/sso/images/APP.png" class="gzwx_img">
+                    <p class="gzwx_text1">扫码下载</p>
+                    <p class="gzwx_text2">中国采招网客户端<br>随时随地查项目</p>
+                </div>
+                <img src="//img.bidcenter.com.cn/sso/images/tip_14.png" class="hover-jiantou fl">
+            </div>
+        </div>
+
+        <ul class="lianxifangshi">
+            <li class="guanzhuweixin">
+                <a href="javascript:;"><span class="weixin-icon">&nbsp;</span>
+                    <p class="lxfs_text">关注微信</p>
+                </a>
+                <div class="guanzhuweixin-hover" style="display: none;">
+                    <div class="guanzhuweixin-hover_cont fl">
+                        <img src="//img.bidcenter.com.cn/sso/images/weixin.png" class="gzwx_img">
+                        <p class="gzwx_text1">微信关注扫码</p>
+                        <p class="gzwx_text2">
+                            采招网会员服务<br>
+                            每天及时接收新项目
+                        </p>
+                    </div>
+                    <img src="//img.bidcenter.com.cn/sso/images/tip_14.png" class="hover-jiantou fl">
+                </div>
+            </li>
+            <li>
+                <a href="javascript:;"><span class="kefu-icon">&nbsp;</span><p class="lxfs_text">联系客服</p>
+                </a>
+                <div class="lianxikefu-hover">
+                    <img src="//img.bidcenter.com.cn/sso/images/zixundianhua.png">
+                </div>
+            </li>
+            <li style="border-bottom: 0;"><a href="http://wpa.b.qq.com/cgi/wpa.php?ln=1&amp;key=XzkzODE4NDE0MV80Nzg5MTBfNDAwODEwOTY4OF8yXw" target="_blank">
+                <img src="//img.bidcenter.com.cn/sso/images/tip_23.png"><p class="lxfs_text">在线咨询</p>
+            </a></li>
+        </ul>
+        <div class="zhiding">
+            <a class="xiazaiApp" href="javascript:;" onclick="goTop();">
+                <img src="//img.bidcenter.com.cn/sso/images/tip_25.png">
+                <p class="title">置顶</p>
+            </a>
+        </div>
+    </div>
+
+    <!--到期弹窗-->
+    <div class="daoqi-tk" style="display: none">
+        <a href="javascript:" onclick="closeTank()" class="daoqi-close"></a>
+        <div class="clear">
+        </div>
+        <img src="/images/tixing.png" class="daoqi-tixing">
+        <p class="daoqi-wenzi1">
+            您的会员已到期
+        </p>
+        <p class="daoqi-wenzi2">
+            客服联系电话：010-57219778/79
+        </p>
+        <a href="//www.bidcenter.com.cn/Busercenter/Index.aspx" class="daoqi-btn">进入用户中心</a>
+        <p class="daoqi-wenzi3">
+            <font style="color: #ff6767;" id="tiaozhuan"></font>后自动跳转用户中心
+        </p>
+    </div>
+
+    <!--绑定手机号弹窗-Begin-->
+    <div class="bangding" id="bdsjh" style="display: none">
+        <div class="bangding-top">
+            <span class="banding-topL">温馨提示：</span> <a href="javascript:;" class="banding-topR">
+                <img src="/img/login-03.png" style="margin-top: 15px;">
+            </a>
+            <div class="clear">
+            </div>
+        </div>
+        <img src="/img/login-07.png" class="tel-img">
+        <p class="text-p1">
+            绑定手机号
+        </p>
+        <p class="text-p2">
+            忘记密码或账号有异常，可以通过手机号寻回账号
+        </p>
+        <div class="bangding-box">
+            <em class="phone-icon phone-icon_active">&nbsp;</em>
+            <input type="text" id="phone" placeholder="手机号" class="bangding-inp">
+        </div>
+        <div id="jq_trValidate2"></div>
+        <div class="bangding-btn">
+            <a href="javascript:;" id="codeLogin_btn2" class="btn-active">发送验证码</a>
+            <a href="javascript:;" id="codeLogin_btn2_djs" class="btn-active" style="display: none;">60秒后重发</a>
+        </div>
+    </div>
+    <div class="bangding yzm-box" id="bdsjh_yzm" style="display: none;">
+        <div class="bangding-top" style="margin-top: 20px;">
+            <a href="javascript:;" class="banding-topL">
+                <img src="/img/login-19.png"></a> <a href="javascript:;" class="banding-topR">
+                    <img src="/img/login-03.png">
+                </a>
+            <div class="clear">
+            </div>
+        </div>
+        <img src="/img/login-23.png" class="tel-img">
+        <p class="text-p1">
+            输入验证码
+        </p>
+        <p id="send_state" class="text-p2" style="font-size: 14px; font-weight: bold;">
+            请发送验证码至
+        </p>
+        <p id="phone_title" style="text-align: center; color: #545454; font-size: 16px; font-weight: bold;">
+        </p>
+        <div class="bangding-box" style="border: 0;">
+            <input type="text" maxlength="1" tid="1" placeholder="" class="yzm-inp yzm_btn firstNum">
+            <input type="text" maxlength="1" tid="2" placeholder="" class="yzm-inp yzm_btn">
+            <input type="text" maxlength="1" tid="3" placeholder="" class="yzm-inp yzm_btn">
+            <input type="text" maxlength="1" tid="4" placeholder="" class="yzm-inp yzm_btn">
+            <input type="text" maxlength="1" tid="5" placeholder="" class="yzm-inp yzm_btn">
+            <input type="text" maxlength="1" tid="6" placeholder="" class="yzm-inp yzm_btn huicheBind">
+        </div>
+        <div class="bangding-btn">
+            <a href="javascript:;" onclick="btn_sub()" class="btn-active">确认</a>
+        </div>
+        <div class="bangding-btn" id="tijiao5">
+            <a href="javascript:;" id="tjyzm" style="background-color: #fff; color: #03A9F4; border: 1px solid #ccc; font-size: 16px; font-weight: initial;" class="btn-active">发送验证码</a>
+            <a href="javascript:;" id="tjyzm_djs" style="background-color: #fff; color: #03A9F4; border: 1px solid #ccc; font-size: 16px; font-weight: initial; display: none;" class="btn-active">60秒后重发</a>
+        </div>
+        <p class="text-p1" id="bianhao_show" style="color: #FF5722; font-size: 14px;">
+        </p>
+        <div class="bangding-btn" id="Validate5" style="height: 45px; display: none;">
+        </div>
+    </div>
+    <div class="bangding yzm-box" id="chenggongshenqing" style="display: none;">
+        <div class="bangding-top" style="margin-top: 20px;">
+            <a href="javascript:;" class="banding-topL ">
+                <img src="/img/login-19.png"></a> <a href="javascript:;" class="banding-topR cgtz">
+                    <img src="/img/login-03.png">
+                </a>
+            <div class="clear">
+            </div>
+        </div>
+        <img src="/img/login-27.png" class="tel-img">
+        <p class="text-p1">
+            绑定成功
+        </p>
+        <p class="text-p2">
+            您已成功绑定手机号，<span id="bdsuccess">10</span>秒后自动跳转用户中心
+        </p>
+        <div class="bangding-box" style="border: 0; text-align: center;">
+            <a href="//www.bidcenter.com.cn/Busercenter/Index.aspx" class="jinru">进入用户中心</a>
+        </div>
+    </div>
+    <!--End-->
+    <script>
+        var type = parseInt('0');
+        var mobile = '';
+        $(function () {
+            if (type > 0) {
+                chgLogtype($(".login-tab li[type='" + type + "']"));
+                $("#codeLogin_phone").val(mobile);
+            }
+        })
+    </script>
+    <!-- 页面事件 -->
+    <script>
+        $("#txtpassword").keyup(function (event) {
+            if (event.keyCode == 13) {
+                pub.loginMember();
+            }
+        });
+        $("#txtusername").keyup(function (event) {
+            if (event.keyCode == 13) {
+                pub.loginMember();
+            }
+        });
+        $("#txtyzhuname").keyup(function (event) {
+            if (event.keyCode == 13) {
+                pub.loginYezhu();
+            }
+        });
+        $("#txtpass").keyup(function (event) {
+            if (event.keyCode == 13) {
+                pub.loginYezhu();
+            }
+        });
+
+        $('.banding-topR').live('click', function () {
+            layer.closeAll();
+        });
+        // 下载App
+        $('.xiazaiApp a').mouseenter(function () {
+            $(this).next().show();
+        }).mouseleave(function () {
+            $(this).next().hide();
+        });
+        // 关注微信
+        $('.lianxifangshi li a').mouseenter(function () {
+            $(this).next().show();
+        }).mouseleave(function () {
+            $(this).next().hide();
+        });
+        // 扫码切换
+        $('.ewm-login a').click(function () {
+            $('.ewm-login').hide();
+            $('.mimadenglu').hide();
+            $('.saomadenglu').show();
+            $('.huiyuan-login').show();
+            $('.login-tab').hide();
+            CreateLoginCode();
+        })
+        $('.huiyuan-login a').click(function () {
+            $('.huiyuan-login').hide();
+            $('.mimadenglu').show();
+            $('.saomadenglu').hide();
+            $('.ewm-login').show();
+            $('.login-tab').show();
+        });
+        //验证码输入切换foucs
+        $(".yzm_btn").live("keydown", function (event) {
+            if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105))
+                $(this).val("");
+        });
+        $(".yzm_btn").live("keyup", function (event) {
+            var obj = $(this);
+            var val = $.trim(obj.val());
+            if ((event.ctrlKey) && (event.keyCode == 86))
+                return;
+            if (event.keyCode == 8) {
+                if (val == "" && !obj.hasClass("firstNum"))
+                    obj.prev().focus();
+            } else {
+                if (val != "" && !obj.hasClass("huicheBind"))
+                    obj.next().focus();
+            }
+        });
+        //验证码粘贴监听事件
+        var pasteEle = document.getElementsByClassName("firstNum");
+        pasteEle[0].addEventListener("paste", function (e) {
+            if (!(e.clipboardData && e.clipboardData.items)) {
+                return;
+            }
+            for (var i = 0, len = e.clipboardData.items.length; i < len; i++) {
+                var item = e.clipboardData.items[i];
+                if (item.kind === "string") {
+                    item.getAsString(function (str) {
+                        if (str == undefined || $.trim(str) == "")
+                            return;
+                        var yzm = $.trim(str);
+                        if (yzm.length > 5)
+                            $(".yzm_btn:eq(5)").val(yzm.substr(5, 1));
+                        if (yzm.length > 4)
+                            $(".yzm_btn:eq(4)").val(yzm.substr(4, 1));
+                        if (yzm.length > 3)
+                            $(".yzm_btn:eq(3)").val(yzm.substr(3, 1));
+                        if (yzm.length > 2)
+                            $(".yzm_btn:eq(2)").val(yzm.substr(2, 1));
+                        if (yzm.length > 1)
+                            $(".yzm_btn:eq(1)").val(yzm.substr(1, 1));
+                        if (yzm.length > 0)
+                            $(".yzm_btn:eq(0)").val(yzm.substr(0, 1));
+                        var pos = yzm.length < 6 ? yzm.length : 5;
+                        $(".yzm_btn:eq(" + pos + ")").focus();
+                    });
+                }
+            }
+        });
+        // 会员登录切换
+        $('.login-tab li').click(function () {
+            chgLogtype($(this));
+        });
+        // 常见问题
+        $('.cjwt-top_tab li').click(function () {
+            $(this).addClass('active').siblings().removeClass('active');
+            $('.changjianwenti-cont').hide().eq($(this).index()).show();
+        })
+        function chgLogtype(obj) {
+            obj.addClass('active').siblings().removeClass('active');
+            $('.mimadenglu .login-form').hide().eq(obj.index()).show();
+        }
+        //置顶
+        function goTop() {
+            $('body,html').animate({
+                scrollTop: '0em'
+            }, 1000);
+        }
+
+        var yanchong = false;
+        //密保绑定事件
+        function btn_sub() {
+            //			if (jzmm.attr("checked") == "checked")
+            //				flag_jzmm = 1;
+            var name = $("#txtusername");
+            var pwd = $("#txtpassword");
+            var jzmm = $("#jzmm");
+            var nameval = $.trim(name.val());
+            var pwdval = $.trim(pwd.val());
+
+            var flag_jzmm = 0;
+            if (nameval == "" || nameval == "用户名") {
+                layer.msg("请输入用户名");
+                name.focus();
+                return false;
+            }
+
+            else if (pwdval == "" || pwdval == "密码") {
+                layer.msg("请输入密码");
+                pwd.focus();
+                return false;
+            }
+
+            else if (yanchong) {
+                layer.alert("正在提交，请勿重复操作！");
+            }
+            else {
+                yanchong = true;
+                var yzm_code = "";
+                $('.yzm_btn').each(function () {
+                    yzm_code += $(this).val();
+
+                });
+                $.ajax({
+                    type: "get",
+                    data: {
+                        from:curr_from,
+                        location:curr_location,
+                        guid:guid, 
+                        mobile: $("#phone").val(), 
+                        vcode: yzm_code, 
+                        mbzt: mibaoZt, 
+                        username: nameval, 
+                        password: pwdval, 
+                        auto: flag_jzmm 
+                    },
+                    url: "/JsonHandler/MiBaoBindHandler.aspx",
+                    dataType: "json",
+                    success: function (d) {
+                        if (d.ret) {
+                            yanchong = false;
+                            layer.closeAll();
+                            tank('chenggongshenqing');
+                            var itime = 10;
+                            setInterval(function () {
+                                if (itime == 0) {
+                                    window.location.href = "//www.bidcenter.com.cn/Busercenter/Index.aspx";
+                                }
+                                itime--;
+                                $('#bdsuccess').text(itime);
+
+                            }, 1000);
+
+                        }
+                        else {
+                            layer.alert(d.msg);
+
+                        }
+                        yanchong = false;
+                    },
+                    error: function (e) {
+                        yanchong = false;
+                        layer.alert("提交数据出错，请再次提交！");
+                    }
+                });
+
+            }
+        }
+    </script>
+
+    <!--登录相关-->
+    <script type="text/javascript" src="/js/new_loginMibaoBind.js?v=2026/3/3 15:18:45"></script>
+    <script>
+        var sms_vcode = '64E3C12A2908734A47FE24AAE9B0115715BE433DD30E6FC528FEAF255FF63EF37F7AD2694126D8EB3FEC4851B5273C1CAD0BBF3B1B8FB22C01BDB35C99E9E79F';
+        var activeTab = "meblg";
+        var curr_from = 7346;
+        var curr_location = 0;
+        //自动提交
+        var issaoma = false;//二维码是否扫描成功
+        //自动提交
+        var interval;//扫码登录计时器
+
+        function tankDaoqi() {
+            layer.open({
+                title: false,
+                type: 1,
+                closeBtn: 0,
+                area: ['auto', 'auto'], //宽高
+                content: $('.daoqi-tk')
+            });
+            dingshitime();
+        }
+        //重置密码提醒
+        function tankChongzhi(brief) {
+            layer.confirm('登录成功！经过检测，您的登录密码是系统重置密码，安全级别低，建议重置密码。',
+                { icon: 1, title: '提示', btn: ['立即重置', '暂时不用'] }, function (index) {
+                    window.location.href = "//www.bidcenter.com.cn/BuserCenter/ZhangHuGuanLi/RePassword.aspx";
+                }, function () {
+                    window.location.href = decodeURIComponent(brief);
+                });
+        }
+        function dingshitime() {
+            var i = 10;
+            setInterval(function () {
+                if (i == 0) {
+                    window.location.href = "//www.bidcenter.com.cn/Busercenter/Index.aspx";
+                }
+                $('#tiaozhuan').text(i + 'S');
+                i--;
+            }, 1000);
+        }
+        function closeTank() {
+            window.location.href = "//www.bidcenter.com.cn/Busercenter/Index.aspx";
+        }
+
+        var isSubmit = false;
+        //验证码登录事件
+        function codeLogin_Click() {
+            var pre = /(^1[2-9][0-9]{9}$)/;
+            var smsCode = $("#codeLogin_code").val();
+            if ($("#codeLogin_phone").val() == "") {
+                pub.changeRemindTxt("show", "手机号不能为空", 1);
+            } else if ($.trim($("#codeLogin_phone").val()).length !== 11) {
+                pub.changeRemindTxt("show", "手机号格式不正确", 1);
+            } else if (!pre.test($("#codeLogin_phone").val())) {
+                pub.changeRemindTxt("show", "请输入正确的手机号", 1);
+            } else if (smsCode == null || smsCode == "") {
+                pub.changeRemindTxt("show", "请输入验证码", 2);
+            } else if (isSubmit) {
+                layer.alert("正在提交，请勿重复操作！");
+            } else {
+                isSubmit = true;
+                $.ajax({
+                    type: "get",
+                    data: { 
+                        from:curr_from,
+                        location:curr_location,
+                        guid:guid, 
+                        mobile: $("#codeLogin_phone").val(), 
+                        vcode: smsCode 
+                    },
+                    url: "/JsonHandler/codeLoginHandler.aspx",
+                    dataType: "json",
+                    success: function (d) {
+                        if (d.ret) {
+                            var result = JSON.parse(d.other);
+                            //验证成功
+                            if (result.status) {
+                                location.href = decodeURIComponent(result.brief);
+                            }
+                        }
+                        else {
+                            pub.changeRemindTxt("show", d.msg, 2);
+                        }
+                        isSubmit = false;
+                    },
+                    error: function (e) {
+                        isSubmit = false;
+                        pub.changeRemindTxt("show", "提交数据出错，请再次提交！", 2);
+                    }
+                });
+            }
+        }
+    </script>
+
+    <!--二维码相关-->
+    <script>
+        //刷新二维码
+        function refresh_Click() {
+            $(".codeInvalid").hide();
+            CreateLoginCode();
+
+        }
+        //扫码登录
+        function CreateLoginCode() {
+            $.ajax({
+                type: "get",
+                data: {
+                    from:curr_from,
+                    location:curr_location,
+                    guid:guid
+                },
+                url: "/JsonHandler/CreateErweimaHandler.aspx",
+                dataType: "json",
+                success: function (d) {
+                    if (d.ret) {
+                        $("#codeImg").attr("src", d.msg);
+                        if (d.other && d.other != 'undefined') {
+                            var json = JSON.parse(d.other);
+                            var guoqitime = json.time;
+                            CheckLoginCode(json.time, json.message);
+                        }
+                    }
+                    else {
+                        layer.alert(d.msg);
+                    }
+                },
+                error: function (e) {
+                    layer.alert("生成二维码出错，请更换登录方式！");
+                }
+            });
+        }
+        //检查二维码
+        function CheckLoginCode(date, msg) {
+            //清理
+            if (interval) {
+                window.clearInterval(interval);
+                $(".codeInvalid").hide();
+            }
+            interval = setInterval(function () {
+                var isguoqi = true;//是否过期
+                if (date) {
+                    var d = new Date();
+                    isguoqi = after(date, d)
+                    //console.log(date + d + "===" + isguoqi);
+                }
+                if (issaoma)//扫码成功后就不判断二维码是否过期
+                    isguoqi = false;
+                if (isguoqi) {
+                    console.log("已过期");
+                    $(".codeInvalid").show();
+                    window.clearInterval(interval);
+                } else {
+                    var parms = {
+                        from:curr_from,
+                        location:curr_location,
+                        guid:guid,
+                        result: msg
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "/JsonHandler/SaomaDenglu_pc.aspx",
+                        data: parms,
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.ret) {
+                                if (data.retbs == 1) {
+                                    //console.log('扫码成功');
+                                    issaoma = true;
+                                    $(".scanCodeSuc").show();
+                                } else {
+                                    window.clearInterval(interval);
+                                    window.open("//www.bidcenter.com.cn", "_self")
+                                }
+                            } else {
+                                //console.log("等待验证")
+                            }
+                        },
+                        error: function (e) {
+                        }
+                    })
+                }
+            }, 1000);
+        }
+        //某个日期是否晚于某个日期
+        function after(date1, date2) {
+            var stime = transferDate(transferDate(date1)).getTime();
+            var etime = transferDate(transferDate(date2)).getTime();
+            return stime < etime ? true : false;
+        }
+        /*转换日期*/
+        function transferDate(date) {
+            if (typeof date == "string") {
+                return new Date(date.replace(/-/ig, "/"));
+            } else {
+                return date;
+            }
+        }
+
+        //时间戳转换方法    date:时间戳数字
+        function formatDate(datetime, isdatetime, fengefu) {
+            if (datetime > 0) {
+                datetime = parseFloat(datetime);
+                var date = new Date(datetime);
+                fengefu = fengefu || '-';
+                var YY = date.getFullYear() + fengefu;
+                var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + fengefu;
+                var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
+                var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+                var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+                var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+                if (isdatetime)
+                    return YY + MM + DD + " " + hh + mm + ss;
+                else
+                    return YY + MM + DD;
+            } else {
+                return "--";
+            }
+        }
+    </script>
+
+    <!--验证码相关-->
+    
+    <script>
+        $("#tjyzm").on('click',function(){
+            $("#Validate5").show();
+        });
+        var isGetVCF = false;
+        var timeInterval;
+
+        //获取验证码th
+        function GetValidateCode(id, xianshi, selid, type) {
+            if (isGetVCF) {
+                return;
+            } else if (CheckMobile(true, id)) {
+                try {
+                    yzid = selid;
+                    sendBtn = xianshi;
+                    djsbtn = xianshi + "_djs";
+                    moid = id;
+                    lytype = type;
+                    isGetVCF = true;
+                } catch (e) {
+                }
+                SendVCode();
+            }
+        }
+        var mibaoZt = 1;
+        var yzid;
+        var sendBtn;
+        var djsbtn;
+        var moid;
+        var lytype = 2308;
+        function SendVCode(){
+            $("#tijiao" + yzid).show();
+            var sjCount = suiji_bianhao();
+            $("[name='vcode']").attr("isgetvcode", "true");
+            //倒计时
+            var i = 60;
+            $(sendBtn).hide();
+            $(djsbtn).show();
+            $(djsbtn).text(i + "秒后重发");
+            if(sendBtn == "#tjyzm")
+                $("#send_state").text("已发送6位数验证码至");
+            timeInterval = setInterval(function () {
+                i--;
+                $(djsbtn).text(i + "秒后重发");
+                if (i == 0) {
+                    isGetVCF = false;
+                    clearInterval(timeInterval);
+                    $(sendBtn).text("重新发送");
+                    $(sendBtn).show();
+                    $(djsbtn).hide();
+                }
+            }, 1000);
+
+            var username = $('#txtusername').val();
+            if ($(".tab_yzm.active").length > 0)
+                username = $('#codeLogin_phone').val();
+            else if ($(".tab_cgyz.active").length > 0)
+                username = $('#txtyzhuname').val();
+            username = $.trim(username);
+            var vkey = '';
+            try{ vkey = resData ? resData.vkeydata : ''; }
+            catch(e){ vkey = ''; }
+            $.ajax({
+                type: "GET",
+                url: "/JsonHandler/ValidateCode.aspx?v=" + new Date().getTime() + "&num=6&username=" + username,
+                data: { 
+                    from: curr_from, 
+                    location: curr_location <= 0 ? 12682 : curr_location, 
+                    guid:guid, 
+                    mobiles: $.trim($("#" + moid).val()), 
+                    type: lytype, 
+                    vCode: sms_vcode, 
+                    isyz: yzid, 
+                    sjshu: sjCount, 
+                    vkey: vkey },
+                dataType: "json",
+                success: function (data) {
+                    if (!data.ret) {
+                        isGetVCF = false;
+                        layer.alert(data.msg);
+                        $('#bianhao_show').text();
+                    }
+                    else {
+                        $('#bianhao_show').text("发送成功！您的编号是：" + sjCount);
+                    }
+                }
+            });
+        }
+
+        //验证手机号
+        function CheckMobile(focus, id) {
+            //  "mobile";
+            var pre = /(^1[2-9][0-9]{9}$)/;
+
+            var obj = $("#" + id);
+
+            var s = $("#" + id).val();
+            if ($("#" + id).val() == "") {
+                layer.msg("手机号不能为空");
+
+            }
+            else if ($.trim(obj.val()).length !== 11) {
+                layer.msg("请输入正确手机号");
+
+            }
+            else if (!pre.test($("#" + id).val())) {
+                layer.msg("请输入正确手机号");
+
+            }
+            else {
+                return true;
+            }
+            if (focus) obj.focus();
+            return false;
+        }
+        //验证验证码
+        function checkVcode(focus, id) {
+            var obj = $("#" + id);
+            if (obj.attr("isgetvcode") != "true")
+                layer.msg("请先获取验证码");
+            else if ($.trim(obj.val()).length !== 6)
+                layer.msg("验证码格式错误");
+            else if ($.trim(obj.val()) == "" || $.trim(obj.val()) == obj.attr("placeholder"))
+                layer.msg("验证码不能为空");
+            else
+                return true;
+            if (focus) obj.focus();
+            return false;
+        }
+        function first_btn() {
+            if (CheckMobile(true, 'phone')) {
+                mibaoZt = 0;
+                var dianhua = $('#phone').val();
+                $('#phone_title').text('+86 ' + dianhua.substring(0, 3) + " " + dianhua.substring(3, 7) + " " + dianhua.substring(7, 11));
+                layer.closeAll();
+                GetValidateCode('phone', "#tjyzm", 5, 2308);
+                tank('bdsjh_yzm');
+                $('.yzm_btn[tid="1"]').focus();
+            }
+
+        }
+        //验证码登录-获取验证码
+        function codeLogin_getCode() {
+            var pre = /(^1[2-9][0-9]{9}$)/;
+            if ($("#codeLogin_phone").val() == "") {
+                pub.changeRemindTxt("show", "手机号不能为空", 1);
+            } else if ($.trim($("#codeLogin_phone").val()).length !== 11) {
+                pub.changeRemindTxt("show", "手机号格式不正确", 1);
+            } else if (!pre.test($("#codeLogin_phone").val())) {
+                pub.changeRemindTxt("show", "请输入正确的手机号", 1);
+            } else {
+                mibaoZt = 0;
+                var dianhua = $('#codeLogin_phone').val();
+                $.ajax({
+                    type: "GET",
+                    url: "/JsonHandler/checkDataExUserHandler.aspx",
+                    dataType: "json",
+                    data: {
+                        from:curr_from,
+                        location:curr_location,
+                        guid:guid, 
+                        mobl: dianhua 
+                    },
+                    success: function (data) {
+                        if (data.ret) {
+                            GetValidateCode('codeLogin_phone', "#codeLogin_btn", 5, 6569);
+                            $('#cpdeLogin_code').focus();
+                        }
+                        else {
+                            pub.changeRemindTxt("show", "抱歉，您还未成为采招网用户，请注册后登录;", 1);
+                            setTimeout(function () { window.location.href = "//www.bidcenter.com.cn/zhuce.html"; }, 3000)
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+    <!--验证码-->
+    <script type="text/javascript">
+        captchaVerifyCallback_params = { 
+            from: curr_from, 
+            location: curr_location <= 0 ? 12682 : curr_location, 
+            guid: guid, 
+            token: token 
+        };
+        initAliyunCaptcha_config.element = "#jq_trValidate1";
+        initAliyunCaptcha_config.button = "#codeLogin_btn";
+        initAliyunCaptcha_config.mode = "popup";
+        initAliyunCaptcha_config.onBizResultCallback = function (bizResult) {
+            if (bizResult) {
+                codeLogin_getCode();
+            }
+        }
+        initAliyunCaptcha(initAliyunCaptcha_config);
+    </script>
+    
+
+
+<iframe style="display: none;"></iframe></body></html>

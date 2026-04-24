@@ -1,0 +1,16 @@
+# 企微摘要快照（推送时生成，含 manifest，勿提交）
+digest_packs/
+
+# 本仓库自带的便携 Node（体积大，勿提交）
+tools/nodejs/
+tools/_node_stage/
+tools/node-v*-win-x64.zip
+
+# Node 依赖（在子目录执行 npm install 即可恢复）
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/

@@ -1,0 +1,19 @@
+{
+  "name": "web-view-node",
+  "version": "1.0.0",
+  "description": "招采信息披露 - Node.js 展示页",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "gen-ssl": "node nginx/gen-dev-pem.cjs"
+  },
+  "devDependencies": {
+    "selfsigned": "^2.4.1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ini": "^4.1.0",
+    "mysql2": "^3.6.5"
+  }
+}

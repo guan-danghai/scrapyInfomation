@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "e:\caiwu\caizhaowang\_respider_others.py", line 17, in <module>
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+                                  ^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'buffer'

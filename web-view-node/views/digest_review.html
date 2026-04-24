@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>摘要审核 · 招采信息</title>
+  <link rel="stylesheet" href="/css/digest_review.css" id="dr-css">
+  <script>
+    (function () {
+      var pre = (location.pathname.indexOf('/ztb/') === 0) ? '/ztb' : '';
+      var l = document.getElementById('dr-css');
+      if (l && pre) l.href = pre + '/css/digest_review.css';
+    })();
+  </script>
+</head>
+<body>
+  <div class="dr-page">
+    <div class="dr-top">
+      <div>
+        <h1>摘要审核</h1>
+        <p>汇总「当前跑批待发送」与「digest_packs 历史包」；可预览、从包中移除条目（库中改为待审核），并发送企微 textcard。</p>
+      </div>
+      <div class="dr-nav">
+        <a id="lnk-review" href="/review">← 审核工作台</a>
+        <a id="lnk-home" href="/">披露列表</a>
+        <button type="button" class="btn btn-ghost" id="btn-refresh">刷新列表</button>
+      </div>
+    </div>
+
+    <p class="dr-hint" id="dr-hint"></p>
+    <div id="msg"></div>
+    <div id="loading" class="loading">加载中…</div>
+
+    <div class="dr-layout" id="dr-main" style="display:none">
+      <div>
+        <div class="dr-table-wrap">
+          <table class="dr-table">
+            <thead>
+              <tr>
+                <th>类型</th>
+                <th>摘要日</th>
+                <th>生成时间</th>
+                <th>条数</th>
+                <th>Token</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="dr-panel">
+        <h2>预览与发送</h2>
+        <p class="dr-preview-meta" id="pv-meta">请从左侧点击一行选择摘要。</p>
+        <div id="pv-card" style="display:none">
+          <div class="dr-preview-title" id="pv-title"></div>
+          <pre class="dr-preview-desc" id="pv-desc"></pre>
+          <a id="pv-link" class="dr-preview-link" href="#" target="_blank" rel="noopener"></a>
+          <h3 class="dr-subh">本包条目</h3>
+          <p class="dr-pack-hint">移除后：本条从本摘要 manifest 删除，不再出现在预览与企微卡片；数据库中该条 <strong>audit_status</strong> 置为「待审核」。</p>
+          <div class="dr-pack-toolbar" id="pack-toolbar" style="display:none">
+            <input type="search" id="pack-title-q" placeholder="标题关键字筛选；纯数字可匹配 ID（回车筛选）" autocomplete="off">
+            <button type="button" class="btn btn-ghost" id="pack-title-btn">筛选</button>
+            <button type="button" class="btn btn-ghost" id="pack-title-clear">清空</button>
+            <span class="dr-pack-count" id="pack-items-count"></span>
+          </div>
+          <div id="pack-items-loading" class="dr-pack-loading" style="display:none">加载条目…</div>
+          <div id="pack-items-wrap" class="dr-pack-items-wrap" style="display:none">
+            <table class="dr-pack-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>类型</th>
+                  <th>标题</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="pack-items-body"></tbody>
+            </table>
+          </div>
+          <p id="pack-items-empty" class="dr-pack-empty" style="display:none">本包暂无条目。</p>
+          <div class="dr-iframe-wrap">
+            <iframe id="pv-iframe" title="摘要包页面预览" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+          </div>
+          <div class="dr-actions">
+            <button type="button" class="btn btn-primary" id="btn-send" disabled>发送企微卡片…</button>
+            <a class="btn btn-ghost" id="pv-open" href="#" target="_blank" rel="noopener">新窗口打开</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="send-bg" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="send-title">
+      <div class="modal-hd" id="send-title">发送企业微信摘要卡片</div>
+      <div class="modal-bd">
+        <p class="digest-send-tip">userid 与 config.ini 中 <code>to_user</code> 一致；可增删。将发送<strong>当前选中</strong>摘要包对应卡片。</p>
+        <div id="send-users" class="tag-list"></div>
+        <div class="digest-send-add">
+          <input type="text" id="send-add-in" placeholder="输入 userid 后添加" autocomplete="off">
+          <button type="button" class="btn btn-ghost" id="send-add-btn">添加</button>
+        </div>
+        <p class="digest-send-warn" id="send-warn" style="display:none"></p>
+      </div>
+      <div class="modal-ft">
+        <button type="button" class="btn btn-ghost" id="send-cancel">取消</button>
+        <button type="button" class="btn btn-primary" id="send-confirm">确认发送</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var p = location.pathname;
+      var base = '';
+      if (p === '/ztb' || p.indexOf('/ztb/') === 0) base = '/ztb';
+      else if (String(location.port) === '8335') base = '/ztb';
+      var a = document.getElementById('lnk-review');
+      var b = document.getElementById('lnk-home');
+      if (a) a.href = base ? (base + '/review') : '/review';
+      if (b) b.href = base ? (base + '/') : '/';
+    })();
+
+    const apiPrefix = (location.pathname.indexOf('/ztb/') === 0) ? '/ztb' : '';
+
+    let listRows = [];
+    let canAppSend = false;
+    let defaultTousers = [];
+    let selected = null;
+    let sendList = [];
+    let currentPackToken = '';
+    let currentPackItems = [];
+
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
+    }
+
+    function setMsg(text, kind) {
+      var el = document.getElementById('msg');
+      if (!text) { el.innerHTML = ''; return; }
+      el.innerHTML = '<div class="msg msg-' + (kind || 'error') + '">' + esc(text) + '</div>';
+    }
+
+    function tokenShort(t) {
+      t = String(t || '');
+      if (t.length <= 12) return t;
+      return t.slice(0, 8) + '…' + t.slice(-4);
+    }
+
+    function applySelection(row, opts) {
+      opts = opts || {};
+      selected = row;
+      document.querySelectorAll('.dr-table tbody tr').forEach(function (tr) {
+        tr.classList.toggle('dr-row-active', tr.getAttribute('data-token') === row.token);
+      });
+      var meta = document.getElementById('pv-meta');
+      var card = document.getElementById('pv-card');
+      var iframe = document.getElementById('pv-iframe');
+      var digestUrl = apiPrefix + '/digest/' + encodeURIComponent(row.token);
+      meta.textContent = (row.label || '') + ' · 摘要日 ' + (row.digest_date || '-') + ' · 生成 ' + (row.generated_at || '-');
+      if (row.kind === 'pending_send' && row.title) {
+        document.getElementById('pv-title').textContent = row.title;
+        document.getElementById('pv-desc').textContent = row.description || '';
+        document.getElementById('pv-link').href = row.card_url || digestUrl;
+        document.getElementById('pv-link').textContent = row.card_url || digestUrl;
+      } else {
+        document.getElementById('pv-title').textContent = '摘要包（' + (row.digest_date || '') + '）';
+        document.getElementById('pv-desc').textContent = '共 ' + (row.item_count != null ? row.item_count : '—') + ' 条（审核通过）。企微卡片标题与统计文案在发送时按 manifest 与业务规则生成；完整条目见下方页面。';
+        document.getElementById('pv-link').href = digestUrl;
+        document.getElementById('pv-link').textContent = digestUrl;
+      }
+      document.getElementById('pv-open').href = digestUrl;
+      iframe.src = digestUrl + '?_=' + Date.now();
+      card.style.display = 'block';
+      document.getElementById('btn-send').disabled = !canAppSend;
+      loadPackItems(row.token, opts.keepTitleSearch);
+    }
+
+    function filterPackItemsByTitle(items, q) {
+      var s = (q || '').trim().toLowerCase();
+      if (!s) return items.slice();
+      var idNum = /^\d+$/.test(s) ? parseInt(s, 10) : null;
+      return items.filter(function (it) {
+        if (idNum != null && Number(it && it.id) === idNum) return true;
+        var t = String((it && it.title) || '').toLowerCase();
+        return t.indexOf(s) >= 0;
+      });
+    }
+
+    function renderPackItemsTable() {
+      var token = currentPackToken;
+      var wrap = document.getElementById('pack-items-wrap');
+      var empty = document.getElementById('pack-items-empty');
+      var body = document.getElementById('pack-items-body');
+      var toolbar = document.getElementById('pack-toolbar');
+      var countEl = document.getElementById('pack-items-count');
+      var q = document.getElementById('pack-title-q').value;
+      var all = currentPackItems || [];
+      var filtered = filterPackItemsByTitle(all, q);
+      countEl.textContent = all.length
+        ? ('显示 ' + filtered.length + ' / ' + all.length + ' 条' + (q.trim() ? '（标题筛选）' : ''))
+        : '';
+      if (!all.length) {
+        wrap.style.display = 'none';
+        toolbar.style.display = 'none';
+        empty.style.display = 'block';
+        empty.textContent = '本包暂无条目。';
+        return;
+      }
+      toolbar.style.display = 'flex';
+      wrap.style.display = 'block';
+      empty.style.display = 'none';
+      if (!filtered.length) {
+        body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted)">无匹配标题的条目，请调整关键字或清空筛选</td></tr>';
+        return;
+      }
+      body.innerHTML = filtered.map(function (it) {
+        var id = it.id;
+        var tit = (it.title || '（无标题）').slice(0, 80);
+        return '<tr data-rid="' + id + '">'
+          + '<td>' + id + '</td>'
+          + '<td>' + esc(it.sub_type || '-') + '</td>'
+          + '<td class="dr-pack-title">' + esc(tit) + (String(it.title || '').length > 80 ? '…' : '') + '</td>'
+          + '<td><button type="button" class="btn btn-remove-item" data-rid="' + id + '">移出摘要</button></td>'
+          + '</tr>';
+      }).join('');
+      body.querySelectorAll('.btn-remove-item').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var rid = parseInt(btn.getAttribute('data-rid'), 10);
+          if (!rid || !token) return;
+          if (!confirm('确定将 ID=' + rid + ' 从本摘要包移除，并置为「待审核」？')) return;
+          btn.disabled = true;
+          fetch(apiPrefix + '/api/digest_review/remove_item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token, record_id: rid }),
+          })
+            .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+            .then(function (x) {
+              btn.disabled = false;
+              if (!x.ok || !x.j.ok) {
+                setMsg((x.j && x.j.error) || '移除失败', 'error');
+                return;
+              }
+              setMsg('已移出 ID=' + rid + '，剩余 ' + x.j.remaining + ' 条。', 'ok');
+              var keepTok = token;
+              var keepQ = document.getElementById('pack-title-q').value;
+              loadList().then(function () {
+                var r = listRows.find(function (row) { return row.token === keepTok; });
+                if (r) applySelection(r, { keepTitleSearch: keepQ });
+              });
+            })
+            .catch(function (err) {
+              btn.disabled = false;
+              setMsg(err.message || '请求失败', 'error');
+            });
+        });
+      });
+    }
+
+    function loadPackItems(token, keepTitleSearch) {
+      var wrap = document.getElementById('pack-items-wrap');
+      var empty = document.getElementById('pack-items-empty');
+      var loading = document.getElementById('pack-items-loading');
+      var body = document.getElementById('pack-items-body');
+      var toolbar = document.getElementById('pack-toolbar');
+      currentPackToken = token || '';
+      currentPackItems = [];
+      if (keepTitleSearch === undefined) {
+        document.getElementById('pack-title-q').value = '';
+      } else {
+        document.getElementById('pack-title-q').value = keepTitleSearch;
+      }
+      document.getElementById('pack-items-count').textContent = '';
+      toolbar.style.display = 'none';
+      wrap.style.display = 'none';
+      empty.style.display = 'none';
+      loading.style.display = 'block';
+      body.innerHTML = '';
+      fetch(apiPrefix + '/api/digest_pack/' + encodeURIComponent(token))
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          loading.style.display = 'none';
+          if (!data.ok || !data.items) {
+            empty.style.display = 'block';
+            empty.textContent = (data && data.error) || '无法加载条目';
+            return;
+          }
+          currentPackItems = data.items || [];
+          if (!currentPackItems.length) {
+            empty.style.display = 'block';
+            empty.textContent = '本包暂无条目。';
+            return;
+          }
+          renderPackItemsTable();
+        })
+        .catch(function () {
+          loading.style.display = 'none';
+          empty.style.display = 'block';
+          empty.textContent = '加载条目失败';
+        });
+    }
+
+    document.getElementById('pack-title-btn').addEventListener('click', function () {
+      renderPackItemsTable();
+    });
+    document.getElementById('pack-title-clear').addEventListener('click', function () {
+      document.getElementById('pack-title-q').value = '';
+      renderPackItemsTable();
+    });
+    document.getElementById('pack-title-q').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') renderPackItemsTable();
+    });
+
+    function renderTable() {
+      var tb = document.getElementById('tbody');
+      if (!listRows.length) {
+        tb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">暂无摘要包，请先执行跑批生成 digest_packs</td></tr>';
+        return;
+      }
+      tb.innerHTML = listRows.map(function (row) {
+        var badge = row.kind === 'pending_send'
+          ? '<span class="dr-badge dr-badge-pending">待发送</span>'
+          : '<span class="dr-badge dr-badge-pack">历史</span>';
+        return '<tr data-token="' + esc(row.token) + '">'
+          + '<td>' + badge + '</td>'
+          + '<td>' + esc(row.digest_date || '-') + '</td>'
+          + '<td>' + esc((row.generated_at || '').toString().slice(0, 19)) + '</td>'
+          + '<td>' + (row.item_count != null ? row.item_count : '—') + '</td>'
+          + '<td class="token-mono">' + esc(tokenShort(row.token)) + '</td>'
+          + '</tr>';
+      }).join('');
+      tb.querySelectorAll('tr[data-token]').forEach(function (tr) {
+        tr.addEventListener('click', function () {
+          var tok = tr.getAttribute('data-token');
+          var row = listRows.find(function (r) { return r.token === tok; });
+          if (row) applySelection(row);
+        });
+      });
+    }
+
+    function loadList() {
+      setMsg('');
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('dr-main').style.display = 'none';
+      return fetch(apiPrefix + '/api/digest_review/list')
+        .then(function (r) {
+          return r.text().then(function (t) {
+            var ct = (r.headers.get('content-type') || '').toLowerCase();
+            if (ct.indexOf('application/json') === -1) {
+              throw new Error('接口返回非 JSON（请确认已重启 Node 且路径为 ' + apiPrefix + '/api/digest_review/list）');
+            }
+            try { return JSON.parse(t); } catch (e) { throw new Error('JSON 解析失败'); }
+          });
+        })
+        .then(function (data) {
+          document.getElementById('loading').style.display = 'none';
+          if (!data.ok) {
+            setMsg(data.error || '加载失败', 'error');
+            return;
+          }
+          listRows = data.rows || [];
+          canAppSend = !!data.can_app_send;
+          defaultTousers = data.default_tousers || [];
+          var hint = [];
+          if (!canAppSend) hint.push('未配置 corp_id/agent_id/secret 时无法发送企微。');
+          if (data.has_webhook) hint.push('已配置 webhook；本页发送仍走应用消息。');
+          document.getElementById('dr-hint').textContent = hint.join(' ');
+          document.getElementById('dr-main').style.display = 'grid';
+          renderTable();
+          if (listRows.length) {
+            applySelection(listRows[0]);
+          } else {
+            selected = null;
+            document.getElementById('pv-card').style.display = 'none';
+            document.getElementById('pv-meta').textContent = '暂无摘要数据。';
+            document.getElementById('btn-send').disabled = true;
+          }
+        })
+        .catch(function (e) {
+          document.getElementById('loading').style.display = 'none';
+          setMsg(e.message || '网络错误', 'error');
+          return Promise.reject(e);
+        });
+    }
+
+    function renderSendTags() {
+      var wrap = document.getElementById('send-users');
+      if (!sendList.length) {
+        wrap.innerHTML = '<span class="digest-muted-inline">（请添加 userid）</span>';
+        return;
+      }
+      wrap.innerHTML = sendList.map(function (u, i) {
+        return '<span class="userid-tag">' + esc(u)
+          + ' <button type="button" class="tag-remove" data-i="' + i + '">×</button></span>';
+      }).join('');
+      wrap.querySelectorAll('.tag-remove').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var i = parseInt(b.getAttribute('data-i'), 10);
+          sendList.splice(i, 1);
+          renderSendTags();
+        });
+      });
+    }
+
+    function openSendModal() {
+      if (!selected || !canAppSend) return;
+      sendList = defaultTousers.slice();
+      document.getElementById('send-warn').style.display = 'none';
+      document.getElementById('send-add-in').value = '';
+      renderSendTags();
+      document.getElementById('send-bg').classList.add('open');
+    }
+
+    document.getElementById('btn-refresh').addEventListener('click', loadList);
+    document.getElementById('btn-send').addEventListener('click', openSendModal);
+    document.getElementById('send-cancel').addEventListener('click', function () {
+      document.getElementById('send-bg').classList.remove('open');
+    });
+    document.getElementById('send-bg').addEventListener('click', function (e) {
+      if (e.target.id === 'send-bg') document.getElementById('send-bg').classList.remove('open');
+    });
+    document.getElementById('send-add-btn').addEventListener('click', function () {
+      var v = document.getElementById('send-add-in').value.trim();
+      if (!v || sendList.indexOf(v) >= 0) return;
+      sendList.push(v);
+      document.getElementById('send-add-in').value = '';
+      renderSendTags();
+    });
+    document.getElementById('send-confirm').addEventListener('click', function () {
+      var warn = document.getElementById('send-warn');
+      warn.style.display = 'none';
+      if (!sendList.length) {
+        warn.style.display = 'block';
+        warn.textContent = '请至少一名接收人。';
+        return;
+      }
+      if (!selected || !selected.token) return;
+      var btn = document.getElementById('send-confirm');
+      btn.disabled = true;
+      fetch(apiPrefix + '/api/review/send_digest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ touser_ids: sendList, digest_token: selected.token }),
+      })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+        .then(function (x) {
+          btn.disabled = false;
+          if (!x.ok || !x.j.ok) {
+            warn.style.display = 'block';
+            warn.textContent = (x.j && x.j.error) || '发送失败';
+            return;
+          }
+          document.getElementById('send-bg').classList.remove('open');
+          setMsg('已发送：' + (x.j.touser || ''), 'ok');
+        })
+        .catch(function (e) {
+          btn.disabled = false;
+          warn.style.display = 'block';
+          warn.textContent = e.message || '请求失败';
+        });
+    });
+
+    loadList();
+  </script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>审核工作台 · 招采信息</title>
+  <link rel="stylesheet" href="/css/review.css" id="rev-css">
+  <script>
+    (function () {
+      var pre = (location.pathname.indexOf('/ztb/') === 0) ? '/ztb' : '';
+      var l = document.getElementById('rev-css');
+      if (l && pre) l.href = pre + '/css/review.css';
+    })();
+  </script>
+</head>
+<body>
+  <div class="review-page">
+    <div class="review-top">
+      <div>
+        <h1 style="margin:0 0 6px 0">审核工作台</h1>
+        <p style="margin:0;font-size:14px;color:var(--muted)">待人工补全 / 状态查询</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center">
+        <a id="digest-review-lnk" class="digest-review-lnk" href="/digest_review">摘要审核 →</a>
+        <a id="back-list" href="/">← 返回披露列表</a>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button type="button" data-filter="pending" class="active">待审核</button>
+      <button type="button" data-filter="approved">审核通过</button>
+      <button type="button" data-filter="all">全部</button>
+    </div>
+
+    <div id="msg"></div>
+
+    <div class="toolbar">
+      <input type="search" id="keyword" placeholder="标题 / 产品 / 编号 关键词" autocomplete="off">
+      <button type="button" class="btn btn-primary" id="btn-search">筛选</button>
+    </div>
+
+    <div class="table-wrap">
+      <div id="loading" class="loading">加载中…</div>
+      <table class="review-table" id="tbl" style="display:none">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>状态</th>
+            <th>类型</th>
+            <th>标题</th>
+            <th>入库时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="pager" id="pager" style="display:none">
+      <span id="page-info"></span>
+      <button type="button" id="btn-prev">上一页</button>
+      <button type="button" id="btn-next">下一页</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-bg" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="modal-title">
+      <div class="modal-hd" id="modal-title">信息补充</div>
+      <div class="modal-bd">
+        <p style="margin:0 0 10px;color:var(--muted);font-size:13px;">
+          将完整正文粘贴到下方，提交后由 AI 解析并写入详情与各字段，状态将变为「审核通过」，次日摘要会纳入统计。
+        </p>
+        <textarea id="modal-text" placeholder="粘贴公告正文…"></textarea>
+      </div>
+      <div class="modal-ft">
+        <button type="button" class="btn btn-ghost" id="modal-cancel">取消</button>
+        <button type="button" class="btn btn-primary" id="modal-submit">提交 AI 分析并入库</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var p = location.pathname;
+      var base = '';
+      if (p === '/ztb' || p.indexOf('/ztb/') === 0) base = '/ztb';
+      else if (String(location.port) === '8335') base = '/ztb'; /* 与 E:\\nginx 招采反代端口一致：根路径为 /ztb/ */
+      var a = document.getElementById('back-list');
+      if (a) a.href = base ? (base + '/') : '/';
+      var dr = document.getElementById('digest-review-lnk');
+      if (dr) dr.href = base ? (base + '/digest_review') : '/digest_review';
+    })();
+
+    const apiPrefix = (location.pathname.indexOf('/ztb/') === 0) ? '/ztb' : '';
+
+    let auditFilter = 'pending';
+    let page = 1;
+    let total = 0;
+    const pageSize = 30;
+    let supplementId = null;
+
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function setMsg(text, kind) {
+      const el = document.getElementById('msg');
+      if (!text) { el.innerHTML = ''; return; }
+      el.innerHTML = '<div class="msg msg-' + (kind || 'error') + '">' + esc(text) + '</div>';
+    }
+
+    function buildQuery() {
+      const p = new URLSearchParams();
+      p.set('page', String(page));
+      p.set('page_size', String(pageSize));
+      p.set('audit_filter', auditFilter);
+      const kw = document.getElementById('keyword').value.trim();
+      if (kw) p.set('keyword', kw);
+      return p.toString();
+    }
+
+    function statusBadge(st) {
+      const s = (st || '').trim();
+      if (s === '待审核') return '<span class="badge badge-pending">待审核</span>';
+      return '<span class="badge badge-ok">' + esc(s || '审核通过') + '</span>';
+    }
+
+    function renderRows(items) {
+      const tb = document.getElementById('tbody');
+      if (!items.length) {
+        tb.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted)">暂无数据</td></tr>';
+        return;
+      }
+      tb.innerHTML = items.map(function (row) {
+        const pending = ((row.audit_status || '').trim() === '待审核');
+        const supBtn = pending
+          ? '<button type="button" class="btn btn-primary btn-sup" data-id="' + row.id + '">信息补充</button>'
+            + '<button type="button" class="btn btn-approve btn-apv" data-id="' + row.id + '">审核通过</button>'
+          : '';
+        const detailLink = '<a class="btn btn-ghost" href="' + apiPrefix + '/detail/' + row.id + '?from=review" target="_blank" rel="noopener">详情</a>';
+        return '<tr>'
+          + '<td>' + row.id + '</td>'
+          + '<td>' + statusBadge(row.audit_status) + '</td>'
+          + '<td>' + esc(row.sub_type || '-') + '</td>'
+          + '<td class="title-cell">' + esc(row.title || '（无标题）') + '</td>'
+          + '<td>' + esc((row.created_at || '').toString().slice(0, 19)) + '</td>'
+          + '<td><div class="op-cell">' + supBtn + detailLink + '</div></td>'
+          + '</tr>';
+      }).join('');
+
+      tb.querySelectorAll('.btn-sup').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          supplementId = parseInt(btn.getAttribute('data-id'), 10);
+          document.getElementById('modal-text').value = '';
+          document.getElementById('modal-bg').classList.add('open');
+        });
+      });
+      tb.querySelectorAll('.btn-apv').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const rid = parseInt(btn.getAttribute('data-id'), 10);
+          if (!rid) return;
+          btn.disabled = true;
+          setMsg('');
+          fetch(apiPrefix + '/api/review/approve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: rid }),
+          })
+            .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+            .then(function (x) {
+              btn.disabled = false;
+              if (!x.ok || !x.j.ok) {
+                setMsg((x.j && x.j.error) || '操作失败', 'error');
+                return;
+              }
+              setMsg('已标记为审核通过。', 'ok');
+              loadList();
+            })
+            .catch(function (e) {
+              btn.disabled = false;
+              setMsg(e.message || '请求失败', 'error');
+            });
+        });
+      });
+    }
+
+    function loadList() {
+      setMsg('');
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('tbl').style.display = 'none';
+      document.getElementById('pager').style.display = 'none';
+
+      fetch(apiPrefix + '/api/list?' + buildQuery())
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          document.getElementById('loading').style.display = 'none';
+          if (!data.ok) {
+            setMsg(data.error || '加载失败');
+            return;
+          }
+          total = data.total || 0;
+          document.getElementById('tbl').style.display = 'table';
+          renderRows(data.items || []);
+          document.getElementById('pager').style.display = 'flex';
+          document.getElementById('page-info').textContent =
+            '第 ' + page + ' 页，共 ' + total + ' 条';
+          document.getElementById('btn-prev').disabled = page <= 1;
+          document.getElementById('btn-next').disabled = page * pageSize >= total;
+        })
+        .catch(function (e) {
+          document.getElementById('loading').style.display = 'none';
+          setMsg(e.message || '网络错误');
+        });
+    }
+
+    document.getElementById('tabs').addEventListener('click', function (e) {
+      const btn = e.target.closest('button[data-filter]');
+      if (!btn) return;
+      auditFilter = btn.getAttribute('data-filter');
+      document.querySelectorAll('#tabs button').forEach(function (b) {
+        b.classList.toggle('active', b === btn);
+      });
+      page = 1;
+      loadList();
+    });
+
+    document.getElementById('btn-search').addEventListener('click', function () {
+      page = 1;
+      loadList();
+    });
+    document.getElementById('keyword').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { page = 1; loadList(); }
+    });
+
+    document.getElementById('btn-prev').addEventListener('click', function () {
+      if (page > 1) { page--; loadList(); }
+    });
+    document.getElementById('btn-next').addEventListener('click', function () {
+      if (page * pageSize < total) { page++; loadList(); }
+    });
+
+    document.getElementById('modal-cancel').addEventListener('click', function () {
+      document.getElementById('modal-bg').classList.remove('open');
+      supplementId = null;
+    });
+    document.getElementById('modal-bg').addEventListener('click', function (e) {
+      if (e.target.id === 'modal-bg') {
+        document.getElementById('modal-bg').classList.remove('open');
+        supplementId = null;
+      }
+    });
+
+    document.getElementById('modal-submit').addEventListener('click', function () {
+      const text = document.getElementById('modal-text').value.trim();
+      if (!supplementId) return;
+      if (!text) {
+        setMsg('请填写补充正文', 'error');
+        return;
+      }
+      const submitBtn = document.getElementById('modal-submit');
+      submitBtn.disabled = true;
+      setMsg('');
+      fetch(apiPrefix + '/api/review/supplement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: supplementId, supplement: text }),
+      })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+        .then(function ({ ok, j }) {
+          submitBtn.disabled = false;
+          if (!ok || !j.ok) {
+            setMsg((j && j.error) || '提交失败', 'error');
+            return;
+          }
+          document.getElementById('modal-bg').classList.remove('open');
+          supplementId = null;
+          setMsg('已补全并标记为审核通过。', 'ok');
+          loadList();
+        })
+        .catch(function (e) {
+          submitBtn.disabled = false;
+          setMsg(e.message || '请求失败', 'error');
+        });
+    });
+
+    loadList();
+  </script>
+</body>
+</html>

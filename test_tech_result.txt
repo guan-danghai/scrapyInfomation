@@ -1,0 +1,10 @@
+﻿python :   File "<string>", line 24
+所在位置 C:\Users\Administrator\AppData\Local\Temp\ps-script-bc2fba80-38a2-4196-8be7-976898b1d983.ps1:80 字符: 1
++ python -c "
++ ~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (  File "<string>", line 24:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    print(f'[{" OK\
+              ^
+SyntaxError: unterminated string literal (detected at line 24)

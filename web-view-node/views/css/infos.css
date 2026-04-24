@@ -1,0 +1,770 @@
+/**
+ * 招采信息披露 - 列表页样式
+ */
+
+:root {
+  --bg: #F5F7F9;
+  --card: #ffffff;
+  --text: #1f2329;
+  --muted: #8f959e;
+  --accent: #4A89FF;
+  --accent-hover: #3570db;
+  --border: #e5e7eb;
+  --header-bg-top: #0052D9;
+  --header-bg-bottom: #2A7BFF;
+  --input-bg-dark: rgba(255, 255, 255, 0.15);
+  --input-bg-light: #F4F6F8;
+  --radius-pill: 30px;
+  --radius-card: 20px;
+  --max-width: 428px;
+  --touch-min: 44px;
+  --font-base: 16px;
+  --line-body: 1.5;
+  --line-title: 1.4;
+  --safe-left: env(safe-area-inset-left, 0);
+  --safe-right: env(safe-area-inset-right, 0);
+  --safe-bottom: env(safe-area-inset-bottom, 0);
+  /* 卡片内：类型标签与 info 标签列同宽，约四个汉字 */
+  --card-label-col: 4em;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", -apple-system, sans-serif;
+  font-size: var(--font-base);
+  line-height: var(--line-body);
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 12px;
+  padding-left: max(12px, var(--safe-left));
+  padding-right: max(12px, var(--safe-right));
+  padding-bottom: max(12px, var(--safe-bottom));
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.page {
+  width: 100%;
+  max-width: var(--max-width);
+}
+
+/* ========== 1. 顶部沉浸式蓝色区域 ========== */
+.top-header {
+  background: linear-gradient(135deg, var(--header-bg-top), var(--header-bg-bottom));
+  padding: 30px 20px 50px 20px;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+}
+
+.page-title {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 13px 0;
+  letter-spacing: 1px;
+  line-height: 1.3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0;
+}
+
+.page-title-main {
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.page-title-date {
+  font-size: 0.7em;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  opacity: 0.92;
+}
+
+.main-search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--input-bg-dark);
+  border-radius: var(--radius-pill);
+  padding: 8px 16px;
+  backdrop-filter: blur(5px);
+}
+
+.main-search-bar svg {
+  width: 18px;
+  height: 18px;
+  fill: #fff;
+  margin-right: 10px;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.main-search-bar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  min-width: 0;
+}
+
+.main-search-bar input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ========== 2. 悬浮白色筛选卡片 ========== */
+.filter-card {
+  
+  padding: 10px 10px 16px;
+  margin: -30px 0px 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  position: relative;
+  z-index: 10;
+}
+
+/* 类型 Toggle 按钮行 */
+.type-toggle-row {
+  display: flex;
+  gap: 12px;
+}
+.type-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--input-bg-light);
+  color: var(--muted);
+  border: 2px solid transparent;
+  padding: 10px 0;
+  border-radius: var(--radius-pill);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: var(--touch-min);
+  transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+  letter-spacing: 0.5px;
+}
+
+/* 未选中：招标公告浅蓝、中标结果浅橙 */
+#btn-zhaobiao:not(.active) {
+  background: #e8f1ff;
+  color: #1d5bbd;
+  border-color: rgba(74, 137, 255, 0.28);
+}
+
+#btn-zhaobiao:not(.active) .btn-count {
+  color: #2563c8;
+  opacity: 0.92;
+}
+
+#btn-zhongbiao:not(.active) {
+  background: #fff0e6;
+  color: #d68649;
+  border-color: rgba(214, 134, 73, 0.35);
+}
+
+#btn-zhongbiao:not(.active) .btn-count {
+  color: #d68649;
+  opacity: 0.95;
+}
+
+.type-btn .btn-icon {
+  font-size: 18px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.type-btn .btn-icon svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.type-btn .btn-label {
+  flex-shrink: 0;
+}
+
+.type-btn .btn-count {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.85;
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+
+.type-btn.active .btn-count {
+  opacity: 0.95;
+}
+
+.type-btn:active { opacity: 0.85; transform: scale(0.98); }
+
+/* 激活态 */
+.type-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 6px 16px rgba(74, 137, 255, 0.35);
+}
+
+/* 招标公告激活用蓝色，中标结果激活用橙色 */
+#btn-zhongbiao.active {
+  background: #E65100;
+  border-color: #E65100;
+  box-shadow: 0 6px 16px rgba(230, 81, 0, 0.3);
+}
+
+
+/* ========== 2b. 分类分组区（替代旧 category-section） ========== */
+.ps-sections {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 每个分组卡片 */
+.ps-section {
+  background: var(--card);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+/* 分组标题栏 */
+.ps-section-hd {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  min-height: 48px;
+  transition: background 0.15s;
+  letter-spacing: 0.3px;
+}
+
+.ps-section-hd:active { background: rgba(0, 0, 0, 0.03); }
+
+/* 软件相关：标题黑灰色 */
+#section-software .ps-section-hd { color: var(--text); }
+
+/* 硬件相关：标题黑灰色 */
+#section-hardware .ps-section-hd { color: var(--text); }
+
+.ps-hd-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.ps-hd-label { flex: 0 0 auto; text-align: left; }
+
+.ps-hd-count {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+.ps-hd-arrow {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: transform 0.25s ease;
+  opacity: 0.6;
+}
+
+/* 收起时箭头旋转 */
+.ps-section-hd[aria-expanded="false"] .ps-hd-arrow {
+  transform: rotate(-90deg);
+}
+
+/* 分组内容区：默认展开 */
+.ps-body {
+  overflow: hidden;
+  padding: 8px 10px 4px;
+}
+
+/* 收起时隐藏（使用 display:none 避免大量卡片 max-height 动画问题）*/
+.ps-body--collapsed {
+  display: none;
+}
+
+.ps-loading,
+.ps-more {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 14px;
+}
+
+.ps-error { color: #c62828; }
+
+.ps-end {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 10px 16px 14px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+
+.ps-sentinel {
+  height: 1px;
+  width: 100%;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+
+/* ========== 2b. 分类筛选区（可折叠） ========== */
+.category-section {
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+.category-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  min-height: 32px;
+}
+
+.category-toggle:active { opacity: 0.75; }
+
+.category-toggle-label {
+  flex: 1;
+  text-align: left;
+}
+
+.category-arrow {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+  color: var(--muted);
+}
+
+/* 收起时箭头反转 */
+.category-toggle[aria-expanded="false"] .category-arrow {
+  transform: rotate(-90deg);
+}
+
+/* 分类按钮行：可折叠动画 */
+.category-row {
+  display: flex;
+  gap: 10px;
+  overflow: hidden;
+  max-height: 60px;
+  transition: max-height 0.28s ease, opacity 0.22s ease, margin-top 0.22s ease;
+  margin-top: 8px;
+  opacity: 1;
+}
+
+.category-row.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+}
+
+/* 分类筛选按钮 */
+.category-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 2px solid transparent;
+  padding: 8px 0;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 40px;
+  transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.category-btn:active { opacity: 0.85; transform: scale(0.98); }
+
+/* 软件相关：未激活 — 青绿浅色 */
+#btn-software:not(.active) {
+  background: #e6faf6;
+  color: #0b7a63;
+  border-color: rgba(11, 122, 99, 0.25);
+}
+
+#btn-software:not(.active) .category-btn-count {
+  color: #085c4a;
+  opacity: 0.9;
+}
+
+/* 硬件相关：未激活 — 琥珀浅色 */
+#btn-hardware:not(.active) {
+  background: #fff7e6;
+  color: #b45309;
+  border-color: rgba(180, 83, 9, 0.28);
+}
+
+#btn-hardware:not(.active) .category-btn-count {
+  color: #8a3d04;
+  opacity: 0.9;
+}
+
+/* 激活态 — 软件绿 */
+#btn-software.active {
+  background: #0b7a63;
+  color: #fff;
+  border-color: #0b7a63;
+  box-shadow: 0 6px 16px rgba(11, 122, 99, 0.32);
+}
+
+/* 激活态 — 硬件琥珀 */
+#btn-hardware.active {
+  background: #b45309;
+  color: #fff;
+  border-color: #b45309;
+  box-shadow: 0 6px 16px rgba(180, 83, 9, 0.30);
+}
+
+.category-btn-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.category-btn-label { flex-shrink: 0; }
+
+.category-btn-count {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.85;
+  margin-left: 1px;
+  flex-shrink: 0;
+}
+
+.category-btn.active .category-btn-count { opacity: 0.95; }
+
+
+/* ========== 3. 列表与卡片 ========== */
+.list-wrap {
+  width: 100%;
+}
+
+.project-card {
+  background: var(--card);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  padding: 15px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project-card:active {
+  transform: scale(0.99);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+/* 左侧标签组 */
+.card-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.project-card .type-badge {
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  line-height: 1.6;
+  padding: 1px 8px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* 招标类：蓝色 */
+.project-card--zhaobiao .type-badge {
+  color: var(--accent);
+  background: #e8f1ff;
+}
+
+/* 中标类（中标结果、中标公告、中标公示等）：橘色 */
+.project-card--zhongbiao .type-badge {
+  color: #FF5A14;
+  background: #fff0e6;
+}
+
+/* 其他类型：中性 */
+.project-card--other .type-badge {
+  background: #f0f2f5;
+  color: var(--muted);
+}
+
+/* 采购方式标签：同款样式，紫色 */
+.method-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7c3aed;
+  background: #ede9fe;
+  border-radius: 20px;
+  padding: 1px 8px;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+/* 右侧日期区块：一行内显示 */
+.publish-date-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.publish-date-label {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.publish-date {
+  font-size: 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* 采购人：仅展示机构名，置于标题上方 */
+.card-owner {
+  /* 暂时隐藏采购人行；恢复展示时删掉下一行 */
+  display: none;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 0 0 6px 0;
+  word-break: break-all;
+}
+
+.card-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0 0 5px 0;
+  word-break: break-word;
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 8px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.info-label {
+  color: var(--muted);
+  font-size: 0.85rem;
+  flex: 0 0 var(--card-label-col);
+  width: var(--card-label-col);
+  min-width: var(--card-label-col);
+  max-width: var(--card-label-col);
+  margin-right: 12px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.info-value {
+  color: var(--text);
+  flex: 1;
+  word-break: break-all;
+}
+
+.more-tag {
+  display: inline-block;
+  background: rgba(74,137,255,0.12);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.tag-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.product-tag {
+  background: #f0f2f5;
+  color: var(--text);
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.card-divider {
+  height: 1px;
+  background-image: linear-gradient(to right, #e0e6ed 50%, transparent 50%);
+  background-size: 10px 1px;
+  background-repeat: repeat-x;
+  margin: 5px 0;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.budget-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.budget-amount {
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.project-card--zhaobiao .budget-amount {
+  color: var(--accent);
+}
+
+.project-card--zhongbiao .budget-amount {
+  color: #FF5A14;
+}
+
+.project-card--other .budget-amount {
+  color: var(--text);
+}
+
+.budget-amount .unit {
+  font-size: 14px;
+  font-weight: normal;
+  margin-left: 2px;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: transparent;
+  color: #8698ba;
+  text-decoration: none;
+  font-size: 0.8rem;
+  padding: 4px 0;
+  min-height: auto;
+  border-radius: 0;
+  box-shadow: none;
+  transition: color 0.2s ease;
+}
+
+.action-btn:active {
+  color: var(--accent-hover);
+}
+
+.action-btn-icon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+
+.list-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 24px;
+  font-size: 15px;
+}
+
+/* ========== 4. 无限滚动与状态 ========== */
+.load-more {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 16px 12px 8px;
+}
+
+.list-end-hint {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 20px 16px 28px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+.infinite-sentinel {
+  height: 1px;
+  width: 100%;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.loading,
+.error {
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.error { color: #c62828; }

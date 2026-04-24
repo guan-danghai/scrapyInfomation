@@ -1,0 +1,8 @@
+==========================================================================================
+原始标题                                                实际结果            期望结果            通过
+------------------------------------------------------------------------------------------
+Traceback (most recent call last):
+  File "e:\caiwu\caizhaowang\test_type_extract.py", line 81, in <module>
+    print(f"{short:<50}  {info_type:<14}  {expected:<14}  {passed}")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'gbk' codec can't encode character '\u2713' in position 84: illegal multibyte sequence

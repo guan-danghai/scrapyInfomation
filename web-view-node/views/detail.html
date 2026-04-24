@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4A89FF">
+  <title>爬取详情</title>
+  <link rel="stylesheet" href="/css/detail.css">
+  <style>
+    /* ========== 中标人表格 ========== */
+    .winners-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-top: 6px;
+    }
+    .winners-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .winners-table th {
+      background: var(--accent-light);
+      color: var(--accent);
+      font-weight: 600;
+      padding: 8px 10px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .winners-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-title);
+      word-break: break-word;
+    }
+    .winners-table tr:last-child td { border-bottom: none; }
+    .winners-table tr:nth-child(even) td { background: #F8FAFC; }
+
+    /* ========== 正文中的内联表格 ========== */
+    .rich-text table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin: 12px 0;
+    }
+    .rich-text th, .rich-text td {
+      border: 1px solid var(--border);
+      padding: 7px 10px;
+      word-break: break-word;
+    }
+    .rich-text th {
+      background: var(--accent-light);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .rich-text tr:nth-child(even) td { background: #F8FAFC; }
+
+    /* ========== 额外 info 行 ========== */
+    .info-value-highlight {
+      color: #E65100;
+      font-weight: 700;
+    }
+    .info-value-dim {
+      color: var(--muted);
+    }
+    .badge-type {
+      display: inline-block;
+      background: #FFF3E0;
+      color: #E65100;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="back"><a id="back-list" href="/">← 返回列表</a></div>
+    <div id="loading" class="loading">加载中…</div>
+    <div id="main" style="display: none;">
+
+      <!-- 卡片1：头部 meta + 信息字段 -->
+      <div class="card card-meta">
+        <div class="header-meta">
+          <span class="type-badge" id="meta-type"></span>
+          <span class="publish-time" id="meta-time"></span>
+        </div>
+        <h1 class="project-title" id="title"></h1>
+        <div class="info-box" id="info-box"></div>
+      </div>
+
+      <!-- 卡片2：中标候选人表格（有多中标人时显示） -->
+      <div class="card" id="winners-card" style="display:none;">
+        <div class="section-header">中标候选人</div>
+        <div class="winners-wrap">
+          <table class="winners-table" id="winners-table">
+            <thead>
+              <tr><th>排序</th><th>中标候选人</th><th>金额</th></tr>
+            </thead>
+            <tbody id="winners-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 卡片3：详情正文 -->
+      <div class="card card-content">
+        <div class="section-header">详情正文</div>
+        <div class="rich-text" id="content"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      function safeDigestRefPath(raw) {
+        if (!raw || typeof raw !== 'string') return '';
+        var s = raw.split('?')[0].replace(/\/+$/, '');
+        if (/^\/digest\/[a-f0-9]{32}$/i.test(s)) return s;
+        if (/^\/ztb\/digest\/[a-f0-9]{32}$/i.test(s)) return s;
+        return '';
+      }
+      var p = location.pathname;
+      var base = '';
+      if (p === '/ztb' || p.indexOf('/ztb/') === 0) base = '/ztb';
+      else if (String(location.port) === '8335') base = '/ztb';
+      var a = document.getElementById('back-list');
+      if (!a) return;
+      var sp = new URLSearchParams(location.search);
+      var fromReview = sp.get('from') === 'review';
+      var digestBack = safeDigestRefPath(sp.get('digest_ref'));
+      if (fromReview) {
+        a.href = base ? (base + '/review') : '/review';
+        a.textContent = '← 返回审核工作台';
+      } else if (digestBack) {
+        a.href = digestBack;
+        a.textContent = '← 返回摘要';
+      } else {
+        a.href = base ? (base + '/') : '/';
+        a.textContent = '← 返回列表';
+      }
+    })();
+
+    const recordId = {{ record_id }};
+
+    fetch('/api/detail/' + recordId)
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('loading').style.display = 'none';
+        if (!data.ok) {
+          showError(data.error || '未知错误');
+          return;
+        }
+        renderDetail(data.item);
+      })
+      .catch(err => showError(err.message));
+
+    function showError(msg) {
+      var el = document.getElementById('loading');
+      el.style.display = 'block';
+      el.textContent = '请求失败：' + msg;
+      el.className = 'loading error';
+    }
+
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s || '';
+      return d.innerHTML;
+    }
+
+    /* ── 信息行模板 ── */
+    function infoRow(label, value, cls) {
+      if (!value) return '';
+      return '<div class="info-row">'
+        + '<span class="info-label">' + label + '</span>'
+        + '<span class="info-value' + (cls ? ' ' + cls : '') + '">' + esc(value) + '</span>'
+        + '</div>';
+    }
+
+    /* ── 多中标人表格 ── */
+    function renderWinners(bidders, amounts) {
+      var bList = bidders ? bidders.split('|').map(s => s.trim()).filter(Boolean) : [];
+      var aList = amounts  ? amounts.split('|').map(s => s.trim())  : [];
+      if (bList.length <= 1) return;  // 单个走 info-row 普通渲染
+
+      var tbody = document.getElementById('winners-tbody');
+      bList.forEach(function(b, i) {
+        var tr = document.createElement('tr');
+        var amt = aList[i] || '—';
+        tr.innerHTML = '<td>' + (i+1) + '</td><td>' + esc(b) + '</td><td>' + esc(amt) + '</td>';
+        tbody.appendChild(tr);
+      });
+      document.getElementById('winners-card').style.display = 'block';
+    }
+
+    /* ── 正文渲染：检测 tab 分隔行自动转表格 ── */
+    function renderContent(text) {
+      if (!text) {
+        document.getElementById('content').textContent = '（无爬取正文）';
+        return;
+      }
+      var lines = text.split('\n');
+      var html = '';
+      var tableLines = [];
+      var inTable = false;
+
+      function flushTable() {
+        if (!tableLines.length) return;
+        html += '<table><thead>';
+        var headers = tableLines[0].split('\t').map(h => '<th>' + esc(h.trim()) + '</th>').join('');
+        html += '<tr>' + headers + '</tr></thead><tbody>';
+        for (var r = 1; r < tableLines.length; r++) {
+          var cells = tableLines[r].split('\t').map(c => '<td>' + esc(c.trim()) + '</td>').join('');
+          html += '<tr>' + cells + '</tr>';
+        }
+        html += '</tbody></table>';
+        tableLines = [];
+      }
+
+      lines.forEach(function(line) {
+        var cols = line.split('\t').filter(c => c.trim());
+        if (cols.length >= 2) {
+          tableLines.push(line);
+          inTable = true;
+        } else {
+          if (inTable) { flushTable(); inTable = false; }
+          var s = line.trim();
+          if (s) {
+            html += '<p>' + esc(s) + '</p>';
+          }
+        }
+      });
+      if (inTable) flushTable();
+
+      document.getElementById('content').innerHTML = html || '<p>（无爬取正文）</p>';
+    }
+
+    /* ── 主渲染函数 ── */
+    function renderDetail(item) {
+      document.getElementById('main').style.display = 'block';
+
+      // meta 行
+      document.getElementById('meta-type').textContent = item.sub_type || '其他';
+      document.getElementById('meta-time').textContent =
+        item.published_at ? '发布于 ' + item.published_at.slice(0, 16).replace('T', ' ') : '';
+      document.getElementById('title').textContent = item.title || '（无标题）';
+
+      // 信息卡片字段
+      var rows = [];
+
+      // 区分单/多中标人
+      var bidders = (item.winning_bidder || '').split('|').map(s => s.trim()).filter(Boolean);
+      var amounts  = (item.winning_amount  || '').split('|').map(s => s.trim());
+
+      if (bidders.length > 1) {
+        // 多中标人：信息行只提示「见下方表格」，表格卡片单独渲染
+        rows.push(infoRow('中标候选人', '共 ' + bidders.length + ' 家（见下方）', 'info-value-dim'));
+        renderWinners(item.winning_bidder, item.winning_amount);
+      } else {
+        if (item.winning_bidder) rows.push(infoRow('中标单位', item.winning_bidder, 'info-value-highlight'));
+        if (item.winning_amount)  rows.push(infoRow('中标金额', item.winning_amount, 'info-value-highlight'));
+      }
+
+      if (item.project_owner)    rows.push(infoRow('采购人', item.project_owner));
+      if (item.bidding_agent)    rows.push(infoRow('代理机构', item.bidding_agent));
+      if (item.bidding_method)   rows.push(infoRow('采购方式', item.bidding_method));
+      var st = (item.sub_type || '').trim();
+      var isZb = st && (st.indexOf('中标') >= 0 || st.indexOf('成交结果') >= 0 || st.indexOf('预成交') >= 0);
+      if (item.bid_deadline && !isZb) {
+        rows.push(infoRow('截止时间', String(item.bid_deadline).replace('T', ' ').slice(0, 19)));
+      }
+      if (item.project_no)       rows.push(infoRow('项目编号', item.project_no));
+      if (item.project_budget)   rows.push(infoRow('项目预算', item.project_budget.replace(/\|/g, '\n')));
+      if (item.owner_contact)    rows.push(infoRow('业主联系人', item.owner_contact));
+      if (item.owner_phone)      rows.push(infoRow('业主电话', item.owner_phone));
+      if (item.province || item.city) {
+        rows.push(infoRow('地区', [item.province, item.city, item.district].filter(Boolean).join(' ')));
+      }
+      if (item.product_related)  rows.push(infoRow('所属分类', item.product_related));
+
+      document.getElementById('info-box').innerHTML =
+        rows.length ? rows.join('') : '<div class="info-row"><span class="info-value info-value-dim">暂无结构化信息</span></div>';
+
+      // 正文渲染
+      renderContent(item.detail || '');
+    }
+  </script>
+</body>
+</html>

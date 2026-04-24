@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>招采信息披露</title>
+  <style>
+    :root {
+      --bg: #1a1d23;
+      --card: #252830;
+      --text: #e6e8ec;
+      --muted: #8b909a;
+      --accent: #5c9ead;
+      --border: #3a3f4a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 16px;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+      color: var(--text);
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: var(--card);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .toolbar input, .toolbar select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .toolbar input::placeholder { color: var(--muted); }
+    .toolbar button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .toolbar button:hover { opacity: 0.9; }
+    .toolbar .date-label { color: var(--muted); font-size: 14px; white-space: nowrap; }
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--card);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: #2d3139;
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    tr:hover { background: rgba(92, 158, 173, 0.08); }
+    td a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    td a:hover { text-decoration: underline; }
+    .cell-title { max-width: 320px; }
+    .cell-title span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .muted { color: var(--muted); font-size: 12px; }
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .pagination button {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .pagination button:hover:not(:disabled) { background: var(--border); }
+    .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pagination span { color: var(--muted); font-size: 13px; }
+    .loading, .error {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .error { color: #c75c5c; }
+
+    /* 手机端适配 */
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; margin-bottom: 12px; }
+      .toolbar { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px; }
+      .toolbar input { width: 100% !important; min-height: 40px; }
+      .toolbar select { flex: 1; min-height: 40px; }
+      .toolbar button { min-height: 44px; font-size: 16px; }
+      .table-wrap { border-radius: 8px; overflow: visible; }
+      .table-wrap table thead { display: none; }
+      .table-wrap tbody tr { display: block; margin-bottom: 12px; border-radius: 8px; border: 1px solid var(--border); padding: 12px; background: var(--card); }
+      .table-wrap tbody td { display: block; padding: 6px 0; border: none; font-size: 14px; }
+      .table-wrap tbody td::before { content: attr(data-label); font-weight: 600; color: var(--muted); font-size: 12px; display: block; margin-bottom: 2px; }
+      .table-wrap .cell-title span { white-space: normal; word-break: break-all; }
+      .table-wrap tbody td[data-label=" "]::before { content: none; }
+      .pagination { flex-direction: column; gap: 10px; }
+      .pagination button { min-height: 44px; width: 100%; font-size: 16px; }
+      .pagination span { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <h1>招采信息披露</h1>
+  <div class="toolbar">
+    <label for="data_date" class="date-label">数据日期：</label>
+    <input type="date" id="data_date" title="默认来自配置（today=当天，具体日期=该日）" style="width: 140px;">
+    <input type="text" id="keyword" placeholder="关键词（标题/产品相关）" style="width: 240px;">
+    <select id="sub_type">
+      <option value="">全部类型</option>
+    </select>
+    <select id="product_related">
+      <option value="">全部产品相关</option>
+      <option value="监管报送">监管报送</option>
+      <option value="IT系统建设">IT系统建设</option>
+      <option value="软件相关">软件相关</option>
+      <option value="其它科技相关">其它科技相关</option>
+    </select>
+    <button type="button" id="search">查询</button>
+  </div>
+  <div class="table-wrap">
+    <div id="loading" class="loading">加载中…</div>
+    <table id="table" style="display: none;">
+      <thead>
+        <tr>
+          <th>标题</th>
+          <th>外部链接</th>
+          <th>爬取详情</th>
+          <th>项目业主</th>
+          <th>中标单位</th>
+          <th>信息类型</th>
+          <th>预算/中标金额</th>
+          <th>截止时间</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <div class="pagination" id="pagination" style="display: none;"></div>
+
+  <script>
+    let page = 1;
+    const pageSize = 50;
+    const defaultDate = "{{ default_date | default('', true) }}";
+
+    function buildQuery() {
+      const params = new URLSearchParams();
+      params.set('page', String(page));
+      params.set('page_size', String(pageSize));
+      const dateVal = document.getElementById('data_date').value.trim();
+      if (dateVal) params.set('date', dateVal);
+      const kw = document.getElementById('keyword').value.trim();
+      if (kw) params.set('keyword', kw);
+      const st = document.getElementById('sub_type').value;
+      if (st) params.set('sub_type', st);
+      const pr = document.getElementById('product_related').value;
+      if (pr) params.set('product_related', pr);
+      params.set('audit_filter', 'approved');
+      return params.toString();
+    }
+
+    function renderRows(items) {
+      const tbody = document.getElementById('tbody');
+      tbody.innerHTML = items.map(row => {
+        const title = escapeHtml(row.title || '-');
+        const externalLink = row.detail_url ? `<a href="${escapeAttr(row.detail_url)}" target="_blank" rel="noopener">源站</a>` : '-';
+        const crawlDetailLink = `<a href="/detail/${row.id}" target="_blank" rel="noopener">全文</a>`;
+        const budget = [row.project_budget, row.winning_amount].filter(Boolean).join(' / ') || '-';
+        const st = (row.sub_type || '').trim();
+        const isZb = st && (st.includes('中标') || st.includes('成交结果') || st.includes('预成交'));
+        const deadlineCell = isZb
+          ? ''
+          : (row.bid_deadline ? String(row.bid_deadline).slice(0, 10) : '-');
+        return `<tr>
+          <td class="cell-title" data-label="标题"><span title="${title}">${title}</span></td>
+          <td data-label="外部链接">${externalLink}</td>
+          <td data-label="爬取详情">${crawlDetailLink}</td>
+          <td data-label="项目业主">${escapeHtml((row.project_owner || '').slice(0, 32))}</td>
+          <td data-label="中标单位">${escapeHtml((row.winning_bidder || '').slice(0, 32))}</td>
+          <td data-label="信息类型">${escapeHtml(row.sub_type || '-')}</td>
+          <td data-label="预算/中标金额">${escapeHtml(budget)}</td>
+          <td class="muted" data-label="截止时间">${deadlineCell}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function escapeHtml(s) {
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+    function escapeAttr(s) {
+      return escapeHtml(s).replace(/"/g, '&quot;');
+    }
+
+    function renderPagination(total) {
+      const totalPages = Math.max(1, Math.ceil(total / pageSize));
+      const pag = document.getElementById('pagination');
+      pag.style.display = 'flex';
+      pag.innerHTML = `
+        <button type="button" id="prev" ${page <= 1 ? 'disabled' : ''}>上一页</button>
+        <span>第 ${page} / ${totalPages} 页，共 ${total} 条</span>
+        <button type="button" id="next" ${page >= totalPages ? 'disabled' : ''}>下一页</button>
+      `;
+      document.getElementById('prev').onclick = () => { page--; load(); };
+      document.getElementById('next').onclick = () => { page++; load(); };
+    }
+
+    function load() {
+      const loading = document.getElementById('loading');
+      const table = document.getElementById('table');
+      loading.style.display = 'block';
+      table.style.display = 'none';
+      fetch('/api/list?' + buildQuery())
+        .then(r => r.json())
+        .then(data => {
+          loading.style.display = 'none';
+          if (!data.ok) {
+            loading.textContent = '错误：' + (data.error || '未知');
+            loading.className = 'loading error';
+            return;
+          }
+          table.style.display = 'table';
+          renderRows(data.items);
+          renderPagination(data.total);
+        })
+        .catch(err => {
+          loading.style.display = 'block';
+          loading.textContent = '请求失败：' + err.message;
+          loading.className = 'loading error';
+        });
+    }
+
+    document.getElementById('search').onclick = () => { page = 1; load(); };
+
+    // 动态加载 sub_type 下拉选项（数据库实际存在的类型）
+    (function loadSubTypeOptions() {
+      fetch('/api/sub_type_options')
+        .then(r => r.json())
+        .then(data => {
+          if (!data.ok || !data.options) return;
+          const sel = document.getElementById('sub_type');
+          data.options.forEach(opt => {
+            const el = document.createElement('option');
+            el.value = opt;
+            el.textContent = opt;
+            sel.appendChild(el);
+          });
+        })
+        .catch(() => {});
+    })();
+
+    (function setDefaultDate() {
+      const el = document.getElementById('data_date');
+      if (defaultDate) el.value = defaultDate;
+      if (!el.value) {
+        fetch('/api/default_date').then(r => r.json()).then(d => {
+          if (d.ok && d.default_date) el.value = d.default_date;
+          load();
+        }).catch(() => load());
+        return;
+      }
+      load();
+    })();
+  </script>
+</body>
+</html>
