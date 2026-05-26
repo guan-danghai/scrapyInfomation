@@ -37,6 +37,21 @@ server {
     add_header X-Frame-Options SAMEORIGIN always;
     add_header Referrer-Policy strict-origin-when-cross-origin always;
 
+    # 若只写了 location /ztb-test/digest/ 而没有整段 /ztb-test/，
+    # 则转发卡片里的 /ztb-test/detail/xxx?fr= 会在 Nginx 层 404，浏览器提示「页面无法访问」。
+    # 请保证下列之一：
+    #   (1) 用下面的整块前缀反代到 Node（与摘要、详情、API 同一端口进程）；
+    #   (2) 或保留 location / { proxy_pass ... } 全覆盖。
+    #
+    # location /ztb-test/ {
+    #     proxy_pass http://127.0.0.1:5001;
+    #     proxy_http_version 1.1;
+    #     proxy_set_header Host $host;
+    #     proxy_set_header X-Real-IP $remote_addr;
+    #     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    #     proxy_set_header X-Forwarded-Proto $scheme;
+    # }
+
     location / {
         proxy_pass http://127.0.0.1:5000;
         proxy_http_version 1.1;

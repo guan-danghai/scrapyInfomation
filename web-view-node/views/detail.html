@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#4A89FF">
-  <title>爬取详情</title>
+  <title>招中标详情</title>
   <link rel="stylesheet" href="/css/detail.css">
   <style>
     /* ========== 中标人表格 ========== */
@@ -70,11 +70,104 @@
       padding: 2px 8px;
       border-radius: 10px;
     }
+    .toolbar-forward {
+      margin: 8px 0 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .toolbar-forward button {
+      background: var(--accent, #4A89FF);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .toolbar-forward .hint { font-size: 12px; color: var(--muted, #64748b); }
+    /* 转发弹层（企微内 prompt 常无效） */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(15, 23, 42, 0.55);
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px; box-sizing: border-box;
+    }
+    .modal-box {
+      width: 100%; max-width: 360px;
+      background: var(--card, #fff);
+      border-radius: 14px;
+      padding: 16px 16px 12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    }
+    .modal-title { font-size: 16px; font-weight: 600; color: var(--text-title, #1e293b); margin-bottom: 6px; }
+    .modal-hint { font-size: 12px; color: var(--muted, #64748b); margin: 0 0 10px; line-height: 1.4; }
+    .modal-box textarea {
+      width: 100%; box-sizing: border-box;
+      border: 1px solid var(--border, #e2e8f0);
+      border-radius: 8px; padding: 10px; font-size: 14px;
+      resize: vertical; min-height: 72px; font-family: inherit;
+    }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
+    .modal-actions button {
+      padding: 8px 16px; border-radius: 8px; font-size: 14px; cursor: pointer; border: none;
+    }
+    #forward-cancel { background: #e2e8f0; color: #334155; }
+    #forward-submit { background: var(--accent, #4A89FF); color: #fff; }
+    .forward-toast { font-size: 13px; color: #0d9488; margin-top: 6px; }
+    .forward-err { font-size: 13px; color: #dc2626; margin-top: 6px; }
+    /* 「返回摘要」在谁已看上面：与详情正文、与谁已看各留一档间距 */
+    #back-row.back--before-readers {
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
+    #readers-card {
+      margin-top: 12px;
+    }
+    .readers-muted { font-size: 13px; color: var(--muted); }
+    .readers-list { font-size: 13px; margin: 0; padding: 0; list-style: none; }
+    .readers-list li {
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline;
+    }
+    .readers-list li:last-child { border-bottom: none; }
+    .readers-name { font-weight: 600; color: var(--text-title); }
+    .readers-meta { color: var(--muted); font-size: 12px; }
+    .reader-route-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      color: #c2410c;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 6px;
+      padding: 1px 6px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
   <div class="page">
-    <div class="back"><a id="back-list" href="/">← 返回列表</a></div>
+    <div class="toolbar-forward" id="toolbar-forward" style="display:none;">
+      <button type="button" id="btn-forward">转发本条（企微卡片）</button>
+      <span class="hint" id="forward-hint"></span>
+      <div class="forward-toast" id="forward-toast" style="display:none;"></div>
+      <div class="forward-err" id="forward-err" style="display:none;"></div>
+    </div>
+    <div id="forward-modal" class="modal-overlay" style="display:none;" aria-hidden="true">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="forward-modal-title">
+        <div class="modal-title" id="forward-modal-title">转发接收人</div>
+        <p class="modal-hint">请输入<strong>汉语拼音</strong>形式的企微 userid（与成员通讯录账号一致）；多人用 | 或逗号分隔。若填写中文姓名，将<strong>自动转为汉语拼音</strong>后再发送。</p>
+        <textarea id="forward-input" rows="3" placeholder="请输入汉语拼音，例如：zhangsan | lisi" autocomplete="off"></textarea>
+        <div class="forward-err" id="forward-modal-err" style="display:none;margin-top:8px;"></div>
+        <div class="modal-actions">
+          <button type="button" id="forward-cancel">取消</button>
+          <button type="button" id="forward-submit">发送</button>
+        </div>
+      </div>
+    </div>
     <div id="loading" class="loading">加载中…</div>
     <div id="main" style="display: none;">
 
@@ -106,25 +199,78 @@
         <div class="section-header">详情正文</div>
         <div class="rich-text" id="content"></div>
       </div>
+
+      <div class="back back--before-readers" id="back-row"><a id="back-list" href="/">← 返回列表</a></div>
+
+      <div class="card" id="readers-card">
+        <div class="section-header">谁已看</div>
+        <div id="readers-loading" class="readers-muted">加载中…</div>
+        <div id="readers-body" style="display:none;"></div>
+      </div>
     </div>
   </div>
 
   <script>
-    (function () {
-      function safeDigestRefPath(raw) {
-        if (!raw || typeof raw !== 'string') return '';
-        var s = raw.split('?')[0].replace(/\/+$/, '');
-        if (/^\/digest\/[a-f0-9]{32}$/i.test(s)) return s;
-        if (/^\/ztb\/digest\/[a-f0-9]{32}$/i.test(s)) return s;
-        return '';
+    function safeDigestRefPath(raw) {
+      if (!raw || typeof raw !== 'string') return '';
+      var trimmed = raw.trim();
+      var pathPart = trimmed.split('#')[0];
+      var base = pathPart.split('?')[0].replace(/\/+$/, '');
+      var ok = /^\/digest\/[a-f0-9]{32}$/i.test(base)
+        || /^\/ztb\/digest\/[a-f0-9]{32}$/i.test(base)
+        || /^\/ztb-test\/digest\/[a-f0-9]{32}$/i.test(base);
+      if (!ok) return '';
+      return trimmed;
+    }
+
+    const recordId = {{ record_id }};
+    const API_PREFIX = (function () {
+      var p = location.pathname;
+      if (p.indexOf('/ztb-test/') === 0) return '/ztb-test';
+      if (p.indexOf('/ztb/') === 0) return '/ztb';
+      return '';
+    })();
+    var urlParams = new URLSearchParams(location.search);
+    var digestToken = (urlParams.get('digest_token') || '').trim();
+    var dispatchId = (urlParams.get('dispatch_id') || '').trim();
+    var forwardTicket = (urlParams.get('fr') || '').trim().toLowerCase();
+
+    /** 打开详情即记入「谁已看」：转发 ?fr= 或摘要 dispatch_id */
+    function markReadIfEligible() {
+      if (forwardTicket && /^[a-f0-9]{32}$/.test(forwardTicket)) {
+        return fetch(API_PREFIX + '/api/read/mark', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ forward_ticket: forwardTicket, record_id: recordId }),
+        }).catch(function () {});
       }
+      if (dispatchId) {
+        return fetch(API_PREFIX + '/api/read/mark', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dispatch_id: dispatchId, record_id: recordId }),
+        }).catch(function () {});
+      }
+      return Promise.resolve();
+    }
+
+    /** 「返回列表 / 返回摘要」在谁已看上方；个人转发（?fr= 票据）不显示返回链接 */
+    function setupBackLink() {
+      var row = document.getElementById('back-row');
+      var a = document.getElementById('back-list');
+      if (!a || !row) return;
+      if (forwardTicket && /^[a-f0-9]{32}$/.test(forwardTicket)) {
+        row.style.display = 'none';
+        return;
+      }
+      row.style.display = '';
+      var sp = urlParams;
       var p = location.pathname;
       var base = '';
-      if (p === '/ztb' || p.indexOf('/ztb/') === 0) base = '/ztb';
+      if (p === '/ztb-test' || p.indexOf('/ztb-test/') === 0) base = '/ztb-test';
+      else if (p === '/ztb' || p.indexOf('/ztb/') === 0) base = '/ztb';
       else if (String(location.port) === '8335') base = '/ztb';
-      var a = document.getElementById('back-list');
-      if (!a) return;
-      var sp = new URLSearchParams(location.search);
+
       var fromReview = sp.get('from') === 'review';
       var digestBack = safeDigestRefPath(sp.get('digest_ref'));
       if (fromReview) {
@@ -137,11 +283,78 @@
         a.href = base ? (base + '/') : '/';
         a.textContent = '← 返回列表';
       }
-    })();
+    }
 
-    const recordId = {{ record_id }};
+    setupBackLink();
 
-    fetch('/api/detail/' + recordId)
+    /** 停留秒数：
+     * 1）进入页即开始计时（不再等详情接口返回），避免「加载中就关窗」导致整条丢失；
+     * 2）定时心跳写入库里（接口侧 GREATEST 取较大值），关页/杀进程时至少保留最近一次心跳时长；
+     * 3）离开时 pagehide / visibility=hidden + sendBeacon 做最终上报。 */
+    var dwellT0 = 0;
+    var dwellSent = false;
+    var dwellHeartbeatId = null;
+
+    function canReportDwell() {
+      return (forwardTicket && /^[a-f0-9]{32}$/.test(forwardTicket)) || !!dispatchId;
+    }
+
+    function sendDwellPayload(sec, isFinal) {
+      if (!canReportDwell()) return;
+      var payload;
+      if (forwardTicket && /^[a-f0-9]{32}$/.test(forwardTicket)) {
+        payload = JSON.stringify({
+          forward_ticket: forwardTicket,
+          record_id: recordId,
+          dwell_seconds: sec,
+        });
+      } else {
+        payload = JSON.stringify({
+          dispatch_id: dispatchId,
+          record_id: recordId,
+          dwell_seconds: sec,
+        });
+      }
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(API_PREFIX + '/api/read/dwell', new Blob([payload], { type: 'application/json' }));
+      } else {
+        fetch(API_PREFIX + '/api/read/dwell', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload,
+          keepalive: true,
+        }).catch(function () {});
+      }
+      if (isFinal && dwellHeartbeatId != null) {
+        clearInterval(dwellHeartbeatId);
+        dwellHeartbeatId = null;
+      }
+    }
+
+    function reportDwellOnce() {
+      if (!canReportDwell() || dwellSent) return;
+      dwellSent = true;
+      var sec = dwellT0 ? Math.floor((Date.now() - dwellT0) / 1000) : 0;
+      sendDwellPayload(sec, true);
+    }
+
+    function tickDwellHeartbeat() {
+      if (!canReportDwell() || dwellSent || !dwellT0) return;
+      var sec = Math.floor((Date.now() - dwellT0) / 1000);
+      if (sec >= 1) sendDwellPayload(sec, false);
+    }
+
+    if (canReportDwell()) {
+      dwellT0 = Date.now();
+      dwellHeartbeatId = setInterval(tickDwellHeartbeat, 20000);
+    }
+
+    window.addEventListener('pagehide', reportDwellOnce);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') reportDwellOnce();
+    });
+
+    fetch(API_PREFIX + '/api/detail/' + recordId)
       .then(r => r.json())
       .then(data => {
         document.getElementById('loading').style.display = 'none';
@@ -150,8 +363,122 @@
           return;
         }
         renderDetail(data.item);
+        markReadIfEligible().finally(function () {
+          loadItemReaders();
+        });
+        var bar = document.getElementById('toolbar-forward');
+        var hint = document.getElementById('forward-hint');
+        bar.style.display = 'flex';
+        hint.textContent =
+          '转发本条会以企微文本卡片下发标题与链接；接收人请填汉语拼音 userid（与通讯录一致）；误填中文时将自动转拼音。';
       })
       .catch(err => showError(err.message));
+
+    function showForwardToast(msg, isErr) {
+      var t = document.getElementById('forward-toast');
+      var e = document.getElementById('forward-err');
+      if (isErr) {
+        t.style.display = 'none';
+        e.style.display = 'block';
+        e.textContent = msg;
+      } else {
+        e.style.display = 'none';
+        t.style.display = 'block';
+        t.textContent = msg;
+      }
+    }
+
+    function closeForwardModal() {
+      var m = document.getElementById('forward-modal');
+      m.style.display = 'none';
+      m.setAttribute('aria-hidden', 'true');
+      document.getElementById('forward-modal-err').style.display = 'none';
+    }
+
+    function openForwardModal() {
+      document.getElementById('forward-modal-err').style.display = 'none';
+      document.getElementById('forward-input').value = '';
+      var m = document.getElementById('forward-modal');
+      m.style.display = 'flex';
+      m.setAttribute('aria-hidden', 'false');
+      setTimeout(function () {
+        var inp = document.getElementById('forward-input');
+        if (inp) inp.focus();
+      }, 100);
+    }
+
+    function parseJsonResponse(r) {
+      var ct = (r.headers.get('content-type') || '').toLowerCase();
+      if (!r.ok) {
+        return r.text().then(function (txt) {
+          var slice = (txt || '').replace(/\s+/g, ' ').trim().slice(0, 180);
+          throw new Error('请求失败 HTTP ' + r.status + (slice ? '：' + slice : ''));
+        });
+      }
+      if (ct.indexOf('application/json') < 0) {
+        return r.text().then(function () {
+          throw new Error('服务器返回非 JSON，请检查访问前缀（/ztb-test）或重启 Node 服务');
+        });
+      }
+      return r.json();
+    }
+
+    document.getElementById('btn-forward').onclick = openForwardModal;
+    document.getElementById('forward-cancel').onclick = closeForwardModal;
+    document.getElementById('forward-modal').onclick = function (ev) {
+      if (ev.target.id === 'forward-modal') closeForwardModal();
+    };
+    document.getElementById('forward-submit').onclick = function () {
+      var raw = String(document.getElementById('forward-input').value || '').trim();
+      var errEl = document.getElementById('forward-modal-err');
+      if (!raw) {
+        errEl.style.display = 'block';
+        errEl.textContent = '请填写至少一名接收人';
+        return;
+      }
+      var users = raw.split(/[|,，;\s]+/).map(function (x) { return x.trim(); }).filter(Boolean);
+      if (!users.length) {
+        errEl.style.display = 'block';
+        errEl.textContent = '请填写至少一名接收人';
+        return;
+      }
+      errEl.style.display = 'none';
+      var submitBtn = document.getElementById('forward-submit');
+      submitBtn.disabled = true;
+      fetch(API_PREFIX + '/api/forward/item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          record_id: recordId,
+          touser_ids: users,
+          digest_token: digestToken || undefined,
+          env_prefix: API_PREFIX,
+        }),
+      })
+        .then(parseJsonResponse)
+        .then(function (j) {
+          submitBtn.disabled = false;
+          if (!j.ok) {
+            errEl.style.display = 'block';
+            errEl.textContent = j.error || '未知错误';
+            return;
+          }
+          closeForwardModal();
+          var msg = '已发送给：' + (j.sent || []).join('、');
+          if (j.warning && j.warning.length) msg += '；' + j.warning.join('；');
+          showForwardToast(msg, false);
+          try {
+            window.alert('转发成功\n' + msg);
+          } catch (e) {
+            /* 企微可能屏蔽 alert，页面已 showForwardToast */
+          }
+        })
+        .catch(function (e) {
+          submitBtn.disabled = false;
+          errEl.style.display = 'block';
+          errEl.textContent = e.message || String(e);
+        });
+    };
 
     function showError(msg) {
       var el = document.getElementById('loading');
@@ -164,6 +491,60 @@
       var d = document.createElement('div');
       d.textContent = s || '';
       return d.innerHTML;
+    }
+
+    function fmtReadAt(s) {
+      if (!s) return '—';
+      var t = String(s).replace('T', ' ');
+      if (t.length > 19) return t.slice(0, 19);
+      return t;
+    }
+
+    function loadItemReaders() {
+      var loadEl = document.getElementById('readers-loading');
+      var bodyEl = document.getElementById('readers-body');
+      if (!loadEl || !bodyEl) return;
+      var q = new URLSearchParams();
+      if (digestToken) q.set('digest_token', digestToken);
+      var url = API_PREFIX + '/api/read/item_readers/' + recordId + (q.toString() ? '?' + q.toString() : '');
+      fetch(url)
+        .then(parseJsonResponse)
+        .then(function (data) {
+          loadEl.style.display = 'none';
+          if (!data.ok) {
+            bodyEl.style.display = 'block';
+            bodyEl.innerHTML = '<p class="readers-muted">加载失败：' + esc(data.error || '') + '</p>';
+            return;
+          }
+          var list = data.readers || [];
+          bodyEl.style.display = 'block';
+          if (!list.length) {
+            bodyEl.innerHTML = '<p class="readers-muted">' +
+              ((dispatchId || (forwardTicket && /^[a-f0-9]{32}$/.test(forwardTicket)))
+                ? '暂无记录（打开本页后会自动记入）。'
+                : '暂无记录；从带分发或转发链接（含 fr）进入后可显示。') +
+              '</p>';
+            return;
+          }
+          var html = '<ul class="readers-list">';
+          list.forEach(function (row) {
+            var dwell = row.dwell_seconds != null && row.dwell_seconds !== ''
+              ? '停留 ' + row.dwell_seconds + ' 秒'
+              : '';
+            var routeTag = row.on_item_route
+              ? '<span class="reader-route-tag" title="本条摘要路由「应看」">应看</span>'
+              : '';
+            html += '<li>' + routeTag + '<span class="readers-name">' + esc(row.reader_display || row.reader_userid) + '</span>' +
+              '<span class="readers-meta">' + esc(fmtReadAt(row.read_at)) + (dwell ? ' · ' + esc(dwell) : '') + '</span></li>';
+          });
+          html += '</ul>';
+          bodyEl.innerHTML = html;
+        })
+        .catch(function (e) {
+          loadEl.style.display = 'none';
+          bodyEl.style.display = 'block';
+          bodyEl.innerHTML = '<p class="readers-muted">加载失败：' + esc(e.message) + '</p>';
+        });
     }
 
     /* ── 信息行模板 ── */

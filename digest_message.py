@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import configparser
 import json
+import os
 import re
 import secrets
 from datetime import datetime
@@ -69,6 +70,79 @@ def digest_pack_root() -> Path:
     return Path(__file__).resolve().parent / "digest_packs"
 
 
+def _should_skip_persist_routes(config_path: Path) -> bool:
+    """
+    优先级：环境变量 DIGEST_SKIP_PERSIST_ROUTES（显式 0/false 表示不跳过）
+    > config.ini [digest] skip_persist_routes
+    """
+    ev = (os.environ.get("DIGEST_SKIP_PERSIST_ROUTES") or "").strip().lower()
+    if ev in ("1", "true", "yes", "on"):
+        return True
+    if ev in ("0", "false", "no", "off"):
+        return False
+    try:
+        cfg = configparser.ConfigParser()
+        cfg.read(config_path, encoding="utf-8")
+        if cfg.has_section("digest"):
+            v = (cfg["digest"].get("skip_persist_routes") or "").strip().lower()
+            if v in ("1", "true", "yes", "on"):
+                return True
+    except Exception:
+        pass
+    return False
+
+
+def _persist_digest_routes_safe(config_path: Path, token: str, items: list) -> None:
+    """
+    写入 manifest 后：把「每条 scraping_infos → 售前 userid」预计算落入 digest_item_presale_route，
+    摘要页 /api/read/match 直接查表，避免点击时再跑 Python 匹配超时。
+    """
+    if _should_skip_persist_routes(config_path):
+        print(
+            "[digest_message] 跳过 digest_item_presale_route（环境变量 DIGEST_SKIP_PERSIST_ROUTES 或 config.ini [digest] skip_persist_routes）",
+            flush=True,
+        )
+        return
+    tok = (token or "").strip().lower()
+    if not tok or not re.match(r"^[a-f0-9]{32}$", tok) or not items:
+        return
+    try:
+        import pymysql
+
+        from dispatch_router import load_dispatch_config, persist_digest_item_routes_for_token
+
+        cfg = configparser.ConfigParser()
+        cfg.read(config_path, encoding="utf-8")
+        if not cfg.has_section("database"):
+            return
+        db = cfg["database"]
+        conn = pymysql.connect(
+            host=db["host"],
+            port=int(db["port"]),
+            user=db["user"],
+            password=db["password"],
+            database=db["database"],
+            charset=db["charset"],
+            cursorclass=pymysql.cursors.DictCursor,
+            autocommit=False,
+        )
+        try:
+            dcfg = load_dispatch_config(config_path)
+            verbose = os.environ.get("DISPATCH_PERSIST_VERBOSE", "").strip().lower() in (
+                "1",
+                "true",
+                "yes",
+            )
+            n = persist_digest_item_routes_for_token(
+                conn, tok, items, dcfg, config_path=config_path, verbose=verbose
+            )
+            print(f"[digest_message] digest_item_presale_route 已写入 token={tok[:8]}… rows={n}", flush=True)
+        finally:
+            conn.close()
+    except Exception as e:
+        print(f"[digest_message] persist_digest_routes 跳过: {e}", flush=True)
+
+
 def build_digest_pack_card_url(base_url: str, token: str) -> str:
     """企微 textcard 跳转：{base}/digest/{token}（base 不要尾斜杠）。"""
     u = (base_url or "").strip().rstrip("/")
@@ -111,7 +185,7 @@ def materialize_digest_pack(config_path: Path, digest_date: str) -> str:
         "COALESCE(NULLIF(TRIM(audit_status), ''), '审核通过') = '审核通过'"
     )
     sql = f"""
-        SELECT id, title, sub_type, product_related, reserve2 AS product_related_terms,
+        SELECT id, title, sub_type, keyword, product_related, reserve2 AS product_related_terms,
                project_no, project_budget, winning_amount, bidding_method,
                project_owner, owner_contact, owner_phone,
                winning_bidder, bidding_agent,
@@ -151,7 +225,79 @@ def materialize_digest_pack(config_path: Path, digest_date: str) -> str:
         json.dumps(manifest, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+    _persist_digest_routes_safe(config_path, token, items)
     return token
+
+
+def write_manifest_for_existing_token(config_path: Path, digest_date: str, token: str) -> int:
+    """
+    向已有 token 目录写入/覆盖 manifest.json（与 materialize_digest_pack 同一套查询）。
+    用于补全 digest_packs/<token>/，避免只同步了 pending 无目录时 Web 与 cards 为 0。
+    返回 items 条数。
+    """
+    ds = (digest_date or "").strip()
+    if not ds or not re.match(r"^\d{4}-\d{2}-\d{2}$", ds):
+        raise ValueError("digest_date 须为 YYYY-MM-DD")
+    tok = (token or "").strip().lower()
+    if not re.match(r"^[a-f0-9]{32}$", tok):
+        raise ValueError("token 须为 32 位 hex")
+    de = ds
+
+    cfg = configparser.ConfigParser()
+    cfg.read(config_path, encoding="utf-8")
+    if not cfg.has_section("database"):
+        raise RuntimeError("config.ini 缺少 [database]")
+    db = cfg["database"]
+    import pymysql
+
+    approved_sql = (
+        "COALESCE(NULLIF(TRIM(audit_status), ''), '审核通过') = '审核通过'"
+    )
+    sql = f"""
+        SELECT id, title, sub_type, keyword, product_related, reserve2 AS product_related_terms,
+               project_no, project_budget, winning_amount, bidding_method,
+               project_owner, owner_contact, owner_phone,
+               winning_bidder, bidding_agent,
+               published_at, bid_deadline, detail_url, created_at, audit_status
+        FROM scraping_infos
+        WHERE {approved_sql}
+        AND (
+          (DATE(created_at) >= %s AND DATE(created_at) <= DATE_ADD(%s, INTERVAL 1 DAY))
+          OR (DATE(updated_at) >= %s AND DATE(updated_at) <= DATE_ADD(%s, INTERVAL 1 DAY))
+        )
+        ORDER BY id DESC
+        LIMIT 8000
+    """
+    conn = pymysql.connect(
+        host=db["host"],
+        port=int(db["port"]),
+        user=db["user"],
+        password=db["password"],
+        database=db["database"],
+        charset=db["charset"],
+        cursorclass=pymysql.cursors.DictCursor,
+    )
+    try:
+        with conn.cursor() as cur:
+            cur.execute(sql, (ds, de, ds, de))
+            rows = cur.fetchall() or []
+    finally:
+        conn.close()
+
+    items = [{k: _manifest_row_value(v) for k, v in r.items()} for r in rows]
+    manifest = {
+        "digest_date": ds,
+        "generated_at": datetime.now().replace(microsecond=0).isoformat(),
+        "items": items,
+    }
+    pack_dir = digest_pack_root() / tok
+    pack_dir.mkdir(parents=True, exist_ok=True)
+    (pack_dir / "manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    _persist_digest_routes_safe(config_path, tok, items)
+    return len(items)
 
 
 def get_digest_payload_for_ingest_date(config_path: Path, ymd: str) -> Tuple[str, str, str]:

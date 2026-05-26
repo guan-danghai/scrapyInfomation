@@ -5,6 +5,7 @@
 
 执行：python run_pipeline.py
       python run_pipeline.py --t-minus-1   # 爬取与统计区间为昨天（T-1），适合清晨定时跑前一日数据
+      python run_pipeline.py --always-digest   # 入库为 0 时仍强制生成摘要包（默认会跳过，避免重复 token）
 依赖：config.ini 中 [scraper] / [database] / [ai] 已配置；[wecom].disclose_page_url 可选（卡片跳转基址）。
 """
 
@@ -55,6 +56,11 @@ def main():
         action="store_true",
         dest="t_minus_1",
         help="时间区间固定为昨天（T-1），覆盖 config.ini 中 start_date / end_date",
+    )
+    parser.add_argument(
+        "--always-digest",
+        action="store_true",
+        help="即使本轮入库新增与待审核 JSON 更新均为 0，仍强制生成摘要包；默认跳过以免同日重复多 token",
     )
     args = parser.parse_args()
 
@@ -153,80 +159,93 @@ def main():
     updated_pending = ingest_stats.get("updated_pending", 0)
     print(f"\n入库小结：新增 {inserted} 条；待审核记录经当日 JSON 重跑更新 {updated_pending} 条。")
 
-    # 3. 生成摘要快照包 + 写入审核台「待发送」JSON（企微改为审核工作台手动确认收件人后发送）
-    disclose_url_base = "https://work.weixin.qq.com"
-    if cfg.has_section("wecom"):
-        disclose_url_base = (
-            (cfg["wecom"].get("disclose_page_url") or "").strip() or disclose_url_base
-        )
-
-    from datetime import datetime as _dt
-    import json as _json
-
-    from digest_message import (
-        build_digest_pack_card_url,
-        get_digest_payload,
-        materialize_digest_pack,
+    skip_digest = (
+        not args.always_digest and inserted == 0 and updated_pending == 0
     )
 
-    pending_path = ROOT / "digest_pending_send.json"
-    digest_link_date = ""
-    title = ""
-    description = ""
-    ds_q = (start_date or "").strip() or None
-    de_q = (end_date or "").strip() or None
-    try:
-        title, description, digest_link_date = get_digest_payload(CONFIG_FILE, ds_q, de_q)
-    except Exception as e:
-        print(f"\n[WARN] 摘要读库失败，使用降级文案: {e}")
-        from digest_message import build_digest_title
-
-        ds_fb = (start_date or "").strip()
-        de_fb = (end_date or "").strip()
-        if not ds_fb and not de_fb:
-            ds_fb = de_fb = _dt.now().strftime("%Y-%m-%d")
-        elif not de_fb:
-            de_fb = ds_fb
-        elif not ds_fb:
-            ds_fb = de_fb
-        title = build_digest_title(ds_fb, de_fb)
-        description = "\n".join(
-            [
-                "📌 今日概览",
-                "新增招标公告：— 条",
-                "新增中标公示：— 条",
-            ]
+    # 3. 生成摘要快照包 + 写入审核台「待发送」JSON（企微改为审核工作台手动确认收件人后发送）
+    #    说明：摘要包是按「摘要日」从库里读审核通过数据打包；与本轮是否写入新库记录无关。
+    #    若入库为 0 仍每次生成，会新建随机 token，内容与昨日同摘要日一致 → 审核台出现多条同日期。
+    if skip_digest:
+        print(
+            "\n[摘要快照] 已跳过：本轮入库新增与待审核 JSON 更新均为 0。"
+            "（摘要仍可按库重算，但默认不再新建 digest_packs token，避免与既有摘要日重复。）"
+            "\n  若需按当前库强制重新生成 manifest / digest_pending_send.json：python run_pipeline.py --always-digest"
         )
-        digest_link_date = (de_fb or ds_fb) or _dt.now().strftime("%Y-%m-%d")
-
-    if digest_link_date:
-        try:
-            pack_token = materialize_digest_pack(CONFIG_FILE, digest_link_date)
-            disclose_url = build_digest_pack_card_url(
-                disclose_url_base.rstrip("/"), pack_token
-            )
-            pending_obj = {
-                "token": pack_token,
-                "digest_date": digest_link_date,
-                "title": title,
-                "description": description,
-                "card_url": disclose_url,
-                "disclose_page_url": disclose_url_base.rstrip("/"),
-                "generated_at": _dt.now().replace(microsecond=0).isoformat(),
-                "pipeline_note": f"start_date={raw_start!r} end_date={raw_end!r}",
-            }
-            pending_path.write_text(
-                _json.dumps(pending_obj, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-            print(
-                f"\n[摘要快照] 已生成 digest_packs/{pack_token}/ ，待发送: {pending_path.name}"
-            )
-            print("  请到审核工作台「今日摘要推送」预览并选择成员后发送企微（已不再自动推送）。")
-        except Exception as ex:
-            print(f"\n[WARN] 摘要快照包生成失败: {ex}")
     else:
-        print("\n[WARN] 无摘要日期，未生成 digest_pending_send.json")
+        disclose_url_base = "https://work.weixin.qq.com"
+        if cfg.has_section("wecom"):
+            disclose_url_base = (
+                (cfg["wecom"].get("disclose_page_url") or "").strip() or disclose_url_base
+            )
+
+        from datetime import datetime as _dt
+        import json as _json
+
+        from digest_message import (
+            build_digest_pack_card_url,
+            get_digest_payload,
+            materialize_digest_pack,
+        )
+
+        pending_path = ROOT / "digest_pending_send.json"
+        digest_link_date = ""
+        title = ""
+        description = ""
+        ds_q = (start_date or "").strip() or None
+        de_q = (end_date or "").strip() or None
+        try:
+            title, description, digest_link_date = get_digest_payload(CONFIG_FILE, ds_q, de_q)
+        except Exception as e:
+            print(f"\n[WARN] 摘要读库失败，使用降级文案: {e}")
+            from digest_message import build_digest_title
+
+            ds_fb = (start_date or "").strip()
+            de_fb = (end_date or "").strip()
+            if not ds_fb and not de_fb:
+                ds_fb = de_fb = _dt.now().strftime("%Y-%m-%d")
+            elif not de_fb:
+                de_fb = ds_fb
+            elif not ds_fb:
+                ds_fb = de_fb
+            title = build_digest_title(ds_fb, de_fb)
+            description = "\n".join(
+                [
+                    "📌 今日概览",
+                    "新增招标公告：— 条",
+                    "新增中标公示：— 条",
+                ]
+            )
+            digest_link_date = (de_fb or ds_fb) or _dt.now().strftime("%Y-%m-%d")
+
+        if digest_link_date:
+            try:
+                pack_token = materialize_digest_pack(CONFIG_FILE, digest_link_date)
+                disclose_url = build_digest_pack_card_url(
+                    disclose_url_base.rstrip("/"), pack_token
+                )
+                pending_obj = {
+                    "token": pack_token,
+                    "digest_date": digest_link_date,
+                    "title": title,
+                    "description": description,
+                    "card_url": disclose_url,
+                    "disclose_page_url": disclose_url_base.rstrip("/"),
+                    "generated_at": _dt.now().replace(microsecond=0).isoformat(),
+                    "pipeline_note": f"start_date={raw_start!r} end_date={raw_end!r}",
+                }
+                pending_path.write_text(
+                    _json.dumps(pending_obj, ensure_ascii=False, indent=2),
+                    encoding="utf-8",
+                )
+                print(
+                    f"\n[摘要快照] 已生成 digest_packs/{pack_token}/ ，待发送: {pending_path.name}"
+                )
+                print("  请到审核工作台「今日摘要推送」预览并选择成员后发送企微（已不再自动推送）。")
+            except Exception as ex:
+                print(f"\n[WARN] 摘要快照包生成失败: {ex}")
+        else:
+            print("\n[WARN] 无摘要日期，未生成 digest_pending_send.json")
 
     print("\n链路执行完毕。")
 

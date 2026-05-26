@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>摘要分发 · 阅读情况</title>
+  <style>
+    :root { --bg:#0f1419; --card:#1a2332; --text:#e6edf3; --muted:#8b9cad; --accent:#58a6ff; --ok:#3fb950; --bad:#f85149; }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 16px; line-height: 1.5; }
+    h1 { font-size: 1.15rem; font-weight: 600; margin: 0 0 12px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; }
+    label { color: var(--muted); font-size: 13px; }
+    input[type="text"] { background: var(--card); border: 1px solid #30363d; color: var(--text); padding: 8px 10px; border-radius: 6px; min-width: 280px; }
+    button { background: var(--accent); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+    button:hover { filter: brightness(1.1); }
+    .hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #30363d; vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+    .pill-ok { background: rgba(63,185,80,.2); color: var(--ok); }
+    .pill-no { background: rgba(248,81,73,.15); color: var(--bad); }
+    .mono { font-family: ui-monospace, monospace; font-size: 12px; word-break: break-all; }
+    #err { color: var(--bad); margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <h1>摘要卡片 · 谁看了 / 谁没看</h1>
+  <div class="toolbar">
+    <div>
+      <label for="tok">筛选 digest_token（32位，可选）</label><br>
+      <input id="tok" type="text" placeholder="留空则显示最近全部" autocomplete="off">
+    </div>
+    <div style="align-self:flex-end">
+      <button type="button" id="btn-load">刷新</button>
+    </div>
+  </div>
+  <p class="hint">若配置了 <code>[web_view] dashboard_secret</code>，请在 URL 加 <code>?key=你的密钥</code>。招采入口：<code>/ztb/dispatch-dashboard</code>；测试：<code>/ztb-test/dispatch-dashboard</code>。接口：<code>/ztb/api/dispatch/read-report</code>（与当前页前缀一致）。</p>
+  <div id="err" hidden></div>
+  <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>接收人 userid</th>
+          <th>客户命中</th>
+          <th>条数</th>
+          <th>概览（卡片/摘要）</th>
+          <th>阅读明细条数</th>
+          <th>详情记录</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <script>
+    (function () {
+      function qKey() {
+        return new URLSearchParams(location.search).get('key') || '';
+      }
+      function apiUrl() {
+        var pre = '';
+        if (location.pathname.indexOf('/ztb-test/') === 0) pre = '/ztb-test';
+        else if (location.pathname.indexOf('/ztb/') === 0) pre = '/ztb';
+        var tok = document.getElementById('tok').value.trim();
+        var qs = 'limit=80&key=' + encodeURIComponent(qKey());
+        if (/^[a-f0-9]{32}$/i.test(tok)) qs += '&digest_token=' + encodeURIComponent(tok.toLowerCase());
+        return pre + '/api/dispatch/read-report?' + qs;
+      }
+      function fmt(dt) {
+        if (!dt) return '—';
+        var s = String(dt);
+        return s.replace('T', ' ').slice(0, 19);
+      }
+      function load() {
+        var err = document.getElementById('err');
+        err.hidden = true;
+        fetch(apiUrl()).then(function (r) { return r.json(); }).then(function (d) {
+          if (!d.ok) {
+            err.textContent = d.error || '加载失败';
+            err.hidden = false;
+            return;
+          }
+          var tb = document.getElementById('tbody');
+          tb.innerHTML = '';
+          (d.rows || []).forEach(function (row) {
+            var tr = document.createElement('tr');
+            var ov = row.overview_first_read_at;
+            var ovLabel = ov
+              ? '<span class="pill pill-ok">已打开</span><br><span class="mono">' + fmt(row.overview_first_read_at) + '</span><br>次数 ' + (row.overview_open_count != null ? row.overview_open_count : '—')
+              : '<span class="pill pill-no">未打开</span>';
+            var details = row.detail_reads || [];
+            var detailText = details.length
+              ? details.map(function (x) {
+                  return '#' + x.record_id + ' 停留' + (x.dwell_seconds != null ? x.dwell_seconds + 's' : '—') + ' @' + fmt(x.read_at);
+                }).join('<br>')
+              : '—';
+            tr.innerHTML =
+              '<td class="mono">' + (row.receiver_userid || '') + '<br><span style="color:#8b9cad;font-size:11px">' + (row.dispatch_id || '').slice(0, 12) + '…</span></td>' +
+              '<td>' + (row.receiver_customer || '—') + '</td>' +
+              '<td>' + (row.item_count != null ? row.item_count : '—') + '</td>' +
+              '<td>' + ovLabel + '</td>' +
+              '<td>' + details.length + '</td>' +
+              '<td class="mono" style="max-width:480px">' + detailText + '</td>';
+            tb.appendChild(tr);
+          });
+        }).catch(function (e) {
+          err.textContent = '请求失败：' + e.message;
+          err.hidden = false;
+        });
+      }
+      document.getElementById('btn-load').onclick = load;
+      load();
+    })();
+  </script>
+</body>
+</html>

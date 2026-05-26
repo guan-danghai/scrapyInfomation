@@ -61,6 +61,31 @@ body {
   border-bottom-right-radius: 24px;
 }
 
+.top-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.read-log-nav {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+  align-self: center;
+  white-space: nowrap;
+}
+
+.read-log-nav:active {
+  opacity: 0.9;
+}
+
 .page-title {
   color: #fff;
   font-size: 24px;
@@ -550,6 +575,18 @@ body {
   padding: 1px 8px;
   white-space: nowrap;
   line-height: 1.6;
+}
+
+/* @售前（如 @张三）：与采购方式标签区分 */
+.method-badge.presale-badge {
+  background: #E4ECF8;
+  color: #FF5900;
+}
+
+/* 摘要列表：当前查看者为本条路由「应看」售前时置顶并轻微高亮 */
+.project-card--my-route {
+  border-left: 4px solid var(--accent, #4A89FF);
+  padding-left: 11px;
 }
 
 /* 右侧日期区块：一行内显示 */

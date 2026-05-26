@@ -13,7 +13,14 @@
       <h1 class="page-title" id="page-title">
         <span class="page-title-main">全国最新招中标信息汇总</span><span class="page-title-date" id="page-title-date" hidden></span>
       </h1>
+      <div class="main-search-bar" role="search" aria-label="本摘要内搜索">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+        <input type="search" id="digest-q" placeholder="可查询：标题 / 客户 / 销售" autocomplete="off" enterkeyhint="search" />
+      </div>
       <p id="digest-error" role="alert" hidden style="margin:8px 0 0;font-size:13px;color:#c53030;"></p>
+      <p id="digest-degraded" role="status" hidden style="margin:8px 0 0;font-size:13px;color:#b45309;background:#fffbeb;padding:10px 12px;border-radius:8px;border:1px solid #fcd34d;line-height:1.5"></p>
     </header>
 
     <div class="filter-card">
@@ -60,12 +67,21 @@
     const SUB_ZHONGBIAO = ['中标结果', '中标公示', '中标公告', '中标结果公示', '中标候选人公示', '中标'];
 
     const token = (location.pathname.match(/\/digest\/([a-f0-9]{32})\/?$/i) || [])[1] || '';
-    /* 与详情页「返回列表」一致：带 digest_ref 时返回本快照页，而非 8335 默认 /ztb/ */
+    const dispatchId = new URLSearchParams(location.search).get('dispatch_id') || '';
+    /* Nginx 下 /ztb/、/ztb-test/ 分别反代到不同 Node 端口，API 与详情链接必须带同一前缀 */
+    const API_PREFIX = (function () {
+      const p = location.pathname;
+      if (p.indexOf('/ztb-test/') === 0) return '/ztb-test';
+      if (p.indexOf('/ztb/') === 0) return '/ztb';
+      return '';
+    })();
+    /* 与详情页「返回摘要」一致：带 dispatch_id 以便回到同一会话 */
     const digestListPath = token
-      ? ((location.pathname.indexOf('/ztb/') === 0 ? '/ztb' : '') + '/digest/' + token)
+      ? (API_PREFIX + '/digest/' + token + (dispatchId ? ('?dispatch_id=' + encodeURIComponent(dispatchId)) : ''))
       : '';
     let rawItems = [];
     let activeType = '';
+    let digestSearchQ = '';
 
     function formatDigestShortDate(ymd) {
       if (!ymd || typeof ymd !== 'string') return '';
@@ -104,8 +120,79 @@
       return items;
     }
 
+    /** 仅在本摘要 rawItems 范围内搜：标题、采购单位/客户、路由匹配客户、销售（digest_presale_names）姓名（不含请求全站） */
+    function filterByDigestSearch(items) {
+      const raw = (digestSearchQ || '').trim();
+      if (!raw) return items;
+      const parts = raw.split(/\s+/)
+        .map(function (s) { return s.replace(/^@+/, '').trim().toLowerCase(); })
+        .filter(Boolean);
+      if (!parts.length) return items;
+      return items.filter(function (row) {
+        const presales = Array.isArray(row.digest_presale_names) ? row.digest_presale_names.join(' ') : '';
+        const custs = Array.isArray(row.digest_matched_customers) ? row.digest_matched_customers.join(' ') : '';
+        const hay = [
+          row.title,
+          row.sub_type,
+          row.project_owner,
+          row.winning_bidder,
+          row.bidding_agent,
+          row.product_related,
+          row.product_related_terms,
+          presales,
+          custs,
+        ].map(function (x) { return String(x || '').toLowerCase(); }).join('\u0000');
+        for (var i = 0; i < parts.length; i++) {
+          if (hay.indexOf(parts[i]) < 0) return false;
+        }
+        return true;
+      });
+    }
+
+    /** 与 filterByDigestSearch 一致：拆成去 @ 的小写词 */
+    function getSearchParts() {
+      const raw = (digestSearchQ || '').trim();
+      if (!raw) return [];
+      return raw.split(/\s+/)
+        .map(function (s) { return s.replace(/^@+/, '').trim().toLowerCase(); })
+        .filter(Boolean);
+    }
+
+    /** 有多少个搜索词出现在 digest_presale_names（卡片上 @售前）里 */
+    function presaleNameHitCount(row, parts) {
+      if (!parts.length) return 0;
+      const pres = (Array.isArray(row.digest_presale_names) ? row.digest_presale_names : [])
+        .map(function (x) { return String(x || '').toLowerCase(); })
+        .join('\u0000');
+      var n = 0;
+      for (var i = 0; i < parts.length; i++) {
+        if (pres.indexOf(parts[i]) >= 0) n++;
+      }
+      return n;
+    }
+
+    /**
+     * 1) 当前查看者被 @ 的条目（my_routed_presale，依赖 dispatch_id / viewer 与路由表）
+     * 2) 有搜索词时：搜索词命中 @售前姓名的条目优先（解决「搜于浩军时 @他的应在最前」）
+     * 3) 其余保持原相对顺序
+     */
+    function sortDigestDisplayOrder(items) {
+      const parts = getSearchParts();
+      const scored = items.map(function (r, idx) {
+        return { r: r, idx: idx, ph: presaleNameHitCount(r, parts) };
+      });
+      scored.sort(function (a, b) {
+        var ma = a.r.my_routed_presale ? 1 : 0;
+        var mb = b.r.my_routed_presale ? 1 : 0;
+        if (mb !== ma) return mb - ma;
+        if (parts.length && b.ph !== a.ph) return b.ph - a.ph;
+        return a.idx - b.idx;
+      });
+      return scored.map(function (x) { return x.r; });
+    }
+
     function splitSoftwareHardware(items) {
-      const f = filterByType(items);
+      const f = sortDigestDisplayOrder(filterByType(items));
       const sw = f.filter(r => (r.product_related || '').indexOf('软件相关') >= 0);
       const hw = f.filter(r => (r.product_related || '').indexOf('硬件相关') >= 0);
       return { sw, hw };
@@ -178,12 +265,29 @@
       const pubHtml = !showDeadline ? '' : (deadline !== '-'
         ? '<div class="publish-date-box"><span class="publish-date-label">截止时间</span><span class="publish-date">' + esc(deadline) + '</span></div>'
         : '<div class="publish-date-box"><span class="publish-date">-</span></div>');
-      return '<article class="project-card project-card--' + cardKind + '">' +
-        '<div class="card-header"><div class="card-badges"><span class="type-badge">' + subType + '</span>' + methodHtml + '</div>' + pubHtml + '</div>' +
+      const dPresales = Array.isArray(row.digest_presale_names) ? row.digest_presale_names : [];
+      var presaleHtml = '';
+      if (dPresales.length) {
+        for (var pi = 0; pi < dPresales.length; pi++) {
+          presaleHtml += '<span class="method-badge presale-badge">@' + esc(dPresales[pi]) + '</span>';
+        }
+      }
+      const detailQs = new URLSearchParams();
+      if (digestListPath) {
+        /* 带锚点：从详情「返回摘要」可滚回本条卡片位置 */
+        detailQs.set('digest_ref', digestListPath + '#digest-card-' + String(row.id));
+      }
+      if (dispatchId) detailQs.set('dispatch_id', dispatchId);
+      if (token) detailQs.set('digest_token', token);
+      const detailQuery = detailQs.toString();
+      const detailHref = API_PREFIX + '/detail/' + row.id + (detailQuery ? ('?' + detailQuery) : '');
+      const mineCls = row.my_routed_presale ? ' project-card--my-route' : '';
+      return '<article class="project-card project-card--' + cardKind + mineCls + '" id="digest-card-' + String(row.id) + '">' +
+        '<div class="card-header"><div class="card-badges"><span class="type-badge">' + subType + '</span>' + methodHtml + presaleHtml + '</div>' + pubHtml + '</div>' +
         ownerHtml + '<h2 class="card-title">' + title + '</h2>' + infoHtml +
         '<div class="card-divider"></div><div class="card-footer">' +
         '<div class="budget-box"><div class="budget-amount">' + budgetHtml + '</div></div>' +
-        '<a href="/detail/' + row.id + (digestListPath ? ('?digest_ref=' + encodeURIComponent(digestListPath)) : '') + '" class="action-btn" target="_blank" rel="noopener">查看全文<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="action-btn-icon"><path d="M1.99974 13.0001L1.9996 11.0002L18.1715 11.0002L14.2218 7.05044L15.636 5.63623L22 12.0002L15.636 18.3642L14.2218 16.9499L18.1716 13.0002L1.99974 13.0001Z"/></svg></a>' +
+        '<div><a href="' + detailHref + '" class="action-btn">查看全文<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="action-btn-icon"><path d="M1.99974 13.0001L1.9996 11.0002L18.1715 11.0002L14.2218 7.05044L15.636 5.63623L22 12.0002L15.636 18.3642L14.2218 16.9499L18.1716 13.0002L1.99974 13.0001Z"/></svg></a></div>' +
         '</div></article>';
     }
 
@@ -200,10 +304,25 @@
     }
 
     function reloadAll() {
-      const { sw, hw } = splitSoftwareHardware(rawItems);
-      applyTypeCounts(rawItems);
+      const narrowed = filterByDigestSearch(rawItems);
+      applyTypeCounts(narrowed);
+      const { sw, hw } = splitSoftwareHardware(narrowed);
       renderSection('software', sw);
       renderSection('hardware', hw);
+      scrollToDigestCardFromHash();
+    }
+
+    /** 从详情返回或带 #digest-card-<id> 进入时，滚到对应摘要卡片 */
+    function scrollToDigestCardFromHash() {
+      const m = (location.hash || '').match(/^#(digest-card-[A-Za-z0-9_-]+)$/);
+      if (!m) return;
+      const id = m[1];
+      requestAnimationFrame(function () {
+        setTimeout(function () {
+          const el = document.getElementById(id);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 80);
+      });
     }
 
     function setActiveType(type) {
@@ -217,6 +336,13 @@
     document.querySelectorAll('.type-btn').forEach(btn => {
       btn.onclick = () => setActiveType(btn.dataset.type);
     });
+    var digestQInput = document.getElementById('digest-q');
+    if (digestQInput) {
+      digestQInput.addEventListener('input', function () {
+        digestSearchQ = digestQInput.value || '';
+        reloadAll();
+      });
+    }
     document.querySelectorAll('.ps-section-hd').forEach(btn => {
       btn.onclick = () => {
         const k = btn.dataset.key;
@@ -230,24 +356,72 @@
     if (!token) {
       document.body.innerHTML = '<p style="padding:24px">无效的摘要链接</p>';
     } else {
+      window.addEventListener('hashchange', scrollToDigestCardFromHash);
+      /** 进入详情前把当前摘要历史条改成带 #digest-card-* ，手机系统返回键回到摘要时也能定位卡片（否则历史栈里是无 hash 的 URL） */
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('a.action-btn');
+        if (!a || !a.href) return;
+        var href = a.getAttribute('href') || '';
+        if (href.indexOf('/detail/') < 0 && href.indexOf('/ztb/detail/') < 0 && href.indexOf('/ztb-test/detail/') < 0 && href.indexOf('detail/') < 0) return;
+        var art = a.closest('article[id^="digest-card-"]');
+        if (!art || !art.id) return;
+        try {
+          history.replaceState(history.state, '', location.pathname + location.search + '#' + art.id);
+        } catch (err) {}
+      }, true);
+      window.addEventListener('pageshow', function () {
+        scrollToDigestCardFromHash();
+      });
       /* 页面在 /ztb/digest/ 下时请求 /ztb/api/...，与 Nginx 转发是否保留前缀一致 */
-      const apiPrefix = (location.pathname.indexOf('/ztb/') === 0) ? '/ztb' : '';
-      fetch(apiPrefix + '/api/digest_pack/' + token)
-        .then(r => r.json())
-        .then(data => {
+      const apiPrefix = API_PREFIX;
+      /* 概览已读：后台 fire-and-forget，避免与 digest_pack 串行拖慢首屏 */
+      if (dispatchId) {
+        fetch(apiPrefix + '/api/read/overview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dispatch_id: dispatchId }),
+        }).catch(function () {});
+      }
+      var digestQs = new URLSearchParams();
+      if (dispatchId) digestQs.set('dispatch_id', dispatchId);
+      var urlViewer = new URLSearchParams(location.search).get('viewer') || new URLSearchParams(location.search).get('wx_userid');
+      if (urlViewer) digestQs.set('viewer', urlViewer.trim());
+      var digestPackUrl = apiPrefix + '/api/digest_pack/' + token + (digestQs.toString() ? ('?' + digestQs.toString()) : '');
+      fetch(digestPackUrl)
+        .then(function (r) {
+          return r.json();
+        })
+        .then(function (data) {
           if (!data.ok) {
             const err = document.getElementById('digest-error');
             err.textContent = data.error || '加载失败';
             err.hidden = false;
             return;
           }
+          const deg = document.getElementById('digest-degraded');
+          if (data.hydrated_from_db) {
+            deg.textContent = '已从数据库补全当日条目（摘要包文件未部署或 manifest 中列表为空时自动加载）。';
+            deg.style.color = '#047857';
+            deg.style.background = '#ecfdf5';
+            deg.style.borderColor = '#6ee7b7';
+            deg.hidden = false;
+          } else if (data.degraded_no_manifest) {
+            deg.textContent = '提示：服务器上未找到摘要 manifest，且当前入库日在库中无「审核通过」条目，列表为空。请同步 digest_packs 或运行跑批/入库；或确认 digest_pending_send.json 的 digest_date 与库中数据一致。';
+            deg.style.color = '#b45309';
+            deg.style.background = '#fffbeb';
+            deg.style.borderColor = '#fcd34d';
+            deg.hidden = false;
+          } else if (deg) {
+            deg.hidden = true;
+          }
           rawItems = data.items || [];
           applyPageTitleFromPushDate(data.digest_date || '');
+          /* @售前 仅展示 digest_item_presale_route 合并后的 digest_presale_names，无匹配则不显示 */
           reloadAll();
         })
-        .catch(e => {
+        .catch(function (e) {
           const err = document.getElementById('digest-error');
-          err.textContent = '请求失败：' + e.message;
+          err.textContent = '请求失败：' + (e && e.message ? e.message : String(e));
           err.hidden = false;
         });
     }

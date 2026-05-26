@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2563eb">
+  <title>详情阅读记录</title>
+  <style>
+    :root {
+      --bg: #eef2f7;
+      --surface: #ffffff;
+      --surface-hover: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --muted: #64748b;
+      --accent: #2563eb;
+      --accent-dim: rgba(37, 99, 235, 0.1);
+      --success: #059669;
+      --danger: #dc2626;
+      --link: #2563eb;
+      --radius: 10px;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 18px 48px;
+    }
+    .nav-top { margin-bottom: 20px; }
+    .nav-top a {
+      color: var(--link);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .nav-top a:hover { text-decoration: underline; }
+    .page-head {
+      margin-bottom: 20px;
+    }
+    .page-head h1 {
+      font-size: 1.35rem;
+      font-weight: 650;
+      margin: 0 0 8px;
+      letter-spacing: -0.02em;
+    }
+    .hint {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+      max-width: 920px;
+      line-height: 1.55;
+    }
+    .hint code {
+      font-size: 12px;
+      background: var(--surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .sheet-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .sheet-tab {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .sheet-tab:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+    }
+    .sheet-tab.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--text);
+      font-weight: 600;
+    }
+    .filter-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px 12px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+    .filter-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 16px;
+      align-items: flex-end;
+    }
+    .filter-item {
+      flex: 1 1 160px;
+      min-width: 0;
+    }
+    .filter-item--grow {
+      flex: 2 1 220px;
+    }
+    .filter-item--date {
+      flex: 0 1 280px;
+    }
+    .filter-item--actions {
+      flex: 0 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: flex-end;
+    }
+    label.filter-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .field-row {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .field-row input[type="date"] {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    input[type="text"],
+    input[type="search"],
+    input[type="date"] {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+    input[type="date"] {
+      min-height: 42px;
+      color-scheme: light;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+    .btn-clear-date {
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn-clear-date:hover {
+      color: var(--text);
+      border-color: var(--muted);
+    }
+    .read-status-group {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      vertical-align: middle;
+    }
+    .rs-btn {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+    }
+    .rs-btn:hover { color: var(--text); }
+    .rs-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .rs-btn.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--text);
+      font-weight: 600;
+    }
+    .rs-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      display: none;
+    }
+    .rs-hint.visible { display: block; }
+    details.hint-collapse {
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    details.hint-collapse summary {
+      cursor: pointer;
+      color: var(--link);
+      user-select: none;
+    }
+    details.hint-collapse[open] summary {
+      margin-bottom: 8px;
+    }
+    .tbody-loading {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+    button.primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      box-shadow: 0 1px 2px rgba(37, 99, 235, 0.25);
+    }
+    button.primary:hover { background: #1d4ed8; }
+    button.primary:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
+    button.secondary {
+      background: var(--surface-hover);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+    }
+    button.secondary:hover { filter: brightness(1.08); }
+    button.secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+    #err {
+      color: var(--danger);
+      margin-bottom: 12px;
+      font-size: 14px;
+      padding: 10px 12px;
+      background: rgba(248, 81, 73, 0.08);
+      border: 1px solid rgba(248, 81, 73, 0.35);
+      border-radius: 8px;
+      display: none;
+    }
+    #err:not([hidden]) { display: block; }
+    .table-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      background: #f8fafc;
+      white-space: nowrap;
+    }
+    tbody tr:hover td { background: #eff6ff; }
+    tbody tr:last-child td { border-bottom: none; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; word-break: break-all; }
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-weight: 500;
+    }
+    a.detail-link { color: var(--link); text-decoration: none; font-weight: 500; }
+    a.detail-link:hover { text-decoration: underline; }
+    .presale-cell { font-size: 12px; line-height: 1.45; max-width: 300px; }
+    .pr-line {
+      margin: 4px 0;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+    }
+    .pr-line.ok { border-left: 3px solid var(--success); }
+    .pr-line.no { border-left: 3px solid var(--border); color: var(--muted); }
+    .pr-name { font-weight: 600; color: var(--text); }
+    .pr-cust { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .pager {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 18px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    #filter-warn {
+      margin: 10px 0 0;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #e3b341;
+      background: rgba(227, 179, 65, 0.08);
+      border: 1px solid rgba(227, 179, 65, 0.35);
+      border-radius: 8px;
+      max-width: 920px;
+    }
+    #filter-warn[hidden] { display: none !important; }
+    .badge-seen {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .badge-seen.yes { background: #d1fae5; color: #047857; }
+    .badge-seen.no { background: #f1f5f9; color: var(--muted); }
+
+    /* —— 统计看板（浅色，与销售签到图类似） —— */
+    .rl-dash-wrap {
+      margin-bottom: 18px;
+    }
+    .rl-view-tabs-inner {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .rl-view-tab {
+      padding: 9px 22px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .rl-view-tab:hover { color: var(--text); border-color: #cbd5e1; }
+    .rl-view-tab.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--text);
+      font-weight: 600;
+    }
+    .rl-dashboard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 16px 20px;
+      box-shadow: var(--shadow);
+    }
+    .rl-dash-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 0 14px;
+      line-height: 1.5;
+    }
+    .rl-summary-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    @media (max-width: 900px) {
+      .rl-summary-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .rl-summary-row { grid-template-columns: 1fr 1fr; }
+    }
+    .rl-stat-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 10px 12px;
+      text-align: center;
+    }
+    .rl-stat-ring-wrap {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 8px;
+    }
+    .rl-ring-svg {
+      width: 100px;
+      height: 100px;
+      display: block;
+    }
+    .rl-stat-center-num {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+      pointer-events: none;
+    }
+    .rl-stat-center-num.rl-num-tip {
+      pointer-events: auto;
+      cursor: help;
+      text-decoration: underline dotted;
+      text-underline-offset: 3px;
+    }
+    .rl-group-stats strong.rl-num-tip {
+      cursor: help;
+      text-decoration: underline dotted;
+      text-underline-offset: 2px;
+    }
+    .rl-group-pct.rl-num-tip {
+      cursor: help;
+      text-decoration: underline dotted;
+      text-underline-offset: 3px;
+    }
+    .rl-stat-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .rl-stat-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .rl-groups-title {
+      font-size: 15px;
+      font-weight: 650;
+      margin: 0 0 12px;
+      color: var(--text);
+    }
+    .rl-groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .rl-group-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 14px 12px;
+    }
+    .rl-group-hd {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .rl-group-name {
+      font-weight: 650;
+      font-size: 14px;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .rl-group-uid {
+      font-size: 11px;
+      color: var(--muted);
+      font-family: ui-monospace, monospace;
+      margin-top: 2px;
+    }
+    .rl-group-pct {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .rl-group-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    .rl-group-stats span { color: var(--muted); }
+    .rl-group-stats strong { font-weight: 700; margin-left: 4px; }
+    .rl-st-blue { color: #2563eb !important; }
+    .rl-st-green { color: #059669 !important; }
+    .rl-st-amber { color: #d97706 !important; }
+    .rl-progress-track {
+      height: 8px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .rl-progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #3b82f6, #2563eb);
+      transition: width 0.25s ease;
+    }
+    .rl-progress-meta {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+    .rl-other-simple {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 24px;
+      font-size: 14px;
+    }
+    .rl-other-simple strong { color: var(--accent); font-size: 1.2em; }
+    .rl-dash-loading { text-align: center; color: var(--muted); padding: 24px; font-size: 14px; }
+    .rl-dash-empty { text-align: center; color: var(--muted); padding: 20px; font-size: 14px; }
+    .rl-table-wrap.rl-hidden { display: none; }
+    .rl-dashboard.rl-hidden { display: none; }
+    .pager.rl-hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav-top">
+      <a id="back-home" href="/">← 返回招采列表</a>
+    </div>
+    <div class="page-head">
+      <h1>详情阅读记录</h1>
+      <details class="hint-collapse">
+        <summary>字段说明（点击展开）</summary>
+        <p class="hint" style="margin:0">
+          <strong>@的人观看</strong>：来自 <code>digest_item_presale_route</code>（跑批按采购人匹配的售前）。<strong>其他人观看</strong>：非本条售前读者的打开记录。
+          摘要日期与各包 <code>manifest.json</code> 的 <code>digest_date</code> 一致时命中；标题匹配库中招标标题。
+          同一摘要日期可能多次生成不同摘要包（多组 <code>digest_token</code>）；选具体日期时，已读会按「该日<strong>任一包</strong>内打开过」合并为一行，来源列可显示多个 token。
+        </p>
+      </details>
+    </div>
+
+    <div class="sheet-tabs" role="tablist" aria-label="记录分类">
+      <button type="button" class="sheet-tab active" role="tab" id="tab-presale" aria-selected="true">@的人观看</button>
+      <button type="button" class="sheet-tab" role="tab" id="tab-other" aria-selected="false">其他人观看</button>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-toolbar">
+        <div class="filter-item filter-item--date">
+          <label class="filter-label" for="digest-date-input">摘要日期</label>
+          <div class="field-row">
+            <input type="date" id="digest-date-input" aria-label="摘要日期" title="留空表示全部日期" />
+            <button type="button" class="btn-clear-date" id="btn-clear-digest-date" title="清除日期（查全部）">清除</button>
+          </div>
+        </div>
+        <div class="filter-item filter-item--grow">
+          <label class="filter-label" for="person-q">人员</label>
+          <input id="person-q" type="search" placeholder="userid 或售前姓名（模糊）" autocomplete="off" />
+        </div>
+        <div class="filter-item filter-item--grow">
+          <label class="filter-label" for="title-q">标题关键词</label>
+          <input id="title-q" type="search" placeholder="招标标题模糊匹配" autocomplete="off" />
+        </div>
+        <div class="filter-item" id="read-status-wrap">
+          <label class="filter-label">阅读状态</label>
+          <div class="read-status-group" id="read-status-group" role="group" aria-label="阅读状态">
+            <button type="button" class="rs-btn active" data-rs="all">全部</button>
+            <button type="button" class="rs-btn" data-rs="seen">已看</button>
+            <button type="button" class="rs-btn" data-rs="unseen">未看</button>
+          </div>
+        </div>
+        <div class="filter-item filter-item--actions">
+          <button type="button" class="primary" id="btn-load">查询</button>
+        </div>
+      </div>
+      <p class="rs-hint" id="rs-tab-hint" style="margin:10px 0 0;font-size:12px">「其他人」列表均为真实打开记录，仅「全部」有意义。</p>
+    </div>
+
+    <div id="err" hidden></div>
+
+    <div id="rl-dash-wrap" class="rl-dash-wrap">
+      <div class="rl-view-tabs-inner" role="tablist" aria-label="展示方式">
+        <button type="button" class="rl-view-tab active" id="rl-tab-dash" role="tab" aria-selected="true">统计看板</button>
+        <button type="button" class="rl-view-tab" id="rl-tab-table" role="tab" aria-selected="false">明细列表</button>
+      </div>
+      <div id="rl-dashboard" class="rl-dashboard">
+        <p class="rl-dash-hint" id="rl-dash-hint">
+          与下方筛选条件一致（摘要日、人员、标题）；<strong>不受</strong>「已看/未看」筛选影响，用于看整体漏斗。切换「@的人观看」与「其他人」会更新口径。
+        </p>
+        <div id="rl-dash-body" class="rl-dash-loading">加载统计…</div>
+      </div>
+      <div id="rl-table-wrap" class="rl-table-wrap rl-hidden">
+        <div class="table-card">
+          <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>阅读时间</th>
+              <th>读者</th>
+              <th>停留</th>
+              <th>@售前（应看）</th>
+              <th>来源</th>
+              <th>记录</th>
+            </tr>
+          </thead>
+          <tbody id="tbody" class="tbody-main"></tbody>
+        </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p id="filter-warn" hidden></p>
+    <div class="pager rl-hidden" id="rl-pager">
+      <button type="button" class="secondary" id="btn-prev" disabled>上一页</button>
+      <button type="button" class="secondary" id="btn-next" disabled>下一页</button>
+      <span id="page-info"></span>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var PAGE_SIZE = 50;
+      var offset = 0;
+      var total = 0;
+      var spInit = new URLSearchParams(location.search);
+      var sheetInit = (spInit.get('sheet') || 'presale').toLowerCase();
+      var currentSheet = sheetInit === 'other' ? 'other' : 'presale';
+      var readStatus = (spInit.get('read_status') || 'all').toLowerCase();
+      if (readStatus !== 'seen' && readStatus !== 'unseen') readStatus = 'all';
+
+      function apiPrefix() {
+        var p = location.pathname;
+        if (p.indexOf('/ztb-test/') === 0 || p === '/ztb-test') return '/ztb-test';
+        if (p.indexOf('/ztb/') === 0 || p === '/ztb') return '/ztb';
+        return '';
+      }
+
+      function qKey() {
+        return new URLSearchParams(location.search).get('key') || '';
+      }
+
+      function detailBase() {
+        return apiPrefix() || '';
+      }
+
+      function esc(s) {
+        if (s == null) return '';
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      /** 多行提示写入 HTML title 属性（换行用 &#10;） */
+      function tipForAttr(lines) {
+        if (!lines || !lines.length) return '';
+        var max = 48;
+        var arr = lines.slice(0, max);
+        var body = arr.join('\n');
+        if (lines.length > max) body += '\n…（仅展示部分）';
+        return esc(body).replace(/\r\n|\n|\r/g, '&#10;');
+      }
+
+      function tipMergeSections(sections) {
+        var out = [];
+        for (var s = 0; s < sections.length; s++) {
+          var sec = sections[s];
+          if (!sec) continue;
+          var hasLines = sec.lines && sec.lines.length;
+          var hasSales = sec.sales && sec.sales.length;
+          if (!hasLines && !hasSales) continue;
+          if (sec.title) out.push(sec.title);
+          if (hasSales) out.push('涉及销售：' + sec.sales.join('、'));
+          if (hasLines) {
+            for (var i = 0; i < sec.lines.length; i++) out.push(sec.lines[i]);
+          }
+        }
+        return out;
+      }
+
+      function buildStatsQueryString() {
+        var qs =
+          'sheet=' +
+          encodeURIComponent(currentSheet) +
+          '&key=' +
+          encodeURIComponent(qKey());
+        var reader = document.getElementById('person-q').value.trim();
+        var titleQ = document.getElementById('title-q') ? document.getElementById('title-q').value.trim() : '';
+        var dq = digestDateQueryParam();
+        if (reader) qs += '&reader=' + encodeURIComponent(reader);
+        if (dq) qs += '&digest_date=' + encodeURIComponent(dq);
+        if (titleQ) qs += '&title=' + encodeURIComponent(titleQ);
+        return qs;
+      }
+
+      function ringBlock(pct, strokeColor, centerText, tipLines) {
+        var p = Math.max(0, Math.min(100, Number(pct) || 0));
+        var dash = p + ' ' + (100 - p);
+        var tipAttr = '';
+        var tipClass = 'rl-stat-center-num';
+        if (tipLines && tipLines.length) {
+          tipClass += ' rl-num-tip';
+          tipAttr = ' title="' + tipForAttr(tipLines) + '"';
+        }
+        return (
+          '<div class="rl-stat-ring-wrap">' +
+          '<svg class="rl-ring-svg" viewBox="0 0 100 100" aria-hidden="true">' +
+          '<circle cx="50" cy="50" r="44" pathLength="100" fill="none" stroke="#e2e8f0" stroke-width="10"/>' +
+          '<circle cx="50" cy="50" r="44" pathLength="100" fill="none" stroke="' +
+          esc(strokeColor) +
+          '" stroke-width="10" stroke-dasharray="' +
+          dash +
+          '" stroke-linecap="round" transform="rotate(-90 50 50)"/>' +
+          '</svg><span class="' +
+          tipClass +
+          '"' +
+          tipAttr +
+          '>' +
+          esc(String(centerText)) +
+          '</span></div>'
+        );
+      }
+
+      function setRlView(mode) {
+        var dash = document.getElementById('rl-dashboard');
+        var tw = document.getElementById('rl-table-wrap');
+        var pg = document.getElementById('rl-pager');
+        var tDash = document.getElementById('rl-tab-dash');
+        var tTbl = document.getElementById('rl-tab-table');
+        if (!dash || !tw) return;
+        if (mode === 'table') {
+          dash.classList.add('rl-hidden');
+          tw.classList.remove('rl-hidden');
+          if (pg) pg.classList.remove('rl-hidden');
+          if (tDash) {
+            tDash.classList.remove('active');
+            tDash.setAttribute('aria-selected', 'false');
+          }
+          if (tTbl) {
+            tTbl.classList.add('active');
+            tTbl.setAttribute('aria-selected', 'true');
+          }
+        } else {
+          dash.classList.remove('rl-hidden');
+          tw.classList.add('rl-hidden');
+          if (pg) pg.classList.add('rl-hidden');
+          if (tDash) {
+            tDash.classList.add('active');
+            tDash.setAttribute('aria-selected', 'true');
+          }
+          if (tTbl) {
+            tTbl.classList.remove('active');
+            tTbl.setAttribute('aria-selected', 'false');
+          }
+        }
+      }
+
+      function renderPresaleDash(p) {
+        var total = Number(p.total) || 0;
+        var seen = Number(p.seen) || 0;
+        var unseen = Number(p.unseen) || 0;
+        var seenPct = total > 0 ? Math.round((seen * 1000) / total) / 10 : 0;
+        var unseenPct = total > 0 ? Math.round((unseen * 1000) / total) / 10 : 0;
+        var tipRoster = p.tip_roster_lines || [];
+        var tipSeen = p.tip_seen_lines || [];
+        var tipUnseen = p.tip_unseen_lines || [];
+        var tipSeenSales = p.tip_seen_sales || [];
+        var tipUnseenSales = p.tip_unseen_sales || [];
+        var tipSeenBlock = tipMergeSections([
+          { title: '【已看】销售 · 标题（部分）', sales: tipSeenSales, lines: tipSeen },
+        ]);
+        var tipUnseenBlock = tipMergeSections([
+          { title: '【未看】销售 · 标题（部分）', sales: tipUnseenSales, lines: tipUnseen },
+        ]);
+        var tipRate = tipMergeSections([
+          { title: '【已看】', sales: tipSeenSales, lines: tipSeen },
+          { title: '【未看】', sales: tipUnseenSales, lines: tipUnseen },
+        ]);
+        var row =
+          '<div class="rl-summary-row">' +
+          '<div class="rl-stat-card">' +
+          ringBlock(100, '#94a3b8', total, tipRoster.length ? ['【应看】销售 · 标题（部分）'].concat(tipRoster) : []) +
+          '<div class="rl-stat-label">应看</div><div class="rl-stat-sub">条数（销售×记录）</div></div>' +
+          '<div class="rl-stat-card">' +
+          ringBlock(total ? (seen / total) * 100 : 0, '#059669', seen, tipSeenBlock) +
+          '<div class="rl-stat-label">已看</div><div class="rl-stat-sub">' +
+          seenPct +
+          '%</div></div>' +
+          '<div class="rl-stat-card">' +
+          ringBlock(total ? (unseen / total) * 100 : 0, '#d97706', unseen, tipUnseenBlock) +
+          '<div class="rl-stat-label">未看</div><div class="rl-stat-sub">' +
+          unseenPct +
+          '%</div></div>' +
+          '<div class="rl-stat-card">' +
+          ringBlock(seenPct, '#2563eb', seenPct + '%', tipRate.length ? ['已看率 ' + seenPct + '%（悬停看明细）'].concat(tipRate) : []) +
+          '<div class="rl-stat-label">已看率</div><div class="rl-stat-sub">已看 / 应看</div></div>' +
+          '</div>';
+        var groups = p.by_reader || [];
+        if (!groups.length) {
+          return row + '<div class="rl-dash-empty">当前筛选下无应看记录</div>';
+        }
+        var cards = groups
+          .map(function (g) {
+            var pct = g.seen_pct != null ? g.seen_pct : 0;
+            var w = g.total > 0 ? Math.round((g.seen * 100) / g.total) : 0;
+            var seenTitles = g.seen_titles || [];
+            var unseenTitles = g.unseen_titles || [];
+            var tipTotal =
+              seenTitles.length || unseenTitles.length
+                ? ['【已看标题】'].concat(seenTitles).concat(['【未看标题】']).concat(unseenTitles)
+                : [];
+            var tipSeenG = seenTitles.length ? ['【已看标题】'].concat(seenTitles) : [];
+            var tipUnG = unseenTitles.length ? ['【未看标题】'].concat(unseenTitles) : [];
+            return (
+              '<div class="rl-group-card">' +
+              '<div class="rl-group-hd"><div><div class="rl-group-name">' +
+              esc(g.reader_display || g.reader_userid) +
+              '</div><div class="rl-group-uid">' +
+              esc(g.reader_userid || '') +
+              '</div></div><div class="rl-group-pct rl-num-tip" title="' +
+              tipForAttr(['已看率 ' + pct + '%'].concat(tipTotal)) +
+              '">' +
+              esc(String(pct)) +
+              '%</div></div>' +
+              '<div class="rl-group-stats">' +
+              '<span class="rl-st-blue">应看<strong class="rl-num-tip" title="' +
+              tipForAttr(tipTotal.length ? tipTotal : ['该销售应看 ' + g.total + ' 条（无标题明细）']) +
+              '">' +
+              g.total +
+              '</strong></span>' +
+              '<span class="rl-st-green">已看<strong class="rl-num-tip" title="' +
+              tipForAttr(tipSeenG.length ? tipSeenG : ['暂无已看标题明细']) +
+              '">' +
+              g.seen +
+              '</strong></span>' +
+              '<span class="rl-st-amber">未看<strong class="rl-num-tip" title="' +
+              tipForAttr(tipUnG.length ? tipUnG : ['暂无未看标题明细']) +
+              '">' +
+              g.unseen +
+              '</strong></span>' +
+              '</div>' +
+              '<div class="rl-progress-track"><div class="rl-progress-fill" style="width:' +
+              w +
+              '%"></div></div>' +
+              '<div class="rl-progress-meta"><span>阅读进度</span><span>' +
+              g.seen +
+              ' / ' +
+              g.total +
+              '</span></div></div>'
+            );
+          })
+          .join('');
+        return row + '<h3 class="rl-groups-title">各销售阅读情况</h3><div class="rl-groups-grid">' + cards + '</div>';
+      }
+
+      function renderOtherDash(o) {
+        return (
+          '<div class="rl-other-simple">' +
+          '<span>打开次数 <strong>' +
+          (o.total_reads || 0) +
+          '</strong></span>' +
+          '<span>独立读者 <strong>' +
+          (o.unique_readers || 0) +
+          '</strong></span></div>' +
+          '<p class="rl-dash-hint" style="margin-top:14px">以下为阅读次数较多的 userid（最多 40 人）。</p>' +
+          '<div class="rl-groups-grid">' +
+          (o.top_readers || [])
+            .map(function (r) {
+              return (
+                '<div class="rl-group-card"><div class="rl-group-name mono">' +
+                esc(r.reader_userid) +
+                '</div><div class="rl-group-stats"><span>次数<strong>' +
+                r.read_count +
+                '</strong></span></div></div>'
+              );
+            })
+            .join('') +
+          '</div>'
+        );
+      }
+
+      function loadStats() {
+        var body = document.getElementById('rl-dash-body');
+        if (!body) return;
+        body.className = 'rl-dash-loading';
+        body.textContent = '加载统计…';
+        fetch(apiPrefix() + '/api/read/logs/stats?' + buildStatsQueryString(), { cache: 'no-store' })
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (d) {
+            if (!d.ok) {
+              body.className = 'rl-dash-empty';
+              body.textContent = d.error || '统计加载失败';
+              return;
+            }
+            body.className = '';
+            if (d.sheet === 'presale' && d.presale) {
+              body.innerHTML = renderPresaleDash(d.presale);
+            } else if (d.sheet === 'other' && d.other) {
+              body.innerHTML = renderOtherDash(d.other);
+            } else {
+              body.className = 'rl-dash-empty';
+              body.textContent = '暂无统计数据';
+            }
+          })
+          .catch(function (e) {
+            body.className = 'rl-dash-empty';
+            body.textContent = e.message || '统计请求失败';
+          });
+      }
+
+      /** 摘要日期：有值为 YYYY-MM-DD，交给后端（含 manifest 精确匹配该日） */
+      function digestDateQueryParam() {
+        var inp = document.getElementById('digest-date-input');
+        if (!inp || !inp.value) return '';
+        return inp.value;
+      }
+
+      function padYmdFromLoose(s) {
+        var m = String(s || '').trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+        if (!m) return '';
+        return m[1] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[3]).slice(-2);
+      }
+
+      function normalizeDigestDateUrlToken(raw) {
+        var x = String(raw || '').trim();
+        if (!x || x.toLowerCase() === 'all') return '';
+        var xl = x.toLowerCase();
+        if (x === '今天' || xl === 'today') return 'today';
+        if (x === '昨天' || xl === 'yesterday') return 'yesterday';
+        if (x === '前天' || xl === 'before_yesterday' || xl === 'day_before_yesterday') return 'before_yesterday';
+        var ymd = padYmdFromLoose(x);
+        if (ymd) return ymd;
+        return '';
+      }
+
+      function resolveLegacyDigestParam(d) {
+        if (!d) return '';
+        if (d === 'today' || d === 'yesterday' || d === 'before_yesterday') return d;
+        if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+        return '';
+      }
+
+      function todayYmdShanghai() {
+        var parts = new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Shanghai',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }).formatToParts(new Date());
+        var y = 0,
+          mo = 1,
+          d = 1;
+        for (var i = 0; i < parts.length; i++) {
+          if (parts[i].type === 'year') y = parseInt(parts[i].value, 10);
+          if (parts[i].type === 'month') mo = parseInt(parts[i].value, 10);
+          if (parts[i].type === 'day') d = parseInt(parts[i].value, 10);
+        }
+        return (
+          y +
+          '-' +
+          String(mo).padStart(2, '0') +
+          '-' +
+          String(d).padStart(2, '0')
+        );
+      }
+
+      function addCalendarDaysFromYmd(ymd, delta) {
+        var m = String(ymd || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!m) return '';
+        var t = Date.UTC(parseInt(m[1], 10), parseInt(m[2], 10) - 1, parseInt(m[3], 10) + delta);
+        var dt = new Date(t);
+        return (
+          dt.getUTCFullYear() +
+          '-' +
+          String(dt.getUTCMonth() + 1).padStart(2, '0') +
+          '-' +
+          String(dt.getUTCDate()).padStart(2, '0')
+        );
+      }
+
+      function presetDigestToYmd(preset) {
+        var t = todayYmdShanghai();
+        if (preset === 'today') return t;
+        if (preset === 'yesterday') return addCalendarDaysFromYmd(t, -1);
+        if (preset === 'before_yesterday') return addCalendarDaysFromYmd(t, -2);
+        return '';
+      }
+
+      function applyFiltersFromUrl() {
+        var sp = spInit;
+        var dRaw = (sp.get('digest_date') || '').trim();
+        var dNorm = normalizeDigestDateUrlToken(dRaw);
+        var inp = document.getElementById('digest-date-input');
+        if (inp) {
+          if (dNorm === 'today' || dNorm === 'yesterday' || dNorm === 'before_yesterday') {
+            inp.value = presetDigestToYmd(dNorm);
+          } else if (/^\d{4}-\d{2}-\d{2}$/.test(dNorm)) {
+            inp.value = dNorm;
+          } else {
+            var legacy = resolveLegacyDigestParam(dRaw);
+            if (legacy === 'today' || legacy === 'yesterday' || legacy === 'before_yesterday') {
+              inp.value = presetDigestToYmd(legacy);
+            } else if (legacy && /^(\d{4})-(\d{2})-(\d{2})$/.test(legacy)) {
+              inp.value = legacy;
+            } else {
+              inp.value = '';
+            }
+          }
+        }
+        var pq = document.getElementById('person-q');
+        if (pq) pq.value = sp.get('reader') || '';
+        var tq = document.getElementById('title-q');
+        if (tq) tq.value = sp.get('title') || '';
+        var rs = (sp.get('read_status') || 'all').toLowerCase();
+        readStatus = rs === 'seen' || rs === 'unseen' ? rs : 'all';
+        syncReadStatusButtons();
+      }
+
+      function syncReadStatusButtons() {
+        document.querySelectorAll('.rs-btn').forEach(function (b) {
+          b.classList.toggle('active', b.getAttribute('data-rs') === readStatus);
+        });
+      }
+
+      function syncReadLogsUrl() {
+        var sp = new URLSearchParams(location.search);
+        sp.set('sheet', currentSheet);
+        var k = qKey();
+        if (k) sp.set('key', k);
+        var dq = digestDateQueryParam();
+        if (dq) sp.set('digest_date', dq);
+        else sp.delete('digest_date');
+        var tit = document.getElementById('title-q');
+        if (tit && tit.value.trim()) sp.set('title', tit.value.trim());
+        else sp.delete('title');
+        var pq = document.getElementById('person-q');
+        if (pq && pq.value.trim()) sp.set('reader', pq.value.trim());
+        else sp.delete('reader');
+        if (currentSheet === 'presale') {
+          if (readStatus !== 'all') sp.set('read_status', readStatus);
+          else sp.delete('read_status');
+        } else {
+          sp.delete('read_status');
+        }
+        history.replaceState({}, '', location.pathname + (sp.toString() ? '?' + sp.toString() : ''));
+      }
+
+      function updateTabUi() {
+        var tp = document.getElementById('tab-presale');
+        var to = document.getElementById('tab-other');
+        var hint = document.getElementById('rs-tab-hint');
+        var wrap = document.getElementById('read-status-wrap');
+        if (tp && to) {
+          tp.classList.toggle('active', currentSheet === 'presale');
+          to.classList.toggle('active', currentSheet === 'other');
+          tp.setAttribute('aria-selected', currentSheet === 'presale' ? 'true' : 'false');
+          to.setAttribute('aria-selected', currentSheet === 'other' ? 'true' : 'false');
+        }
+        if (hint) {
+          hint.classList.toggle('visible', currentSheet === 'other');
+        }
+        if (wrap) {
+          wrap.style.opacity = currentSheet === 'other' ? '0.65' : '1';
+        }
+      }
+
+      function setTableLoading(on) {
+        var tb = document.getElementById('tbody');
+        if (tb) tb.classList.toggle('tbody-loading', !!on);
+      }
+
+      function load() {
+        syncReadLogsUrl();
+        var err = document.getElementById('err');
+        err.hidden = true;
+        setTableLoading(true);
+        loadStats();
+        var reader = document.getElementById('person-q').value.trim();
+        var titleQ = document.getElementById('title-q') ? document.getElementById('title-q').value.trim() : '';
+        var dq = digestDateQueryParam();
+        var qs =
+          'limit=' +
+          PAGE_SIZE +
+          '&offset=' +
+          offset +
+          '&sheet=' +
+          encodeURIComponent(currentSheet) +
+          '&key=' +
+          encodeURIComponent(qKey());
+        if (reader) qs += '&reader=' + encodeURIComponent(reader);
+        if (dq) qs += '&digest_date=' + encodeURIComponent(dq);
+        if (titleQ) qs += '&title=' + encodeURIComponent(titleQ);
+        if (currentSheet === 'presale' && readStatus !== 'all') {
+          qs += '&read_status=' + encodeURIComponent(readStatus);
+        }
+        fetch(apiPrefix() + '/api/read/logs?' + qs, { cache: 'no-store' })
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (d) {
+            setTableLoading(false);
+            if (!d.ok) {
+              err.textContent = d.error || '加载失败';
+              err.hidden = false;
+              return;
+            }
+            total = d.total != null ? Number(d.total) : 0;
+            var fw = document.getElementById('filter-warn');
+            if (fw) {
+              if (currentSheet === 'presale' && readStatus !== 'all' && d.read_status === undefined) {
+                fw.hidden = false;
+                fw.textContent =
+                  '提示：当前后端未返回 read_status，「已看 / 未看」筛选可能不会生效。请将服务器上的 web-view-node 更新到包含 read_status 的版本并重启 Node。';
+              } else {
+                fw.hidden = true;
+                fw.textContent = '';
+              }
+            }
+            var tb = document.getElementById('tbody');
+            tb.innerHTML = '';
+            (d.rows || []).forEach(function (row) {
+              var tr = document.createElement('tr');
+              var dwell =
+                row.dwell_seconds != null && row.dwell_seconds !== ''
+                  ? row.dwell_seconds + ' 秒'
+                  : '—';
+              var title = row.record_title || ('#' + row.record_id);
+              var shortTitle = title.length > 48 ? title.slice(0, 48) + '…' : title;
+              var href = detailBase() + '/detail/' + row.record_id;
+              var src = row.source_label || (row.source_type === 'forward' ? '单条转发' : '摘要分发');
+              var digest = row.digest_token
+                ? '<br><span class="mono" style="color:#8b949e;font-size:11px">' +
+                  esc(row.digest_token.slice(0, 8)) +
+                  '…</span>'
+                : '';
+              var pw = row.presale_watchers || [];
+              var presaleHtml = '';
+              if (pw.length) {
+                presaleHtml =
+                  '<div class="presale-cell">' +
+                  pw
+                    .map(function (w) {
+                      var disp = w.presale_display_name || w.presale_userid || '';
+                      var cust = (w.canonical_customer || '').trim();
+                      if (w.seen) {
+                        var ds =
+                          w.dwell_seconds != null && w.dwell_seconds !== ''
+                            ? '停留 ' + w.dwell_seconds + ' 秒'
+                            : '已打开';
+                        var ra = w.read_at ? ' · ' + esc(w.read_at) : '';
+                        var custBlock = cust
+                          ? '<div class="pr-cust">客户：' + esc(cust) + '</div>'
+                          : '';
+                        return (
+                          '<div class="pr-line ok"><span class="pr-name">' +
+                          esc(disp) +
+                          '</span> <span class="mono">' +
+                          esc(w.presale_userid || '') +
+                          '</span><br>✓ 已看 ' +
+                          esc(ds) +
+                          ra +
+                          '</div>' +
+                          custBlock
+                        );
+                      }
+                      return (
+                        '<div class="pr-line no"><span class="pr-name">' +
+                        esc(disp) +
+                        '</span> <span class="mono">' +
+                        esc(w.presale_userid || '') +
+                        '</span><br>未看' +
+                        (cust ? ' · ' + esc(cust) : '') +
+                        '</div>'
+                      );
+                    })
+                    .join('') +
+                  '</div>';
+              } else if (row.digest_token) {
+                presaleHtml =
+                  '<span class="mono" style="color:#8b949e;font-size:12px">无售前索引</span>';
+              } else {
+                presaleHtml = '—';
+              }
+              var rowSeen = !!(row.read_at && String(row.read_at).trim());
+              var seenBadge =
+                currentSheet === 'presale'
+                  ? '<span class="badge-seen ' +
+                    (rowSeen ? 'yes' : 'no') +
+                    '">' +
+                    (rowSeen ? '已看' : '未看') +
+                    '</span>'
+                  : '<span class="badge-seen yes">已看</span>';
+              tr.innerHTML =
+                '<td class="mono">' +
+                esc(row.read_at || '') +
+                '</td>' +
+                '<td><strong>' +
+                esc(row.reader_display || row.reader_userid) +
+                '</strong>' +
+                seenBadge +
+                '<br><span class="mono" style="color:#8b949e">' +
+                esc(row.reader_userid || '') +
+                '</span></td>' +
+                '<td>' +
+                esc(dwell) +
+                '</td>' +
+                '<td>' +
+                presaleHtml +
+                '</td>' +
+                '<td><span class="pill">' +
+                esc(src) +
+                '</span>' +
+                digest +
+                '</td>' +
+                '<td><a class="detail-link" href="' +
+                esc(href) +
+                '">#' +
+                esc(String(row.record_id)) +
+                '</a> ' +
+                esc(shortTitle) +
+                '<br><span class="mono" style="color:#8b949e;font-size:11px">' +
+                esc((row.dispatch_id || '').slice(0, 14)) +
+                (row.dispatch_id && row.dispatch_id.length > 14 ? '…' : '') +
+                '</span></td>';
+              tb.appendChild(tr);
+            });
+            var pi = document.getElementById('page-info');
+            var from = total === 0 ? 0 : offset + 1;
+            var to = offset + (d.rows || []).length;
+            pi.textContent =
+              '共 ' + total + ' 条 · 当前第 ' + from + '–' + to + ' 条';
+            document.getElementById('btn-prev').disabled = offset <= 0;
+            document.getElementById('btn-next').disabled = offset + PAGE_SIZE >= total;
+          })
+          .catch(function (e) {
+            setTableLoading(false);
+            err.textContent = e.message || '网络错误';
+            err.hidden = false;
+          });
+      }
+
+      document.getElementById('rl-tab-dash').onclick = function () {
+        setRlView('dash');
+      };
+      document.getElementById('rl-tab-table').onclick = function () {
+        setRlView('table');
+      };
+
+      document.getElementById('tab-presale').onclick = function () {
+        if (currentSheet === 'presale') return;
+        currentSheet = 'presale';
+        offset = 0;
+        updateTabUi();
+        load();
+      };
+      document.getElementById('tab-other').onclick = function () {
+        if (currentSheet === 'other') return;
+        currentSheet = 'other';
+        readStatus = 'all';
+        syncReadStatusButtons();
+        offset = 0;
+        updateTabUi();
+        load();
+      };
+
+      (function bindReadStatusClicks() {
+        var readStatusGroup = document.getElementById('read-status-group');
+        if (!readStatusGroup) return;
+        readStatusGroup.addEventListener('click', function (ev) {
+          var el = ev.target;
+          if (!el || el.nodeType !== 1) return;
+          var btn = el.closest ? el.closest('.rs-btn') : null;
+          if (!btn || !readStatusGroup.contains(btn)) return;
+          ev.preventDefault();
+          var v = btn.getAttribute('data-rs') || 'all';
+          readStatus = v;
+          syncReadStatusButtons();
+          offset = 0;
+          load();
+        });
+      })();
+
+      document.getElementById('digest-date-input').onchange = function () {
+        offset = 0;
+        load();
+      };
+      document.getElementById('btn-clear-digest-date').onclick = function () {
+        document.getElementById('digest-date-input').value = '';
+        offset = 0;
+        load();
+      };
+
+      document.getElementById('btn-load').onclick = function () {
+        offset = 0;
+        load();
+      };
+      document.getElementById('btn-prev').onclick = function () {
+        offset = Math.max(0, offset - PAGE_SIZE);
+        load();
+      };
+      document.getElementById('btn-next').onclick = function () {
+        offset += PAGE_SIZE;
+        load();
+      };
+
+      var back = document.getElementById('back-home');
+      back.href = detailBase() ? detailBase() + '/' : '/';
+
+      applyFiltersFromUrl();
+      updateTabUi();
+      if (currentSheet === 'other') readStatus = 'all';
+      syncReadStatusButtons();
+      load();
+    })();
+  </script>
+</body>
+</html>

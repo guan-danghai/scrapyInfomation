@@ -162,6 +162,10 @@ def load_config() -> dict:
         "article_inline_image_ocr": s.getboolean(
             "article_inline_image_ocr", False
         ),
+        # 单条详情提取总超时（秒），防止 PDF/OCR/附件弹窗无限挂起
+        "detail_extract_timeout_sec": s.getint("detail_extract_timeout_sec", 300),
+        # Aspose 查看器 / 扫描 PDF 最多 OCR 页数，超出则截断
+        "detail_ocr_max_pages": s.getint("detail_ocr_max_pages", 40),
     }
     if cfg.has_section("wecom"):
         w = cfg["wecom"]
@@ -200,7 +204,21 @@ END_DATE    = _CFG["end_date"]
 EXCLUDE_KEYWORDS = _CFG["exclude_keywords"]
 SEARCH_MODE      = _CFG["search_mode"]
 ARTICLE_INLINE_IMAGE_OCR = bool(_CFG.get("article_inline_image_ocr", False))
+DETAIL_EXTRACT_TIMEOUT_SEC = max(60, int(_CFG.get("detail_extract_timeout_sec", 300)))
+MAX_OCR_PAGES = max(1, int(_CFG.get("detail_ocr_max_pages", 40)))
 # ============================================================
+
+
+def _cap_ocr_pages(total: int, label: str = "OCR") -> int:
+    """限制 Aspose/扫描 PDF 的 OCR 页数，避免百页级公告拖死整批任务。"""
+    n = max(1, int(total or 1))
+    if n > MAX_OCR_PAGES:
+        print(
+            f"    [{label}] 共 {n} 页，超过上限 {MAX_OCR_PAGES}，"
+            f"仅处理前 {MAX_OCR_PAGES} 页"
+        )
+        return MAX_OCR_PAGES
+    return n
 
 
 # ─────────────────────────────────────────────────────
@@ -1775,7 +1793,8 @@ def _pdf_pages_to_images(raw: bytes) -> list:
     out = []
     try:
         doc = fitz.open(stream=raw, filetype="pdf")
-        for i in range(len(doc)):
+        page_count = _cap_ocr_pages(len(doc), label="PDF")
+        for i in range(page_count):
             page = doc.load_page(i)
             # 2 倍分辨率便于 OCR 识别
             mat = fitz.Matrix(2.0, 2.0)
@@ -1837,8 +1856,8 @@ def _get_ocr_engine():
     return _ocr_engine
 
 
-async def _ocr_images(captured_images: list) -> str:
-    """对捕获的图片列表（bytes）执行 OCR，返回拼接文字。"""
+def _ocr_images_sync(captured_images: list) -> str:
+    """对捕获的图片列表（bytes）执行 OCR（同步，供线程池调用）。"""
     try:
         engine = _get_ocr_engine()
     except RuntimeError as e:
@@ -1865,6 +1884,20 @@ async def _ocr_images(captured_images: list) -> str:
         print(f"    [OCR] 全部 {len(all_text)} 页识别完成")
         return "\n\n".join(all_text)
     return ""
+
+
+async def _ocr_images(captured_images: list) -> str:
+    """对捕获的图片列表（bytes）执行 OCR，在线程池运行以免阻塞 Playwright 事件循环。"""
+    imgs = list(captured_images or [])[:MAX_OCR_PAGES]
+    if len(captured_images or []) > MAX_OCR_PAGES:
+        print(
+            f"    [OCR] 图片共 {len(captured_images)} 张，"
+            f"仅识别前 {MAX_OCR_PAGES} 张"
+        )
+    if hasattr(asyncio, "to_thread"):
+        return await asyncio.to_thread(_ocr_images_sync, imgs)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, functools.partial(_ocr_images_sync, imgs))
 
 
 def _img_tag_is_probably_icon(tag: str) -> bool:
@@ -2579,7 +2612,7 @@ async def ocr_via_popup_click(page) -> str:
         m_total = re.search(
             r'totalPageNum\s*=\s*parseInt\(["\'](\d+)["\']', popup_html
         )
-        total_pages = int(m_total.group(1)) if m_total else 4
+        total_pages = _cap_ocr_pages(int(m_total.group(1)) if m_total else 4)
 
         # 非 Aspose 弹窗（如「点击查看>>」跳转到中国招标投标公共服务平台等）：尝试 PDF 或正文
         if not m_total:
@@ -2655,7 +2688,7 @@ async def extract_aspose_viewer_text(page, html_text: str, viewer_url: str) -> s
     用 Playwright 导航到该 URL，主动翻页 + 截图 OCR。
     """
     m_total = re.search(r'totalPageNum\s*=\s*parseInt\(["\'](\d+)["\']', html_text)
-    total_pages = int(m_total.group(1)) if m_total else 4
+    total_pages = _cap_ocr_pages(int(m_total.group(1)) if m_total else 4)
 
     captured: list = []
     ctx = page.context
@@ -2930,6 +2963,7 @@ def _title_from_announcement_body(content: str, info_type: str) -> str:
 
 async def extract_article(page, url: str) -> dict:
     """打开详情页，提取标题/信息类型/正文"""
+    print(f"    [详情] 开始提取: {(url or '')[:100]}…", flush=True)
 
     # ── PDF 路由拦截：在 goto 之前通过 route 捕获完整 PDF 字节 ──────────────
     # bidcenter 的 PDF 通过 PDF.js viewer 内嵌加载，事后单独 HTTP 请求无法重现。
@@ -2943,7 +2977,7 @@ async def extract_article(page, url: str) -> dict:
             if ".pdf" not in (request.url or "").lower():
                 await route.continue_()
                 return
-            resp = await route.fetch()
+            resp = await route.fetch(timeout=25000)
             ct = (resp.headers.get("content-type") or "").lower()
             body = await resp.body()
             ct_ok = (not ct.strip() or "application/pdf" in ct or "octet-stream" in ct
@@ -3344,7 +3378,10 @@ async def scrape_keyword(keyword: str, context, out_dir: str, max_pages: int,
 
             detail = await context.new_page()
             try:
-                article = await extract_article(detail, url)
+                article = await asyncio.wait_for(
+                    extract_article(detail, url),
+                    timeout=float(DETAIL_EXTRACT_TIMEOUT_SEC),
+                )
                 # 类型统一取自「查询结果列表前的类型标签」（如招标公告），不再用详情页面包屑，避免类型过多
                 final_type = info_type
                 save_title = title if title else article["title"]
@@ -3361,11 +3398,20 @@ async def scrape_keyword(keyword: str, context, out_dir: str, max_pages: int,
                                  body_content, out_dir)
                 saved_count += 1
                 # 单条不再推送企业微信，由 pipeline 统一发「今日摘要」公众号式卡片
+            except asyncio.TimeoutError:
+                print(
+                    f"    [FAIL] 详情提取超时（>{DETAIL_EXTRACT_TIMEOUT_SEC}s），"
+                    f"已跳过本条继续批处理"
+                )
+                failed_count += 1
             except Exception as e:
                 print(f"    [FAIL] {e}")
                 failed_count += 1
             finally:
-                await detail.close()
+                try:
+                    await asyncio.wait_for(detail.close(), timeout=10.0)
+                except Exception:
+                    pass
 
             # 每条详情页抓取完后随机停顿，模拟真人浏览间隔
             await rand_sleep(search_page, 1000, 4000)

@@ -11,9 +11,12 @@
   <div class="page">
     <!-- 顶部蓝色区：标题 + 关键词搜索 -->
     <header class="top-header">
-      <h1 class="page-title" id="page-title">
-        <span class="page-title-main">全国最新招中标信息汇总</span><span class="page-title-date" id="page-title-date" hidden></span>
-      </h1>
+      <div class="top-header-row">
+        <h1 class="page-title" id="page-title">
+          <span class="page-title-main">全国最新招中标信息汇总</span><span class="page-title-date" id="page-title-date" hidden></span>
+        </h1>
+        <a class="read-log-nav" id="read-log-nav" href="read_logs" title="谁看过详情、停留多久">阅读记录</a>
+      </div>
       <div class="main-search-bar">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
@@ -378,6 +381,16 @@
         listDateStart = a;
         listDateEnd = (b && ymd.test(b)) ? b : a;
       }
+    })();
+
+    (function () {
+      var a = document.getElementById('read-log-nav');
+      if (!a) return;
+      var p = location.pathname;
+      var pre = '';
+      if (p.indexOf('/ztb-test') === 0) pre = '/ztb-test';
+      else if (p.indexOf('/ztb') === 0) pre = '/ztb';
+      a.href = pre + '/read_logs';
     })();
 
     fetch('/api/scrape_dates')

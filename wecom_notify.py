@@ -124,6 +124,64 @@ def get_access_token(corp_id: str, secret: str) -> Optional[str]:
         return None
 
 
+def send_app_textcard_result(
+    access_token: str,
+    agent_id: Union[int, str],
+    title: str,
+    description: str,
+    url: str,
+    btntxt: str = "详情",
+    *,
+    touser: Optional[str] = None,
+    chatid: Optional[str] = None,
+    timeout: int = 10,
+) -> dict:
+    """
+    发送文本卡片，返回企业微信 API 结果。
+    返回字段：ok、errcode、errmsg、raw（完整 JSON）。
+    """
+    if not access_token or not url:
+        return {"ok": False, "errcode": -1, "errmsg": "缺少 access_token 或 url", "raw": {}}
+    title = _truncate_text(title, max_bytes=128)
+    description = _truncate_text(description, max_bytes=512)
+    if len(btntxt.encode("utf-8")) > 4 * 4:  # 约 4 个汉字
+        btntxt = "详情"
+    payload = {
+        "msgtype": "textcard",
+        "agentid": agent_id,
+        "textcard": {
+            "title": title,
+            "description": description,
+            "url": url,
+            "btntxt": btntxt[:4],
+        },
+        "safe": 0,
+    }
+    if chatid:
+        payload["chatid"] = chatid
+    if touser:
+        payload["touser"] = touser
+    if not chatid and not touser:
+        print("    [企业微信应用] 未指定 touser 或 chatid")
+        return {"ok": False, "errcode": -1, "errmsg": "未指定 touser 或 chatid", "raw": {}}
+
+    api_url = f"https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={access_token}"
+    try:
+        ret = _http_post_json(api_url, payload, timeout=timeout)
+        ok = ret.get("errcode") == 0
+        if not ok:
+            print(f"    [企业微信应用 textcard] 发送失败: {ret.get('errmsg', ret)}")
+        return {
+            "ok": ok,
+            "errcode": ret.get("errcode"),
+            "errmsg": str(ret.get("errmsg") or ""),
+            "raw": ret,
+        }
+    except Exception as e:
+        print(f"    [企业微信应用 textcard] 异常: {e}")
+        return {"ok": False, "errcode": -1, "errmsg": str(e), "raw": {}}
+
+
 def send_app_textcard(
     access_token: str,
     agent_id: Union[int, str],
@@ -149,41 +207,19 @@ def send_app_textcard(
     :param chatid: 群 chatid
     :return: 是否发送成功
     """
-    if not access_token or not url:
-        return False
-    title = _truncate_text(title, max_bytes=128)
-    description = _truncate_text(description, max_bytes=512)
-    if len(btntxt.encode("utf-8")) > 4 * 4:  # 约 4 个汉字
-        btntxt = "详情"
-    payload = {
-        "msgtype": "textcard",
-        "agentid": agent_id,
-        "textcard": {
-            "title": title,
-            "description": description,
-            "url": url,
-            "btntxt": btntxt[:4],
-        },
-        "safe": 0,
-    }
-    if chatid:
-        payload["chatid"] = chatid
-    if touser:
-        payload["touser"] = touser
-    if not chatid and not touser:
-        print("    [企业微信应用] 未指定 touser 或 chatid")
-        return False
-
-    api_url = f"https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={access_token}"
-    try:
-        ret = _http_post_json(api_url, payload, timeout=timeout)
-        ok = ret.get("errcode") == 0
-        if not ok:
-            print(f"    [企业微信应用 textcard] 发送失败: {ret.get('errmsg', ret)}")
-        return ok
-    except Exception as e:
-        print(f"    [企业微信应用 textcard] 异常: {e}")
-        return False
+    return bool(
+        send_app_textcard_result(
+            access_token,
+            agent_id,
+            title,
+            description,
+            url,
+            btntxt,
+            touser=touser,
+            chatid=chatid,
+            timeout=timeout,
+        ).get("ok")
+    )
 
 
 def send_app_message(
